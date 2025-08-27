@@ -1,20 +1,20 @@
 //RHC images
-import rhc1 from "/rhc/RHC.jpg";
+import rhc1 from "/cards/RHC.jpg";
 
 //FHC images
-import fhc1 from "/fhc/FHC.jpg";
+import fhc1 from "/cards/FHC.jpg";
 
 //Green images
-import green1 from "/green/Green.jpg";
+import green1 from "/cards/Green.jpg";
 
 //Process images
-import process1 from "/process/Process.jpg";
+import process1 from "/cards/Process.jpg";
 
 //Safe images
-import safe1 from "/safe/Safe.jpg";
+import safe1 from "/cards/Safe.jpg";
 
 //Verdifor images
-import verdifor1 from "/verdifor/Verdifor.jpg";
+import verdifor1 from "/cards/Verdifor.jpg";
 
 // src/data.js
 export const imageCategories = {

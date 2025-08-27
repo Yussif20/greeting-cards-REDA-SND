@@ -532,7 +532,7 @@ const CardSelector = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex flex-col font-sans bg-[url('/light-moon-small.png')] dark:bg-[url('/dark-moon-small.png')] bg-cover bg-no-repeat bg-center transition-all duration-300 sm:bg-[url('/light-moon.png')] sm:dark:bg-[url('/dark-moon.png')] sm:bg-fixed"
+      className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex flex-col font-sans bg-[url('/light-moon-small.png')] dark:bg-[url('/dark-moon-small.png')] bg-cover bg-no-repeat bg-center transition-all duration-300 sm:bg-[url('/saudi-light.jpg')] sm:dark:bg-[url('/saudi-dark.jpg')] sm:bg-fixed"
       dir={i18n.language === "ar" ? "rtl" : "ltr"}
       ref={containerRef}
     >
