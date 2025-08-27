@@ -4,16 +4,19 @@
 
 /* CSS Variables - Saudi National Day Theme */
 :root {
-  --background: #e8f5e8; /* Light green background */
-  --foreground: #004225; /* Deep green text */
+  --background: #f8fdf8; /* Very light green background */
+  --foreground: #1a3d1a; /* Darker green text for better contrast */
   --card-bg: #ffffff; /* white */
   --card-gradient-start: #ffffff; /* white */
   --card-gradient-end: #f4e4bc; /* Light gold */
   --border: #006c35; /* Saudi green border */
   --saudi-green: #006c35; /* Primary Saudi green */
-  --saudi-gold: #ffd700; /* Saudi gold accent */
-  --deep-green: #004225; /* Deep green */
+  --saudi-gold: #b8860b; /* Darker gold for better contrast */
+  --deep-green: #1a3d1a; /* Darker green for better readability */
   --light-gold: #f4e4bc; /* Light gold */
+  --primary-text: #1a3d1a; /* Primary text color */
+  --secondary-text: #2d5a2d; /* Secondary text color */
+  --accent-text: #8b6914; /* Accent text color (darker gold) */
 }
 
 .dark {
@@ -28,6 +31,36 @@
 /* Apply variables */
 body {
   @apply bg-[var(--background)] text-[var(--foreground)] font-sans;
+  font-family: "Lora", "Cairo", serif;
+}
+
+/* Elegant Typography Classes */
+.font-elegant-en {
+  font-family: "Playfair Display", "Lora", serif;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.font-elegant-ar {
+  font-family: "Amiri", "Cairo", "Tajawal", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.font-elegant-mixed {
+  font-family: "Lora", "Amiri", "Cairo", serif;
+  font-weight: 500;
+}
+
+/* Language-specific improvements */
+[lang="ar"],
+[dir="rtl"] {
+  font-family: "Amiri", "Cairo", "Tajawal", sans-serif;
+}
+
+[lang="en"],
+[dir="ltr"] {
+  font-family: "Playfair Display", "Lora", serif;
 }
 
 a,
@@ -168,21 +201,6 @@ button {
 /* Language Switcher Enhanced Animations */
 .lang-switcher-glow {
   position: relative;
-}
-
-.lang-switcher-glow::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  background: linear-gradient(45deg, #006c35, #ffd700, #006c35);
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: -1;
-}
-
-.lang-switcher-glow:hover::before {
-  opacity: 0.3;
 }
 
 /* Pulse animation for active language indicator */

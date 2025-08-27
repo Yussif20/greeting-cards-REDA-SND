@@ -28,13 +28,13 @@ export default function ThemeSwitcher() {
     <>
       {/* Desktop Version - Two buttons */}
       <div className="hidden sm:flex relative">
-        <div className="flex items-center p-1 bg-gray-100 dark:bg-gray-700 rounded-xl shadow-inner border border-gray-200 dark:border-gray-600 transition-all duration-300">
+        <div className="flex items-center p-1 bg-white/40 dark:bg-gray-700 rounded-xl shadow-inner border border-gray-300 dark:border-gray-600 transition-all duration-300 backdrop-blur-sm">
           <button
             onClick={themeToggleHandler}
             className={`relative flex items-center justify-center w-10 h-8 rounded-lg transition-all duration-300 transform ${
               theme === "light"
-                ? "bg-white dark:bg-gray-800 shadow-md scale-105 text-[#FFD700]"
-                : "bg-transparent hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-400 dark:text-gray-500"
+                ? "bg-white dark:bg-gray-800 shadow-md scale-105 text-[#b8860b]"
+                : "bg-transparent hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-500"
             } ${isAnimating ? "animate-pulse" : ""}`}
             aria-label="Switch to light mode"
             title="Light mode"
@@ -42,12 +42,12 @@ export default function ThemeSwitcher() {
             <Sun
               className={`w-4 h-4 transition-all duration-300 ${
                 theme === "light"
-                  ? "text-[#FFD700] drop-shadow-sm"
-                  : "text-gray-400 dark:text-gray-500"
+                  ? "text-[#b8860b] drop-shadow-sm"
+                  : "text-gray-500 dark:text-gray-500"
               }`}
             />
             {theme === "light" && (
-              <div className="absolute inset-0 rounded-lg bg-[#FFD700]/10 animate-ping"></div>
+              <div className="absolute inset-0 rounded-lg bg-[#b8860b]/10 animate-ping"></div>
             )}
           </button>
 
@@ -56,7 +56,7 @@ export default function ThemeSwitcher() {
             className={`relative flex items-center justify-center w-10 h-8 rounded-lg transition-all duration-300 transform ${
               theme === "dark"
                 ? "bg-white dark:bg-gray-800 shadow-md scale-105 text-[#006C35]"
-                : "bg-transparent hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-400 dark:text-gray-500"
+                : "bg-transparent hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-500"
             } ${isAnimating ? "animate-pulse" : ""}`}
             aria-label="Switch to dark mode"
             title="Dark mode"
@@ -65,7 +65,7 @@ export default function ThemeSwitcher() {
               className={`w-4 h-4 transition-all duration-300 ${
                 theme === "dark"
                   ? "text-[#006C35] drop-shadow-sm"
-                  : "text-gray-400 dark:text-gray-500"
+                  : "text-gray-500 dark:text-gray-500"
               }`}
             />
             {theme === "dark" && (
@@ -76,7 +76,7 @@ export default function ThemeSwitcher() {
         {/* Subtle indicator dot */}
         <div
           className={`absolute -top-1 -right-1 w-2 h-2 rounded-full transition-all duration-300 ${
-            theme === "light" ? "bg-[#FFD700]" : "bg-[#006C35]"
+            theme === "light" ? "bg-[#b8860b]" : "bg-[#006C35]"
           } ${isAnimating ? "animate-bounce" : ""}`}
         ></div>
       </div>
@@ -87,7 +87,7 @@ export default function ThemeSwitcher() {
           onClick={themeToggleHandler}
           className={`relative p-2.5 rounded-xl transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-lg border-2 ${
             theme === "light"
-              ? "bg-white hover:bg-gray-50 text-[#006C35] border-[#006C35]/20 hover:border-[#006C35]/30 shadow-[#006C35]/10"
+              ? "bg-white hover:bg-gray-50 text-[#1a3d1a] border-[#006C35]/30 hover:border-[#006C35]/50 shadow-[#006C35]/20"
               : "bg-gray-800 hover:bg-gray-700 text-[#FFD700] border-[#FFD700]/30 hover:border-[#FFD700]/50 shadow-[#FFD700]/10"
           } ${isAnimating ? "animate-pulse" : ""}`}
           aria-label={`Toggle theme (currently ${theme})`}
@@ -95,7 +95,7 @@ export default function ThemeSwitcher() {
         >
           {/* Always show current theme icon, not the target */}
           {theme === "light" ? (
-            <Sun className="w-6 h-6 text-[#FFD700] transition-all duration-300 drop-shadow-sm" />
+            <Sun className="w-6 h-6 text-[#b8860b] transition-all duration-300 drop-shadow-sm" />
           ) : (
             <Moon className="w-6 h-6 text-[#006C35] transition-all duration-300 drop-shadow-sm" />
           )}
@@ -104,7 +104,7 @@ export default function ThemeSwitcher() {
           <div
             className={`absolute inset-0 rounded-xl transition-all duration-300 ${
               theme === "light"
-                ? "bg-gradient-to-r from-orange-500/10 to-yellow-500/10"
+                ? "bg-gradient-to-r from-amber-500/10 to-yellow-600/10"
                 : "bg-gradient-to-r from-blue-500/10 to-indigo-500/10"
             } ${isAnimating ? "animate-ping" : ""}`}
           ></div>
@@ -113,7 +113,7 @@ export default function ThemeSwitcher() {
           <div
             className={`absolute -top-1 -right-1 w-3 h-3 rounded-full transition-all duration-300 ${
               theme === "light"
-                ? "bg-orange-400 shadow-orange-400/50"
+                ? "bg-amber-600 shadow-amber-600/50"
                 : "bg-blue-400 shadow-blue-400/50"
             } ${isAnimating ? "animate-bounce" : ""} shadow-lg`}
           ></div>
