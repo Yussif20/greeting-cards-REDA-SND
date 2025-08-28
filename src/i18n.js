@@ -30,6 +30,25 @@ const resources = {
       // CardSelector
       select_card: "Select a Card",
       cards: "Cards",
+      customize_card: "Customize Card",
+      back_to_cards: "Back to Cards",
+
+      // Saudi National Day Categories
+      category_traditional: "Traditional",
+      category_modern: "Modern",
+      category_landmarks: "Landmarks",
+      category_nature: "Natural Beauty",
+      category_symbols: "Flags & Symbols",
+      category_cultural: "Cultural Heritage",
+
+      // Category descriptions
+      traditional_desc: "Classic Saudi heritage and traditional patterns",
+      modern_desc: "Contemporary designs and Vision 2030",
+      landmarks_desc: "Iconic Saudi landmarks and architecture",
+      nature_desc: "Arabian deserts, mountains, and natural beauty",
+      symbols_desc: "Saudi flag, emblems, and national symbols",
+      cultural_desc: "Traditional arts, crafts, and cultural elements",
+
       guide_name: "Customize Your Card",
       enter_name: "Enter your name",
       guide_color: "Text Color",
@@ -37,6 +56,8 @@ const resources = {
       arabic: "Arabic",
       english: "English",
       guide_font: "Font",
+      arabic_font: "Arabic Font",
+      english_font: "English Font",
       guide_font_style: "Font Style",
       normal: "Normal",
       bold: "Bold",
@@ -102,7 +123,26 @@ const resources = {
 
       // CardSelector
       select_card: "اختر بطاقة",
-      cards: "بطاقات",
+      cards: "البطاقات",
+      customize_card: "تخصيص البطاقة",
+      back_to_cards: "العودة للبطاقات",
+
+      // Saudi National Day Categories - Arabic
+      category_traditional: "التراثية",
+      category_modern: "العصرية",
+      category_landmarks: "المعالم",
+      category_nature: "الطبيعة الخلابة",
+      category_symbols: "الأعلام والرموز",
+      category_cultural: "التراث الثقافي",
+
+      // Category descriptions - Arabic
+      traditional_desc: "التراث السعودي الأصيل والأنماط التقليدية",
+      modern_desc: "التصاميم المعاصرة ورؤية 2030",
+      landmarks_desc: "المعالم السعودية الشهيرة والعمارة الفريدة",
+      nature_desc: "الصحاري العربية والجبال والجمال الطبيعي",
+      symbols_desc: "العلم السعودي والشعارات والرموز الوطنية",
+      cultural_desc: "الفنون التقليدية والحرف والعناصر الثقافية",
+
       guide_name: "تخصيص بطاقتك",
       enter_name: "أدخل اسمك",
       guide_color: "لون النص",
@@ -110,6 +150,8 @@ const resources = {
       arabic: "العربية",
       english: "الإنجليزية",
       guide_font: "الخط",
+      arabic_font: "الخط العربي",
+      english_font: "الخط الإنجليزي",
       guide_font_style: "نمط الخط",
       normal: "عادي",
       bold: "غامق",

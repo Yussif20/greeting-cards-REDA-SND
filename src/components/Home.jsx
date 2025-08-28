@@ -16,12 +16,12 @@ const Home = () => {
       dir={isArabic ? "rtl" : "ltr"}
     >
       {/* Background Overlay for better readability */}
-      <div className="absolute inset-0 bg-white/10 dark:bg-black/30 transition-all duration-300"></div>
+      <div className="absolute inset-0 bg-white/5 dark:bg-black/30 transition-all duration-300"></div>
 
       <main className="container mx-auto px-4 py-12 lg:px-8 lg:py-16 max-w-7xl relative z-10">
         {/* Hero Section */}
         <AnimatedSection>
-          <div className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 dark:border-[#FFD700]/20 p-6 sm:p-8 lg:p-12 text-center relative overflow-hidden glass-hover">
+          <div className="bg-white/10 dark:bg-gray-900/30 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 dark:border-[#FFD700]/20 p-6 sm:p-8 lg:p-12 text-center relative overflow-hidden glass-hover">
             {/* Glass effect enhancement */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent dark:from-[#006C35]/5 dark:to-transparent rounded-3xl"></div>
 
@@ -83,7 +83,7 @@ const Home = () => {
 
         {/* Testimonial Section */}
         <AnimatedSection delay={400}>
-          <div className="mt-12 p-6 bg-white/30 dark:bg-gray-900/30 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-[#FFD700]/20 text-center shadow-xl relative overflow-hidden">
+          <div className="mt-12 p-6 bg-white/10 dark:bg-gray-900/30 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-[#FFD700]/20 text-center shadow-xl relative overflow-hidden">
             {/* Glass effect for testimonial */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent dark:from-[#006C35]/5 dark:to-transparent rounded-2xl"></div>
 

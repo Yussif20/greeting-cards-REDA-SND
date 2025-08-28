@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { imageCategories } from "../data";
+import { getAllCards } from "../data";
 import debounce from "lodash/debounce";
 import {
   Download,
@@ -26,7 +26,6 @@ import AnimatedSection from "./AnimatedSection";
 const CardSelector = () => {
   const { t, i18n } = useTranslation();
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedCardType, setSelectedCardType] = useState(null);
   const [name, setName] = useState("");
   const [color, setColor] = useState("#ffffff");
   const [namePosition, setNamePosition] = useState({ x: 540, y: 540 });
@@ -47,6 +46,11 @@ const CardSelector = () => {
   const previewRef = useRef(null);
   const namePreviewRef = useRef(null);
   const containerRef = useRef(null);
+
+  // Helper function to get all Saudi cards in one array
+  const getAllSaudiCards = useMemo(() => {
+    return getAllCards();
+  }, []);
 
   // Style presets
   const presets = useMemo(
@@ -272,7 +276,6 @@ const CardSelector = () => {
 
       img.onload = () => {
         setSelectedImage(img);
-        setSelectedCardType(card.type);
         setNamePosition({
           x: img.width / 2,
           y: img.height / 2,
@@ -284,7 +287,6 @@ const CardSelector = () => {
       img.onerror = () => {
         setError(t("image_load_error"));
         setSelectedImage(null);
-        setSelectedCardType(null);
         setIsLoading(false);
       };
     },
@@ -520,23 +522,16 @@ const CardSelector = () => {
     }
   }, [font, fontsLoaded, loadFontOnDemand]);
 
-  // Flatten all cards into a single array with fallback
-  const allCards = useMemo(() => {
-    try {
-      return Object.values(imageCategories).flat();
-    } catch (err) {
-      console.error("Error processing imageCategories:", err);
-      return [];
-    }
-  }, []);
-
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex flex-col font-sans bg-[url('/light-moon-small.png')] dark:bg-[url('/dark-moon-small.png')] bg-cover bg-no-repeat bg-center transition-all duration-300 sm:bg-[url('/saudi-light.jpg')] sm:dark:bg-[url('/saudi-dark.jpg')] sm:bg-fixed"
+      className="relative min-h-screen bg-gradient-to-br from-[#f8fdf8] via-[#f0f8f0] to-[#e8f4e8] dark:from-[#004225] dark:via-[#006C35] dark:to-[#004225] flex flex-col font-sans bg-[url('/saudi-light.jpg')] dark:bg-[url('/saudi-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
       dir={i18n.language === "ar" ? "rtl" : "ltr"}
       ref={containerRef}
     >
-      <main className="flex-1 container mx-auto px-4 py-8 lg:px-8 lg:py-12 flex flex-col gap-8 animate-fade-in">
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-white/5 dark:bg-black/30 transition-all duration-300"></div>
+
+      <main className="flex-1 container mx-auto px-4 py-8 lg:px-8 lg:py-12 flex flex-col gap-8 animate-fade-in relative z-10">
         {error && (
           <div className="mb-6 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg flex items-center max-w-3xl mx-auto">
             <span className="text-sm">{error}</span>
@@ -567,20 +562,28 @@ const CardSelector = () => {
               {t("select_card")}
             </h2>
             <div className="bg-gradient-card rounded-xl shadow-card p-4 sm:p-6 w-full box-border">
-              {allCards.length > 0 ? (
-                <CardSection
-                  title={t("cards")}
-                  cards={allCards}
-                  selectedImage={selectedImage}
-                  selectCard={selectCard}
-                  type="card"
-                  id="card-section-cards"
-                />
-              ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {t("no_cards_available")}
-                </p>
-              )}
+              {/* Saudi National Day Cards - All Cards in One Container */}
+              <div className="mb-8">
+                <h3
+                  className={`text-xl font-bold text-[#1a3d1a] dark:text-[#F4E4BC] mb-6 text-center ${
+                    i18n.language === "ar"
+                      ? "font-elegant-ar"
+                      : "font-elegant-en"
+                  }`}
+                >
+                  🇸🇦 {t("saudi_national_day_greeting")}
+                </h3>
+                <div className="bg-white/20 dark:bg-gray-800/20 rounded-lg p-6 backdrop-blur-sm border border-white/30 dark:border-gray-700/30">
+                  <CardSection
+                    title=""
+                    cards={getAllSaudiCards}
+                    selectedImage={selectedImage}
+                    selectCard={selectCard}
+                    type="card"
+                    id="all-saudi-cards"
+                  />
+                </div>
+              </div>
             </div>
           </section>
         </AnimatedSection>

@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CardSelector from "./components/CardSelector";
+import CardGallery from "./components/CardGallery";
+import CustomizationPage from "./components/CustomizationPage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
@@ -19,7 +21,10 @@ const App = () => {
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/cards" element={<CardSelector />} />
+            <Route path="/cards" element={<CardGallery />} />
+            <Route path="/customize" element={<CustomizationPage />} />
+            {/* Keep the old route for backward compatibility */}
+            <Route path="/cards-old" element={<CardSelector />} />
           </Routes>
         </main>
         <Footer />

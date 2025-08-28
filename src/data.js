@@ -1,27 +1,20 @@
-//RHC images
+// Import your 6 Saudi National Day cards
 import rhc1 from "/cards/RHC.jpg";
-
-//FHC images
 import fhc1 from "/cards/FHC.jpg";
-
-//Green images
 import green1 from "/cards/Green.jpg";
-
-//Process images
 import process1 from "/cards/Process.jpg";
-
-//Safe images
 import safe1 from "/cards/Safe.jpg";
-
-//Verdifor images
 import verdifor1 from "/cards/Verdifor.jpg";
 
-// src/data.js
-export const imageCategories = {
-  RHC: [{ src: rhc1 }],
-  FHC: [{ src: fhc1 }],
-  Green: [{ src: green1 }],
-  Process: [{ src: process1 }],
-  Safe: [{ src: safe1 }],
-  Verdifor: [{ src: verdifor1 }],
-};
+// All your Saudi National Day cards in one simple array
+export const cards = [
+  { src: rhc1, name: "RHC" },
+  { src: fhc1, name: "FHC" },
+  { src: green1, name: "Green" },
+  { src: process1, name: "Process" },
+  { src: safe1, name: "Safe" },
+  { src: verdifor1, name: "Verdifor" },
+];
+
+// Simple function to get all cards
+export const getAllCards = () => cards;
