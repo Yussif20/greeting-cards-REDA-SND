@@ -1,22 +1,22 @@
-# 🇸🇦 Saudi National Day Greeting Cards
+# 🌙 Ramadan Greeting Cards
 
-A stunning, modern web application for creating personalized Saudi National Day greeting cards with premium glass morphism design and authentic cultural theming.
+A stunning, modern web application for creating personalized Ramadan greeting cards with premium glass morphism design and an elegant night sky theme.
 
 ## ✨ Features
 
 ### 🎨 **Premium Design System**
 
 - **Glass Morphism UI**: Modern transparent design with backdrop blur effects
-- **Saudi Theme Colors**: Authentic green (#006C35) and gold (#FFD700) color palette
+- **Ramadan Theme Colors**: Night sky navy (#1B3A5C) and warm gold (#C9A84C) color palette
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **Dark/Light Modes**: Seamless theme switching with Saudi-inspired colors
+- **Dark/Light Modes**: Seamless theme switching with Ramadan-inspired colors
 
 ### 🌍 **Internationalization**
 
 - **Bilingual Support**: Full Arabic and English localization
 - **RTL Layout**: Complete right-to-left layout support for Arabic
-- **Cultural Sensitivity**: Respectful representation of Saudi culture and heritage
-- **Stylish Language Switcher**: Glass morphism switcher with flag indicators
+- **Cultural Sensitivity**: Respectful representation of Islamic culture and Ramadan traditions
+- **Stylish Language Switcher**: Glass morphism switcher with smooth transitions
 
 ### 🖼️ **Card Customization**
 
@@ -26,12 +26,12 @@ A stunning, modern web application for creating personalized Saudi National Day 
 - **Zoom & Preview**: Real-time card preview with zoom functionality
 - **Download Options**: High-quality card downloads
 
-### 🏛️ **Saudi Cultural Elements**
+### 🕌 **Ramadan Cultural Elements**
 
-- **National Day Theming**: Dedicated to Saudi National Day celebration
-- **Patriotic Messaging**: Authentic Arabic and English greetings
-- **Cultural Imagery**: Respectful representation of Saudi heritage
-- **Vision 2030 Ready**: Modern design aligned with Saudi's future vision
+- **Ramadan Theming**: Dedicated to the holy month of Ramadan
+- **Spiritual Messaging**: Authentic Arabic and English Ramadan greetings
+- **Islamic Imagery**: Crescent moons, lanterns, mosques, and stars
+- **Elegant Design**: Night sky aesthetic with warm golden accents
 
 ## 🛠️ **Technology Stack**
 
@@ -91,79 +91,44 @@ npm run preview
 
 ```
 src/
-├── components/          # React components
-│   ├── Header.jsx      # Glass morphism header with language switcher
-│   ├── Home.jsx        # Landing page with hero section
-│   ├── Footer.jsx      # Saudi-themed footer
-│   ├── CardSelector.jsx # Card creation and customization
-│   ├── ThemeSwitcher.jsx # Dark/light mode toggle
-│   └── AnimatedSection.jsx # Animation wrapper
-├── assets/             # Static assets
-├── data.js            # Card categories and configuration
-├── i18n.js            # Internationalization setup
-├── index.css          # Global styles and CSS variables
-└── main.jsx           # Application entry point
+├── components/              # React components
+│   ├── Header.jsx           # Glass morphism header with language switcher
+│   ├── Home.jsx             # Landing page with hero section
+│   ├── Footer.jsx           # Ramadan-themed footer
+│   ├── CardGallery.jsx      # Card browsing gallery
+│   ├── CustomizationPage.jsx # Card customization editor
+│   ├── CardSelector.jsx     # Legacy card selector (backward compat)
+│   ├── ThemeSwitcher.jsx    # Dark/light mode toggle
+│   └── AnimatedSection.jsx  # Animation wrapper
+├── data.js                  # Card data and configuration
+├── i18n.js                  # Internationalization setup (EN + AR)
+├── index.css                # Global styles and CSS variables
+├── App.jsx                  # Router and root layout
+└── main.jsx                 # Application entry point
 ```
 
 ## 🎨 **Design System**
 
 ### **Color Palette**
 
-- **Primary**: Saudi Green (#006C35)
-- **Accent**: Gold (#FFD700)
-- **Supporting**: Deep Green (#004225), Light Gold (#F4E4BC)
-- **Background**: Light Green (#E8F5E8) for light mode
+- **Primary**: Night Sky Navy (#1B3A5C)
+- **Accent**: Warm Gold (#C9A84C)
+- **Company Blue**: Reda Blue (#243E87) — used in logo and brand elements
+- **Supporting**: Deep Night (#0F2641), Warm Cream (#F5E6CC)
+- **Background**: Soft Cream (#FFF8F0) for light mode, Deep Night (#070D18) for dark mode
 
 ### **Glass Morphism Standards**
 
 - **Transparency**: 20-30% for main elements
 - **Backdrop Blur**: `backdrop-blur-xl` for optimal readability
-- **Borders**: Semi-transparent with Saudi theme colors
+- **Borders**: Semi-transparent with gold/navy theme colors
 - **Shadows**: Layered shadows for depth and elevation
 
 ### **Typography**
 
-- **Arabic Fonts**: Cairo, Amiri for authentic Arabic text
-- **English Fonts**: Modern sans-serif for clarity
+- **Arabic Fonts**: Amiri, Cairo, Tajawal for authentic Arabic text
+- **English Fonts**: Playfair Display, Lora for elegant serif styling
 - **Responsive Scaling**: Optimized for all screen sizes
-- **Cultural Typography**: Respectful Arabic text rendering
-
-## 🌟 **Key Highlights**
-
-### **Glass Morphism Implementation**
-
-- Transparent backgrounds with backdrop blur
-- Layered glass effects for depth
-- Smooth hover animations
-- Professional shadow system
-
-### **Saudi National Day Theming**
-
-- Authentic color representation
-- Cultural sensitivity in design
-- Patriotic messaging and imagery
-- Modern interpretation of traditional elements
-
-### **Advanced Internationalization**
-
-- Complete Arabic localization
-- RTL layout support
-- Cultural adaptation beyond translation
-- Seamless language switching
-
-### **Performance Optimized**
-
-- Vite for fast development
-- Optimized bundle size
-- Smooth 60fps animations
-- Efficient re-rendering
-
-## 📱 **Responsive Design**
-
-- **Mobile First**: Optimized for mobile devices
-- **Tablet Support**: Enhanced tablet experience
-- **Desktop Excellence**: Full-featured desktop interface
-- **Touch Friendly**: Optimized touch interactions
 
 ## 🔧 **Development**
 
@@ -180,48 +145,29 @@ The application works out of the box with no additional environment configuratio
 
 ## 🎯 **Project Goals**
 
-1. **Cultural Celebration**: Honor Saudi National Day with authentic representation
-2. **Modern Design**: Showcase cutting-edge web design with glass morphism
-3. **Accessibility**: Ensure inclusive design for all users
+1. **Ramadan Celebration**: Honor the holy month with respectful, elegant representation
+2. **Modern Design**: Night sky aesthetic with glass morphism and warm golden accents
+3. **Accessibility**: Ensure inclusive design for all users with WCAG-compliant contrast
 4. **Performance**: Deliver fast, smooth user experience
-5. **Internationalization**: Support Arabic and English audiences
-
-## 🏆 **Features Implemented**
-
-### ✅ **Phase 1 - Complete**
-
-- [x] Saudi National Day theme transformation
-- [x] Glass morphism design system
-- [x] Bilingual support (Arabic/English)
-- [x] Stylish language switcher
-- [x] Theme switcher with Saudi colors
-- [x] Responsive glass morphism components
-- [x] Cultural messaging and content
-
-### 🚧 **Phase 2 - In Progress**
-
-- [ ] Saudi-themed card categories
-- [ ] Enhanced card templates
-- [ ] Advanced customization options
-- [ ] Symbol and flag overlays
+5. **Internationalization**: Full Arabic and English support with RTL layout
 
 ## 🤝 **Contributing**
 
-We welcome contributions to improve this Saudi National Day celebration platform. Please ensure all contributions respect cultural sensitivity and maintain the high-quality design standards.
+We welcome contributions to improve this Ramadan celebration platform. Please ensure all contributions respect cultural and religious sensitivity and maintain the high-quality design standards.
 
 ## 📄 **License**
 
-This project is developed for celebrating Saudi National Day. Please respect the cultural significance and use responsibly.
+This project is developed for celebrating the holy month of Ramadan. Please respect the cultural and religious significance and use responsibly.
 
 ## 🙏 **Acknowledgments**
 
-- Saudi Arabian cultural heritage and traditions
-- Vision 2030 initiative inspiration
+- Islamic cultural heritage and Ramadan traditions
+- Reda Hazard Control company branding
 - Modern web design best practices
 - Accessibility and internationalization standards
 
 ---
 
-**Proudly celebrating Saudi National Day 2025** 🇸🇦
+**Ramadan Mubarak 2025** 🌙
 
-_Built with ❤️ for the Kingdom of Saudi Arabia_
+_Built with ❤️ by Reda Hazard Control_

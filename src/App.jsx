@@ -10,7 +10,7 @@ import { useMemo } from "react";
 const App = () => {
   const appClassName = useMemo(
     () =>
-      "flex flex-col min-h-screen bg-gradient-to-br from-[#E8F5E8] to-[#F4E4BC] dark:from-[#004225] dark:to-[#006C35] transition-colors duration-300",
+      "flex flex-col min-h-screen bg-gradient-to-br from-[#FFF8F0] to-[#F5E6CC] dark:from-[#070D18] dark:to-[#1B3A5C] transition-colors duration-300",
     []
   );
 

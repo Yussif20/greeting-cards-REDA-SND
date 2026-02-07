@@ -47,8 +47,8 @@ const CardSelector = () => {
   const namePreviewRef = useRef(null);
   const containerRef = useRef(null);
 
-  // Helper function to get all Saudi cards in one array
-  const getAllSaudiCards = useMemo(() => {
+  // Helper function to get all Ramadan cards in one array
+  const getAllRamadanCards = useMemo(() => {
     return getAllCards();
   }, []);
 
@@ -481,7 +481,7 @@ const CardSelector = () => {
       }
       const dataUrl = tempCanvas.toDataURL("image/png");
       const link = document.createElement("a");
-      link.download = "new-hijri-year-card.png";
+      link.download = "ramadan-greeting-card.png";
       link.href = dataUrl;
       link.click();
     } catch (err) {
@@ -524,7 +524,7 @@ const CardSelector = () => {
 
   return (
     <div
-      className="relative min-h-screen bg-gradient-to-br from-[#f8fdf8] via-[#f0f8f0] to-[#e8f4e8] dark:from-[#004225] dark:via-[#006C35] dark:to-[#004225] flex flex-col font-sans bg-[url('/saudi-light.jpg')] dark:bg-[url('/saudi-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
+      className="relative min-h-screen bg-gradient-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] flex flex-col font-sans bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
       dir={i18n.language === "ar" ? "rtl" : "ltr"}
       ref={containerRef}
     >
@@ -562,25 +562,25 @@ const CardSelector = () => {
               {t("select_card")}
             </h2>
             <div className="bg-gradient-card rounded-xl shadow-card p-4 sm:p-6 w-full box-border">
-              {/* Saudi National Day Cards - All Cards in One Container */}
+              {/* Ramadan Cards - All Cards in One Container */}
               <div className="mb-8">
                 <h3
-                  className={`text-xl font-bold text-[#1a3d1a] dark:text-[#F4E4BC] mb-6 text-center ${
+                  className={`text-xl font-bold text-[#132E4A] dark:text-[#F5E6CC] mb-6 text-center ${
                     i18n.language === "ar"
                       ? "font-elegant-ar"
                       : "font-elegant-en"
                   }`}
                 >
-                  🇸🇦 {t("saudi_national_day_greeting")}
+                  🌙 {t("ramadan_greeting")}
                 </h3>
                 <div className="bg-white/20 dark:bg-gray-800/20 rounded-lg p-6 backdrop-blur-sm border border-white/30 dark:border-gray-700/30">
                   <CardSection
                     title=""
-                    cards={getAllSaudiCards}
+                    cards={getAllRamadanCards}
                     selectedImage={selectedImage}
                     selectCard={selectCard}
                     type="card"
-                    id="all-saudi-cards"
+                    id="all-ramadan-cards"
                   />
                 </div>
               </div>

@@ -17,7 +17,7 @@ const CardGallery = () => {
 
   return (
     <div
-      className="relative bg-gradient-to-br from-[#f8fdf8] via-[#f0f8f0] to-[#e8f4e8] dark:from-[#004225] dark:via-[#006C35] dark:to-[#004225] min-h-screen bg-[url('/saudi-light.jpg')] dark:bg-[url('/saudi-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
+      className="relative bg-gradient-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] min-h-screen bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
       dir={isArabic ? "rtl" : "ltr"}
     >
       {/* Background Overlay */}
@@ -28,18 +28,18 @@ const CardGallery = () => {
           <div className="text-center mb-12">
             <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl p-6 sm:p-8 shadow-xl border border-white/60 dark:border-gray-700/40">
               <h1
-                className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#001a0a] dark:text-white mb-4 animate-slide-up ${
+                className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#0A1A2E] dark:text-white mb-4 animate-slide-up ${
                   isArabic ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
                 {t("select_card")}
               </h1>
               <p
-                className={`text-lg sm:text-xl lg:text-2xl text-[#003d15] dark:text-[#F4E4BC] mb-2 animate-slide-up delay-100 font-medium ${
+                className={`text-lg sm:text-xl lg:text-2xl text-[#132E4A] dark:text-[#F5E6CC] mb-2 animate-slide-up delay-100 font-medium ${
                   isArabic ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
-                🇸🇦 {t("saudi_national_day_greeting")}
+                🌙 {t("ramadan_greeting")}
               </p>
             </div>
           </div>
@@ -65,7 +65,7 @@ const CardGallery = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center">
                         <div className="p-4 text-center">
                           <button
-                            className={`px-6 py-2 bg-[#006C35] hover:bg-[#004225] text-white rounded-lg font-medium transition-colors duration-200 ${
+                            className={`px-6 py-2 bg-[#1B3A5C] hover:bg-[#0F2641] text-white rounded-lg font-medium transition-colors duration-200 ${
                               isArabic ? "font-elegant-ar" : "font-elegant-en"
                             }`}
                           >
@@ -76,7 +76,7 @@ const CardGallery = () => {
                     </div>
                     <div className="p-4 bg-white/50 dark:bg-gray-900/40">
                       <h3
-                        className={`text-lg font-semibold text-[#004225] dark:text-[#F4E4BC] text-center ${
+                        className={`text-lg font-semibold text-[#0F2641] dark:text-[#F5E6CC] text-center ${
                           isArabic ? "font-elegant-ar" : "font-elegant-en"
                         }`}
                       >

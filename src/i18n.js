@@ -16,11 +16,11 @@ const resources = {
       language_en: "English",
 
       // Home
-      greeting: "Happy Saudi National Day",
+      greeting: "Ramadan Mubarak",
       wishes:
-        "Celebrating the pride and heritage of the Kingdom of Saudi Arabia with family and friends",
+        "Wishing you a blessed and peaceful Ramadan with your loved ones",
       description:
-        "At Reda Hazard Control, we celebrate Saudi National Day by creating personalized greeting cards to share the national pride",
+        "At Reda Hazard Control, we celebrate the holy month of Ramadan by creating personalized greeting cards to share blessings and joy",
       create_card: "Create Your Card Now",
       visit_website: "Visit Website",
       cards_downloaded: "{count} cards downloaded so far",
@@ -33,21 +33,21 @@ const resources = {
       customize_card: "Customize Card",
       back_to_cards: "Back to Cards",
 
-      // Saudi National Day Categories
+      // Ramadan Categories
       category_traditional: "Traditional",
       category_modern: "Modern",
-      category_landmarks: "Landmarks",
-      category_nature: "Natural Beauty",
-      category_symbols: "Flags & Symbols",
-      category_cultural: "Cultural Heritage",
+      category_landmarks: "Mosques",
+      category_nature: "Lanterns & Lights",
+      category_symbols: "Crescent & Stars",
+      category_cultural: "Islamic Art",
 
       // Category descriptions
-      traditional_desc: "Classic Saudi heritage and traditional patterns",
-      modern_desc: "Contemporary designs and Vision 2030",
-      landmarks_desc: "Iconic Saudi landmarks and architecture",
-      nature_desc: "Arabian deserts, mountains, and natural beauty",
-      symbols_desc: "Saudi flag, emblems, and national symbols",
-      cultural_desc: "Traditional arts, crafts, and cultural elements",
+      traditional_desc: "Classic Ramadan greetings with traditional Islamic patterns",
+      modern_desc: "Contemporary Ramadan designs with a modern touch",
+      landmarks_desc: "Beautiful mosque illustrations and Islamic architecture",
+      nature_desc: "Warm lantern glows and festive Ramadan lights",
+      symbols_desc: "Crescent moon, stars, and Ramadan symbols",
+      cultural_desc: "Islamic calligraphy, arabesque patterns, and geometric art",
 
       guide_name: "Customize Your Card",
       enter_name: "Enter your name",
@@ -78,23 +78,26 @@ const resources = {
       save_card: "Save Card",
       share_card: "Share Card",
       greeting_card: "Greeting Card",
-      share_message: "Check out my custom Saudi National Day card!",
+      share_message: "Check out my custom Ramadan greeting card!",
       loading_fonts: "Loading fonts...",
       font_load_error_retry: "Failed to load fonts. Please try again.",
       image_load_error: "Failed to load image. Please select another card.",
       download_error: "Failed to download card. Please try again.",
       share_error: "Failed to share card. Please try again.",
       retry: "Retry",
-      saudi_national_day_greeting: "Happy Saudi National Day!",
-      saudi_national_day_message:
-        "Celebrate the Kingdom's heritage and Vision 2030 with personalized greeting cards.",
-      preview_description: "Preview of your custom Saudi National Day card.",
+      sample_card: "Sample Ramadan greeting card",
+      enter_name_first: "Please enter your name first",
+      download_card: "Download Card",
+      ramadan_greeting: "Ramadan Mubarak!",
+      ramadan_message:
+        "Celebrate the holy month with personalized greeting cards for your loved ones.",
+      preview_description: "Preview of your custom Ramadan greeting card.",
       cards_created: "Cards Created",
       happy_users: "Happy Users",
       support_available: "Support Available",
-      saudi_national_testimonial_message:
-        "Creating a custom Saudi National Day card filled me with pride for my country!",
-      saudi_national_testimonial_author: "Ahmed S.",
+      ramadan_testimonial_message:
+        "Creating a custom Ramadan card brought so much joy to my family and friends!",
+      ramadan_testimonial_author: "Ahmed S.",
     },
   },
   ar: {
@@ -111,10 +114,10 @@ const resources = {
       language_en: "الإنجليزية",
 
       // Home
-      greeting: "يوم وطني سعيد",
-      wishes: "نحتفل بفخر وتراث المملكة العربية السعودية مع عائلتنا وأصدقائنا",
+      greeting: "رمضان مبارك",
+      wishes: "نتمنى لكم شهر رمضان مبارك وسعيد مع أحبائكم",
       description:
-        "في رضا للسيطرة على المخاطر، نحتفل باليوم الوطني السعودي بإنشاء بطاقات تهنئة مخصصة لمشاركة الفخر الوطني",
+        "في رضا للسيطرة على المخاطر، نحتفل بشهر رمضان المبارك بإنشاء بطاقات تهنئة مخصصة لمشاركة البركة والفرح",
       create_card: "أنشئ بطاقتك الآن",
       visit_website: "زيارة الموقع",
       cards_downloaded: "تم تنزيل {count} بطاقة حتى الآن",
@@ -127,21 +130,21 @@ const resources = {
       customize_card: "تخصيص البطاقة",
       back_to_cards: "العودة للبطاقات",
 
-      // Saudi National Day Categories - Arabic
+      // Ramadan Categories - Arabic
       category_traditional: "التراثية",
       category_modern: "العصرية",
-      category_landmarks: "المعالم",
-      category_nature: "الطبيعة الخلابة",
-      category_symbols: "الأعلام والرموز",
-      category_cultural: "التراث الثقافي",
+      category_landmarks: "المساجد",
+      category_nature: "الفوانيس والأضواء",
+      category_symbols: "الهلال والنجوم",
+      category_cultural: "الفن الإسلامي",
 
       // Category descriptions - Arabic
-      traditional_desc: "التراث السعودي الأصيل والأنماط التقليدية",
-      modern_desc: "التصاميم المعاصرة ورؤية 2030",
-      landmarks_desc: "المعالم السعودية الشهيرة والعمارة الفريدة",
-      nature_desc: "الصحاري العربية والجبال والجمال الطبيعي",
-      symbols_desc: "العلم السعودي والشعارات والرموز الوطنية",
-      cultural_desc: "الفنون التقليدية والحرف والعناصر الثقافية",
+      traditional_desc: "تهاني رمضان الكلاسيكية بأنماط إسلامية تقليدية",
+      modern_desc: "تصاميم رمضانية معاصرة بلمسة عصرية",
+      landmarks_desc: "رسومات المساجد الجميلة والعمارة الإسلامية",
+      nature_desc: "توهج الفوانيس الدافئ وأضواء رمضان الاحتفالية",
+      symbols_desc: "الهلال والنجوم ورموز رمضان",
+      cultural_desc: "الخط الإسلامي والزخارف العربية والفن الهندسي",
 
       guide_name: "تخصيص بطاقتك",
       enter_name: "أدخل اسمك",
@@ -172,24 +175,27 @@ const resources = {
       save_card: "حفظ البطاقة",
       share_card: "مشاركة البطاقة",
       greeting_card: "بطاقة تهنئة",
-      share_message: "شاهد بطاقة اليوم الوطني السعودي المخصصة الخاصة بي!",
+      share_message: "شاهد بطاقة رمضان المخصصة الخاصة بي!",
       loading_fonts: "جارٍ تحميل الخطوط...",
       font_load_error_retry: "فشل تحميل الخطوط. يرجى المحاولة مرة أخرى.",
       image_load_error: "فشل تحميل الصورة. يرجى اختيار بطاقة أخرى.",
       download_error: "فشل تنزيل البطاقة. يرجى المحاولة مرة أخرى.",
       share_error: "فشل مشاركة البطاقة. يرجى المحاولة مرة أخرى.",
       retry: "إعادة المحاولة",
-      saudi_national_day_greeting: "يوم وطني سعيد!",
-      saudi_national_day_message:
-        "احتفل بتراث المملكة ورؤية 2030 ببطاقات تهنئة مخصصة.",
+      sample_card: "نموذج بطاقة تهنئة رمضان",
+      enter_name_first: "يرجى إدخال اسمك أولاً",
+      download_card: "تحميل البطاقة",
+      ramadan_greeting: "رمضان مبارك!",
+      ramadan_message:
+        "احتفل بالشهر الفضيل ببطاقات تهنئة مخصصة لأحبائك.",
       preview_description:
-        "معاينة بطاقة اليوم الوطني السعودي المخصصة الخاصة بك.",
+        "معاينة بطاقة رمضان المخصصة الخاصة بك.",
       cards_created: "بطاقات تم إنشاؤها",
       happy_users: "مستخدمون سعداء",
       support_available: "الدعم المتاح",
-      saudi_national_testimonial_message:
-        "إنشاء بطاقة يوم وطني مخصصة ملأني بالفخر لبلدي!",
-      saudi_national_testimonial_author: "أحمد س.",
+      ramadan_testimonial_message:
+        "إنشاء بطاقة رمضان مخصصة أدخل الفرح على عائلتي وأصدقائي!",
+      ramadan_testimonial_author: "أحمد س.",
     },
   },
 };

@@ -33,7 +33,7 @@ export default function ThemeSwitcher() {
             onClick={themeToggleHandler}
             className={`relative flex items-center justify-center w-10 h-8 rounded-lg transition-all duration-300 transform ${
               theme === "light"
-                ? "bg-white dark:bg-gray-800 shadow-md scale-105 text-[#b8860b]"
+                ? "bg-white dark:bg-gray-800 shadow-md scale-105 text-[#C9A84C]"
                 : "bg-transparent hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-500"
             } ${isAnimating ? "animate-pulse" : ""}`}
             aria-label="Switch to light mode"
@@ -42,12 +42,12 @@ export default function ThemeSwitcher() {
             <Sun
               className={`w-4 h-4 transition-all duration-300 ${
                 theme === "light"
-                  ? "text-[#b8860b] drop-shadow-sm"
+                  ? "text-[#C9A84C] drop-shadow-sm"
                   : "text-gray-500 dark:text-gray-500"
               }`}
             />
             {theme === "light" && (
-              <div className="absolute inset-0 rounded-lg bg-[#b8860b]/10 animate-ping"></div>
+              <div className="absolute inset-0 rounded-lg bg-[#C9A84C]/10 animate-ping"></div>
             )}
           </button>
 
@@ -55,7 +55,7 @@ export default function ThemeSwitcher() {
             onClick={themeToggleHandler}
             className={`relative flex items-center justify-center w-10 h-8 rounded-lg transition-all duration-300 transform ${
               theme === "dark"
-                ? "bg-white dark:bg-gray-800 shadow-md scale-105 text-[#006C35]"
+                ? "bg-white dark:bg-gray-800 shadow-md scale-105 text-[#1B3A5C]"
                 : "bg-transparent hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-500"
             } ${isAnimating ? "animate-pulse" : ""}`}
             aria-label="Switch to dark mode"
@@ -64,19 +64,19 @@ export default function ThemeSwitcher() {
             <Moon
               className={`w-4 h-4 transition-all duration-300 ${
                 theme === "dark"
-                  ? "text-[#006C35] drop-shadow-sm"
+                  ? "text-[#1B3A5C] drop-shadow-sm"
                   : "text-gray-500 dark:text-gray-500"
               }`}
             />
             {theme === "dark" && (
-              <div className="absolute inset-0 rounded-lg bg-[#006C35]/10 animate-ping"></div>
+              <div className="absolute inset-0 rounded-lg bg-[#1B3A5C]/10 animate-ping"></div>
             )}
           </button>
         </div>
         {/* Subtle indicator dot */}
         <div
           className={`absolute -top-1 -right-1 w-2 h-2 rounded-full transition-all duration-300 ${
-            theme === "light" ? "bg-[#b8860b]" : "bg-[#006C35]"
+            theme === "light" ? "bg-[#C9A84C]" : "bg-[#1B3A5C]"
           } ${isAnimating ? "animate-bounce" : ""}`}
         ></div>
       </div>
@@ -87,17 +87,17 @@ export default function ThemeSwitcher() {
           onClick={themeToggleHandler}
           className={`relative p-2.5 rounded-xl transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-lg border-2 ${
             theme === "light"
-              ? "bg-white hover:bg-gray-50 text-[#1a3d1a] border-[#006C35]/30 hover:border-[#006C35]/50 shadow-[#006C35]/20"
-              : "bg-gray-800 hover:bg-gray-700 text-[#FFD700] border-[#FFD700]/30 hover:border-[#FFD700]/50 shadow-[#FFD700]/10"
+              ? "bg-white hover:bg-gray-50 text-[#132E4A] border-[#1B3A5C]/30 hover:border-[#1B3A5C]/50 shadow-[#1B3A5C]/20"
+              : "bg-gray-800 hover:bg-gray-700 text-[#C9A84C] border-[#C9A84C]/30 hover:border-[#C9A84C]/50 shadow-[#C9A84C]/10"
           } ${isAnimating ? "animate-pulse" : ""}`}
           aria-label={`Toggle theme (currently ${theme})`}
           title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
         >
           {/* Always show current theme icon, not the target */}
           {theme === "light" ? (
-            <Sun className="w-6 h-6 text-[#b8860b] transition-all duration-300 drop-shadow-sm" />
+            <Sun className="w-6 h-6 text-[#C9A84C] transition-all duration-300 drop-shadow-sm" />
           ) : (
-            <Moon className="w-6 h-6 text-[#006C35] transition-all duration-300 drop-shadow-sm" />
+            <Moon className="w-6 h-6 text-[#1B3A5C] transition-all duration-300 drop-shadow-sm" />
           )}
 
           {/* Subtle glow effect */}

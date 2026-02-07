@@ -2,30 +2,30 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* CSS Variables - Saudi National Day Theme */
+/* CSS Variables - Ramadan Theme */
 :root {
-  --background: #f8fdf8; /* Very light green background */
-  --foreground: #1a3d1a; /* Darker green text for better contrast */
+  --background: #FFF8F0; /* Soft cream background */
+  --foreground: #132E4A; /* Dark navy text for better contrast */
   --card-bg: #ffffff; /* white */
   --card-gradient-start: #ffffff; /* white */
-  --card-gradient-end: #f4e4bc; /* Light gold */
-  --border: #006c35; /* Saudi green border */
-  --saudi-green: #006c35; /* Primary Saudi green */
-  --saudi-gold: #b8860b; /* Darker gold for better contrast */
-  --deep-green: #1a3d1a; /* Darker green for better readability */
-  --light-gold: #f4e4bc; /* Light gold */
-  --primary-text: #1a3d1a; /* Primary text color */
-  --secondary-text: #2d5a2d; /* Secondary text color */
-  --accent-text: #8b6914; /* Accent text color (darker gold) */
+  --card-gradient-end: #F5E6CC; /* Warm cream */
+  --border: #C9A84C; /* Ramadan gold border */
+  --ramadan-navy: #1B3A5C; /* Primary night sky navy */
+  --ramadan-gold: #C9A84C; /* Warm gold */
+  --deep-navy: #132E4A; /* Deep navy for readability */
+  --light-gold: #F5E6CC; /* Warm cream */
+  --primary-text: #132E4A; /* Primary text color */
+  --secondary-text: #3D6B8A; /* Secondary text color */
+  --accent-text: #C9A84C; /* Accent text color (warm gold) */
 }
 
 .dark {
-  --background: #004225; /* Deep green background */
-  --foreground: #e8f5e8; /* Light green text */
-  --card-bg: #006c35; /* Saudi green cards */
-  --card-gradient-start: #006c35; /* Saudi green */
-  --card-gradient-end: #004225; /* Deep green */
-  --border: #ffd700; /* Gold border in dark mode */
+  --background: #070D18; /* Deep night background */
+  --foreground: #F5E6CC; /* Warm cream text */
+  --card-bg: #1B3A5C; /* Night sky navy cards */
+  --card-gradient-start: #1B3A5C; /* Night sky navy */
+  --card-gradient-end: #0F2641; /* Deep night navy */
+  --border: #C9A84C; /* Gold border in dark mode */
 }
 
 /* Apply variables */
@@ -204,16 +204,16 @@ button {
 }
 
 /* Pulse animation for active language indicator */
-@keyframes pulse-saudi {
+@keyframes pulse-ramadan {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 108, 53, 0.4);
+    box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(0, 108, 53, 0);
+    box-shadow: 0 0 0 10px rgba(201, 168, 76, 0);
   }
 }
 
-.pulse-saudi {
-  animation: pulse-saudi 2s infinite;
+.pulse-ramadan {
+  animation: pulse-ramadan 2s infinite;
 }

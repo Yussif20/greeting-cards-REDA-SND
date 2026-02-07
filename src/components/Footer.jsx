@@ -7,11 +7,11 @@ const Footer = () => {
 
   return (
     <footer
-      className="py-6 w-full min-h-[80px] bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-t border-white/20 dark:border-[#FFD700]/20 text-[#004225] dark:text-[#F4E4BC] flex flex-col items-center justify-center px-6 shadow-lg transition-all duration-300"
+      className="py-6 w-full min-h-[80px] bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-t border-white/20 dark:border-[#C9A84C]/20 text-[#0F2641] dark:text-[#F5E6CC] flex flex-col items-center justify-center px-6 shadow-lg transition-all duration-300"
       dir={i18n.language === "ar" ? "rtl" : "ltr"} // Dynamic text direction
     >
       {/* Glass effect overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#006C35]/5 to-transparent dark:from-[#FFD700]/5 dark:to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-[#1B3A5C]/5 to-transparent dark:from-[#C9A84C]/5 dark:to-transparent"></div>
 
       <div className="relative z-10 flex flex-col items-center">
         {/* Logo */}
@@ -25,14 +25,14 @@ const Footer = () => {
         </div>
 
         {/* Copyright Text */}
-        <p className="text-sm sm:text-base text-center font-medium bg-gradient-to-r from-[#006C35] to-[#004225] dark:from-[#FFD700] dark:to-[#F4E4BC] bg-clip-text text-transparent">
+        <p className="text-sm sm:text-base text-center font-medium bg-gradient-to-r from-[#1B3A5C] to-[#0F2641] dark:from-[#C9A84C] dark:to-[#F5E6CC] bg-clip-text text-transparent">
           {t("copyright")}
         </p>
 
-        {/* Saudi National Day Badge */}
-        <div className="mt-2 px-3 py-1 bg-[#006C35]/10 dark:bg-[#FFD700]/10 backdrop-blur-sm rounded-full border border-[#006C35]/20 dark:border-[#FFD700]/20">
-          <span className="text-xs font-semibold text-[#006C35] dark:text-[#FFD700]">
-            🇸🇦 Saudi National Day 2025
+        {/* Ramadan Badge */}
+        <div className="mt-2 px-3 py-1 bg-[#1B3A5C]/10 dark:bg-[#C9A84C]/10 backdrop-blur-sm rounded-full border border-[#1B3A5C]/20 dark:border-[#C9A84C]/20">
+          <span className="text-xs font-semibold text-[#1B3A5C] dark:text-[#C9A84C]">
+            🌙 Ramadan Mubarak 2025
           </span>
         </div>
       </div>

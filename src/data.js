@@ -1,4 +1,4 @@
-// Import your 6 Saudi National Day cards
+// Import your 6 Ramadan greeting cards
 import rhc1 from "/cards/RHC.jpg";
 import fhc1 from "/cards/FHC.jpg";
 import green1 from "/cards/Green.jpg";
@@ -6,7 +6,7 @@ import process1 from "/cards/Process.jpg";
 import safe1 from "/cards/Safe.jpg";
 import verdifor1 from "/cards/Verdifor.jpg";
 
-// All your Saudi National Day cards in one simple array
+// All your Ramadan greeting cards in one simple array
 export const cards = [
   { src: rhc1, name: "RHC" },
   { src: fhc1, name: "FHC" },

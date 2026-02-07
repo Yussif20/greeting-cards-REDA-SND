@@ -67,14 +67,14 @@ const CustomizationPage = () => {
         textShadow: 3.5,
       },
       professional: {
-        color: "#2C5234",
+        color: "#0F2641",
         font: "Cairo",
         fontStyle: "bold",
         fontSize: 75,
         textShadow: 2,
       },
       festive: {
-        color: "#FFD700",
+        color: "#C9A84C",
         font: "Scheherazade",
         fontStyle: "bold",
         fontSize: 90,
@@ -363,7 +363,7 @@ const CustomizationPage = () => {
       ctx.fillText(name, namePosition.x, namePosition.y);
 
       const link = document.createElement("a");
-      link.download = `saudi-national-day-${name.replace(/\s+/g, "-")}.png`;
+      link.download = `ramadan-greeting-${name.replace(/\s+/g, "-")}.png`;
       link.href = canvas.toDataURL();
       link.click();
     } catch (err) {
@@ -396,13 +396,13 @@ const CustomizationPage = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-[#006C35]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#1B3A5C]" />
       </div>
     );
   }
 
   return (
-    <div className="relative bg-gradient-to-br from-[#f8fdf8] via-[#f0f8f0] to-[#e8f4e8] dark:from-[#004225] dark:via-[#006C35] dark:to-[#004225] min-h-screen bg-[url('/saudi-light.jpg')] dark:bg-[url('/saudi-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300">
+    <div className="relative bg-gradient-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] min-h-screen bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300">
       <div className="absolute inset-0 bg-white/5 dark:bg-black/30 transition-all duration-300"></div>
 
       <div className="container mx-auto px-4 py-8 max-w-7xl relative z-10">
@@ -428,7 +428,7 @@ const CustomizationPage = () => {
             {/* Customization Panel */}
             <div className="bg-white/60 dark:bg-gray-800/20 rounded-xl p-6 backdrop-blur-sm border border-white/70 dark:border-gray-700/30 shadow-xl">
               <h2
-                className={`text-2xl font-bold text-[#001a0a] dark:text-[#F4E4BC] mb-6 ${
+                className={`text-2xl font-bold text-[#0A1A2E] dark:text-[#F5E6CC] mb-6 ${
                   i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
@@ -438,7 +438,7 @@ const CustomizationPage = () => {
               {/* Name Input */}
               <div className="mb-6">
                 <label
-                  className={`block text-sm font-medium text-[#003d15] dark:text-[#F4E4BC] mb-2 ${
+                  className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
                     i18n.language === "ar"
                       ? "font-elegant-ar"
                       : "font-elegant-en"
@@ -450,7 +450,7 @@ const CustomizationPage = () => {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white/80 dark:bg-gray-900/50 focus:ring-2 focus:ring-[#006C35] focus:border-transparent text-gray-900 dark:text-gray-100"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white/80 dark:bg-gray-900/50 focus:ring-2 focus:ring-[#1B3A5C] focus:border-transparent text-gray-900 dark:text-gray-100"
                   placeholder={t("enter_name")}
                   dir={fontLanguage === "arabic" ? "rtl" : "ltr"}
                 />
@@ -459,7 +459,7 @@ const CustomizationPage = () => {
               {/* Color Picker */}
               <div className="mb-6">
                 <label
-                  className={`block text-sm font-medium text-[#003d15] dark:text-[#F4E4BC] mb-2 ${
+                  className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
                     i18n.language === "ar"
                       ? "font-elegant-ar"
                       : "font-elegant-en"
@@ -478,7 +478,7 @@ const CustomizationPage = () => {
               {/* Font Language Toggle */}
               <div className="mb-6">
                 <label
-                  className={`block text-sm font-medium text-[#003d15] dark:text-[#F4E4BC] mb-2 ${
+                  className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
                     i18n.language === "ar"
                       ? "font-elegant-ar"
                       : "font-elegant-en"
@@ -491,7 +491,7 @@ const CustomizationPage = () => {
                     onClick={() => setFontLanguage("arabic")}
                     className={`flex-1 px-4 py-2 rounded-lg transition-all duration-200 ${
                       fontLanguage === "arabic"
-                        ? "bg-gradient-to-r from-[#006C35] to-[#004225] text-white shadow-md"
+                        ? "bg-gradient-to-r from-[#1B3A5C] to-[#0F2641] text-white shadow-md"
                         : "bg-white/60 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"
                     }`}
                   >
@@ -501,7 +501,7 @@ const CustomizationPage = () => {
                     onClick={() => setFontLanguage("english")}
                     className={`flex-1 px-4 py-2 rounded-lg transition-all duration-200 ${
                       fontLanguage === "english"
-                        ? "bg-gradient-to-r from-[#006C35] to-[#004225] text-white shadow-md"
+                        ? "bg-gradient-to-r from-[#1B3A5C] to-[#0F2641] text-white shadow-md"
                         : "bg-white/60 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"
                     }`}
                   >
@@ -515,7 +515,7 @@ const CustomizationPage = () => {
                 {fontLanguage === "arabic" ? (
                   <div>
                     <label
-                      className={`block text-sm font-medium text-[#003d15] dark:text-[#F4E4BC] mb-2 ${
+                      className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
                         i18n.language === "ar"
                           ? "font-elegant-ar"
                           : "font-elegant-en"
@@ -546,7 +546,7 @@ const CustomizationPage = () => {
                 ) : (
                   <div>
                     <label
-                      className={`block text-sm font-medium text-[#003d15] dark:text-[#F4E4BC] mb-2 ${
+                      className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
                         i18n.language === "ar"
                           ? "font-elegant-ar"
                           : "font-elegant-en"
@@ -578,7 +578,7 @@ const CustomizationPage = () => {
 
                 <div>
                   <label
-                    className={`block text-sm font-medium text-[#003d15] dark:text-[#F4E4BC] mb-2 ${
+                    className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
                       i18n.language === "ar"
                         ? "font-elegant-ar"
                         : "font-elegant-en"
@@ -607,7 +607,7 @@ const CustomizationPage = () => {
                     <button
                       key={presetName}
                       onClick={() => applyPreset(presetName)}
-                      className={`px-3 py-2 text-sm rounded-lg bg-gradient-to-r from-[#006C35] to-[#004225] hover:from-[#004225] hover:to-[#002d15] text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
+                      className={`px-3 py-2 text-sm rounded-lg bg-gradient-to-r from-[#1B3A5C] to-[#0F2641] hover:from-[#0F2641] hover:to-[#070D18] text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
                         i18n.language === "ar"
                           ? "font-elegant-ar"
                           : "font-elegant-en"
@@ -622,14 +622,14 @@ const CustomizationPage = () => {
                   <button
                     onClick={undo}
                     disabled={history.length === 0}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B4513] to-[#654321] hover:from-[#654321] hover:to-[#4a2c17] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white transition-all duration-200 shadow-md hover:shadow-lg"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#1B3A5C] to-[#132E4A] hover:from-[#132E4A] hover:to-[#0F2641] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white transition-all duration-200 shadow-md hover:shadow-lg"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     {t("undo")}
                   </button>
                   <button
                     onClick={reset}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A574] to-[#B8860B] hover:from-[#B8860B] hover:to-[#996f09] text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#C9A84C] to-[#A68A3E] hover:from-[#A68A3E] hover:to-[#8B7333] text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
                   >
                     <RotateCcw className="h-4 w-4" />
                     {t("reset")}
@@ -639,7 +639,7 @@ const CustomizationPage = () => {
                 <button
                   onClick={downloadCard}
                   disabled={actionLoading || !name.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#006C35] to-[#FFD700] hover:from-[#004225] hover:to-[#DAA520] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#1B3A5C] to-[#C9A84C] hover:from-[#0F2641] hover:to-[#A68A3E] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   {actionLoading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -654,7 +654,7 @@ const CustomizationPage = () => {
             {/* Preview Panel */}
             <div className="bg-white/60 dark:bg-gray-800/20 rounded-xl p-6 backdrop-blur-sm border border-white/70 dark:border-gray-700/30 shadow-xl">
               <h3
-                className={`text-xl font-semibold text-[#001a0a] dark:text-[#F4E4BC] mb-4 ${
+                className={`text-xl font-semibold text-[#0A1A2E] dark:text-[#F5E6CC] mb-4 ${
                   i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
