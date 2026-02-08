@@ -8,7 +8,7 @@ export default function ThemeSwitcher() {
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const systemDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
+      "(prefers-color-scheme: dark)",
     ).matches;
     const initialTheme = savedTheme || (systemDark ? "dark" : "light");
     setTheme(initialTheme);
@@ -104,8 +104,8 @@ export default function ThemeSwitcher() {
           <div
             className={`absolute inset-0 rounded-xl transition-all duration-300 ${
               theme === "light"
-                ? "bg-gradient-to-r from-amber-500/10 to-yellow-600/10"
-                : "bg-gradient-to-r from-blue-500/10 to-indigo-500/10"
+                ? "bg-linear-to-r from-amber-500/10 to-yellow-600/10"
+                : "bg-linear-to-r from-blue-500/10 to-indigo-500/10"
             } ${isAnimating ? "animate-ping" : ""}`}
           ></div>
 

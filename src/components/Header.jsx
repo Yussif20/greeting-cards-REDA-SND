@@ -23,7 +23,7 @@ const Logo = ({ className, ariaLabel }) => (
   >
     <g>
       <path
-        className="[data-color='1'] fill-[#243E87] dark:fill-white"
+        className="[data-color='1'] fill-red-500 dark:fill-white"
         fill="#243E87"
         d="M271.79 438.93v9.46H159.96v-9.46h111.83z"
         data-color="1"
@@ -150,7 +150,7 @@ const Header = () => {
         <Link to="/" aria-label="Home">
           <div className="dark:bg-transparent rounded-xl p-2">
             <Logo
-              className="h-8 sm:h-10 w-auto max-w-[200px] sm:max-w-[250px]"
+              className="h-8 sm:h-10 w-auto max-w-50 sm:max-w-62.5"
               ariaLabel="Company Logo"
             />
           </div>
@@ -160,7 +160,7 @@ const Header = () => {
           href="https://www.redahazardcontrol.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#243E87] to-[#1B3070] text-white font-medium rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-[#243E87]/20 ${
+          className={`flex items-center gap-2 px-4 py-2 bg-linear-to-r from-[#243E87] to-[#1B3070] text-white font-medium rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-[#243E87]/20 ${
             i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
           }`}
           aria-label={t("visit_website")}

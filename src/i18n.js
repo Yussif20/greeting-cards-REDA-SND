@@ -5,7 +5,7 @@ const resources = {
   en: {
     translation: {
       // Common
-      copyright: "© 2025 Reda Hazard Control. All rights reserved.",
+      copyright: "© 2026 Reda Hazard Control. All rights reserved.",
 
       // Header
       home: "Home",
@@ -17,8 +17,7 @@ const resources = {
 
       // Home
       greeting: "Ramadan Mubarak",
-      wishes:
-        "Wishing you a blessed and peaceful Ramadan with your loved ones",
+      wishes: "Wishing you a blessed and peaceful Ramadan with your loved ones",
       description:
         "At Reda Hazard Control, we celebrate the holy month of Ramadan by creating personalized greeting cards to share blessings and joy",
       create_card: "Create Your Card Now",
@@ -42,12 +41,14 @@ const resources = {
       category_cultural: "Islamic Art",
 
       // Category descriptions
-      traditional_desc: "Classic Ramadan greetings with traditional Islamic patterns",
+      traditional_desc:
+        "Classic Ramadan greetings with traditional Islamic patterns",
       modern_desc: "Contemporary Ramadan designs with a modern touch",
       landmarks_desc: "Beautiful mosque illustrations and Islamic architecture",
       nature_desc: "Warm lantern glows and festive Ramadan lights",
       symbols_desc: "Crescent moon, stars, and Ramadan symbols",
-      cultural_desc: "Islamic calligraphy, arabesque patterns, and geometric art",
+      cultural_desc:
+        "Islamic calligraphy, arabesque patterns, and geometric art",
 
       guide_name: "Customize Your Card",
       enter_name: "Enter your name",
@@ -103,7 +104,7 @@ const resources = {
   ar: {
     translation: {
       // Common
-      copyright: "© 2025 Reda Hazard Control. جميع الحقوق محفوظة.",
+      copyright: "© 2026 Reda Hazard Control. جميع الحقوق محفوظة.",
 
       // Header
       home: "الرئيسية",
@@ -186,10 +187,8 @@ const resources = {
       enter_name_first: "يرجى إدخال اسمك أولاً",
       download_card: "تحميل البطاقة",
       ramadan_greeting: "رمضان مبارك!",
-      ramadan_message:
-        "احتفل بالشهر الفضيل ببطاقات تهنئة مخصصة لأحبائك.",
-      preview_description:
-        "معاينة بطاقة رمضان المخصصة الخاصة بك.",
+      ramadan_message: "احتفل بالشهر الفضيل ببطاقات تهنئة مخصصة لأحبائك.",
+      preview_description: "معاينة بطاقة رمضان المخصصة الخاصة بك.",
       cards_created: "بطاقات تم إنشاؤها",
       happy_users: "مستخدمون سعداء",
       support_available: "الدعم المتاح",

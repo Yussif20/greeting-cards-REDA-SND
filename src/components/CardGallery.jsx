@@ -17,7 +17,7 @@ const CardGallery = () => {
 
   return (
     <div
-      className="relative bg-gradient-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] min-h-screen bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
+      className="relative bg-linear-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] min-h-screen bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
       dir={isArabic ? "rtl" : "ltr"}
     >
       {/* Background Overlay */}
@@ -62,7 +62,7 @@ const CardGallery = () => {
                         loading="lazy"
                       />
                       {/* Overlay on hover */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center">
+                      <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center">
                         <div className="p-4 text-center">
                           <button
                             className={`px-6 py-2 bg-[#1B3A5C] hover:bg-[#0F2641] text-white rounded-lg font-medium transition-colors duration-200 ${

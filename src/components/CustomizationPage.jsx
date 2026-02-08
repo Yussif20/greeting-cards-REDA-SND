@@ -60,28 +60,28 @@ const CustomizationPage = () => {
   const presets = useMemo(
     () => ({
       elegant: {
-        color: "#4B2E39",
+        color: "#F0DFC8",
         font: "Amiri",
         fontStyle: "normal",
-        fontSize: 85,
-        textShadow: 3.5,
-      },
-      professional: {
-        color: "#0F2641",
-        font: "Cairo",
-        fontStyle: "bold",
-        fontSize: 75,
+        fontSize: 80,
         textShadow: 2,
       },
+      professional: {
+        color: "#FFFFFF",
+        font: "Cairo",
+        fontStyle: "bold",
+        fontSize: 72,
+        textShadow: 1,
+      },
       festive: {
-        color: "#C9A84C",
+        color: "#FFD700",
         font: "Scheherazade",
         fontStyle: "bold",
-        fontSize: 90,
+        fontSize: 88,
         textShadow: 4,
       },
     }),
-    []
+    [],
   );
 
   // Font configuration - Only fonts that are actually imported
@@ -97,7 +97,7 @@ const CustomizationPage = () => {
       ],
       english: ["Roboto", "Lora", "Playfair Display", "Arial"],
     }),
-    []
+    [],
   );
 
   // Load the selected card when component mounts
@@ -130,35 +130,27 @@ const CustomizationPage = () => {
     const loadFonts = async () => {
       setIsLoading(true);
       try {
-        const cachedFonts = localStorage.getItem("loadedFonts");
-        if (cachedFonts) {
-          setFontsLoaded(true);
-          setIsLoading(false);
-          return;
-        }
+        await document.fonts.ready;
 
-        // Fonts are already loaded via HTML link tag
-        // Just wait for document.fonts.ready
-        await Promise.race([
-          document.fonts.ready,
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Font load timeout")), 3000)
-          ),
+        // Explicitly load all font variants so canvas can use them
+        const allFonts = [...fontConfig.arabic, ...fontConfig.english];
+        const loadPromises = allFonts.flatMap((f) => [
+          document.fonts.load(`normal 48px "${f}"`).catch(() => {}),
+          document.fonts.load(`bold 48px "${f}"`).catch(() => {}),
         ]);
+        await Promise.all(loadPromises);
 
-        localStorage.setItem("loadedFonts", "true");
         setFontsLoaded(true);
-        setIsLoading(false);
       } catch (err) {
         console.error("Font loading error:", err);
-        setError(t("font_load_error_retry"));
         setFontsLoaded(true);
+      } finally {
         setIsLoading(false);
       }
     };
 
     loadFonts();
-  }, [t]);
+  }, [t, fontConfig]);
 
   // Update current font based on language selection
   useEffect(() => {
@@ -251,7 +243,7 @@ const CustomizationPage = () => {
       setFontSize(preset.fontSize);
       setTextShadow(preset.textShadow);
     },
-    [presets, saveToHistory, fontConfig]
+    [presets, saveToHistory, fontConfig],
   );
 
   // Update preview
@@ -264,30 +256,39 @@ const CustomizationPage = () => {
     canvas.width = selectedImage.width;
     canvas.height = selectedImage.height;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(selectedImage, 0, 0);
-
-    if (name.trim()) {
-      ctx.font = `${
-        fontStyle === "bold"
-          ? "bold"
-          : fontStyle === "italic"
+    const fontWeight =
+      fontStyle === "bold"
+        ? "bold"
+        : fontStyle === "italic"
           ? "italic"
-          : "normal"
-      } ${fontSize}px "${font}", sans-serif`;
-      ctx.fillStyle = color;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+          : "normal";
 
-      if (textShadow > 0) {
-        ctx.shadowColor = "rgba(0, 0, 0, 0.7)";
-        ctx.shadowBlur = textShadow * 2;
-        ctx.shadowOffsetX = textShadow;
-        ctx.shadowOffsetY = textShadow;
+    const drawContent = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(selectedImage, 0, 0);
+
+      if (name.trim()) {
+        ctx.font = `${fontWeight} ${fontSize}px "${font}", sans-serif`;
+        ctx.fillStyle = color;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        if (textShadow > 0) {
+          ctx.shadowColor = "rgba(0, 0, 0, 0.7)";
+          ctx.shadowBlur = textShadow * 2;
+          ctx.shadowOffsetX = textShadow;
+          ctx.shadowOffsetY = textShadow;
+        }
+
+        ctx.fillText(name, namePosition.x, namePosition.y);
       }
+    };
 
-      ctx.fillText(name, namePosition.x, namePosition.y);
-    }
+    // Ensure the specific font variant is loaded before drawing
+    document.fonts
+      .load(`${fontWeight} ${fontSize}px "${font}"`)
+      .then(drawContent)
+      .catch(drawContent);
   }, [
     selectedImage,
     name,
@@ -303,7 +304,7 @@ const CustomizationPage = () => {
   // Debounced update preview
   const debouncedUpdatePreview = useMemo(
     () => debounce(updatePreview, 100),
-    [updatePreview]
+    [updatePreview],
   );
 
   // Handle preview click
@@ -322,7 +323,7 @@ const CustomizationPage = () => {
       saveToHistory();
       setNamePosition({ x, y });
     },
-    [selectedImage, saveToHistory]
+    [selectedImage, saveToHistory],
   );
 
   // Download functionality
@@ -334,6 +335,18 @@ const CustomizationPage = () => {
 
     setActionLoading(true);
     try {
+      const fontWeight =
+        fontStyle === "bold"
+          ? "bold"
+          : fontStyle === "italic"
+            ? "italic"
+            : "normal";
+
+      // Ensure font is loaded before rendering the download
+      await document.fonts
+        .load(`${fontWeight} ${fontSize}px "${font}"`)
+        .catch(() => {});
+
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
@@ -342,13 +355,7 @@ const CustomizationPage = () => {
 
       ctx.drawImage(selectedImage, 0, 0);
 
-      ctx.font = `${
-        fontStyle === "bold"
-          ? "bold"
-          : fontStyle === "italic"
-          ? "italic"
-          : "normal"
-      } ${fontSize}px "${font}", sans-serif`;
+      ctx.font = `${fontWeight} ${fontSize}px "${font}", sans-serif`;
       ctx.fillStyle = color;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -402,7 +409,7 @@ const CustomizationPage = () => {
   }
 
   return (
-    <div className="relative bg-gradient-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] min-h-screen bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300">
+    <div className="relative bg-linear-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] min-h-screen bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300">
       <div className="absolute inset-0 bg-white/5 dark:bg-black/30 transition-all duration-300"></div>
 
       <div className="container mx-auto px-4 py-8 max-w-7xl relative z-10">
@@ -491,7 +498,7 @@ const CustomizationPage = () => {
                     onClick={() => setFontLanguage("arabic")}
                     className={`flex-1 px-4 py-2 rounded-lg transition-all duration-200 ${
                       fontLanguage === "arabic"
-                        ? "bg-gradient-to-r from-[#1B3A5C] to-[#0F2641] text-white shadow-md"
+                        ? "bg-linear-to-r from-[#1B3A5C] to-[#0F2641] text-white shadow-md"
                         : "bg-white/60 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"
                     }`}
                   >
@@ -501,7 +508,7 @@ const CustomizationPage = () => {
                     onClick={() => setFontLanguage("english")}
                     className={`flex-1 px-4 py-2 rounded-lg transition-all duration-200 ${
                       fontLanguage === "english"
-                        ? "bg-gradient-to-r from-[#1B3A5C] to-[#0F2641] text-white shadow-md"
+                        ? "bg-linear-to-r from-[#1B3A5C] to-[#0F2641] text-white shadow-md"
                         : "bg-white/60 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"
                     }`}
                   >
@@ -607,7 +614,7 @@ const CustomizationPage = () => {
                     <button
                       key={presetName}
                       onClick={() => applyPreset(presetName)}
-                      className={`px-3 py-2 text-sm rounded-lg bg-gradient-to-r from-[#1B3A5C] to-[#0F2641] hover:from-[#0F2641] hover:to-[#070D18] text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
+                      className={`px-3 py-2 text-sm rounded-lg bg-linear-to-r from-[#1B3A5C] to-[#0F2641] hover:from-[#0F2641] hover:to-[#070D18] text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
                         i18n.language === "ar"
                           ? "font-elegant-ar"
                           : "font-elegant-en"
@@ -622,14 +629,14 @@ const CustomizationPage = () => {
                   <button
                     onClick={undo}
                     disabled={history.length === 0}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#1B3A5C] to-[#132E4A] hover:from-[#132E4A] hover:to-[#0F2641] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white transition-all duration-200 shadow-md hover:shadow-lg"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r from-[#1B3A5C] to-[#132E4A] hover:from-[#132E4A] hover:to-[#0F2641] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white transition-all duration-200 shadow-md hover:shadow-lg"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     {t("undo")}
                   </button>
                   <button
                     onClick={reset}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#C9A84C] to-[#A68A3E] hover:from-[#A68A3E] hover:to-[#8B7333] text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r from-[#C9A84C] to-[#A68A3E] hover:from-[#A68A3E] hover:to-[#8B7333] text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
                   >
                     <RotateCcw className="h-4 w-4" />
                     {t("reset")}
@@ -639,7 +646,7 @@ const CustomizationPage = () => {
                 <button
                   onClick={downloadCard}
                   disabled={actionLoading || !name.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#1B3A5C] to-[#C9A84C] hover:from-[#0F2641] hover:to-[#A68A3E] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-linear-to-r from-[#1B3A5C] to-[#C9A84C] hover:from-[#0F2641] hover:to-[#A68A3E] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   {actionLoading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />

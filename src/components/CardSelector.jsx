@@ -77,7 +77,7 @@ const CardSelector = () => {
         textShadow: 4,
       },
     }),
-    []
+    [],
   );
 
   // Font configuration
@@ -100,7 +100,7 @@ const CardSelector = () => {
         "Montserrat",
       ],
     }),
-    []
+    [],
   );
 
   // Font loading with improved Arabic support
@@ -126,7 +126,7 @@ const CardSelector = () => {
           link.rel = "stylesheet";
           link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(
             /\s+/g,
-            "+"
+            "+",
           )}:wght@400;700&display=swap`;
           document.head.appendChild(link);
         });
@@ -134,7 +134,7 @@ const CardSelector = () => {
         await Promise.race([
           document.fonts.ready,
           new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Font load timeout")), 5000)
+            setTimeout(() => reject(new Error("Font load timeout")), 5000),
           ),
         ]);
 
@@ -161,7 +161,7 @@ const CardSelector = () => {
         link.rel = "stylesheet";
         link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(
           /\s+/g,
-          "+"
+          "+",
         )}:wght@400;700&display=swap`;
         document.head.appendChild(link);
         await document.fonts.ready;
@@ -171,7 +171,7 @@ const CardSelector = () => {
         setFont(fontLanguage === "arabic" ? "Cairo" : "Roboto");
       }
     },
-    [t, fontLanguage]
+    [t, fontLanguage],
   );
 
   // Retry font loading
@@ -188,7 +188,7 @@ const CardSelector = () => {
           link.rel = "stylesheet";
           link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(
             /\s+/g,
-            "+"
+            "+",
           )}:wght@400;700&display=swap`;
           document.head.appendChild(link);
         });
@@ -290,7 +290,7 @@ const CardSelector = () => {
         setIsLoading(false);
       };
     },
-    [t]
+    [t],
   );
 
   // Apply preset
@@ -305,7 +305,7 @@ const CardSelector = () => {
       setTextShadow(preset.textShadow);
       loadFontOnDemand(preset.font);
     },
-    [presets, saveToHistory, loadFontOnDemand]
+    [presets, saveToHistory, loadFontOnDemand],
   );
 
   // Update preview
@@ -358,7 +358,7 @@ const CardSelector = () => {
 
   const debouncedUpdatePreview = useMemo(
     () => debounce(updatePreview, 50),
-    [updatePreview]
+    [updatePreview],
   );
 
   // Handle preview interactions
@@ -375,7 +375,7 @@ const CardSelector = () => {
       setNamePosition({ x, y });
       debouncedUpdatePreview();
     },
-    [selectedImage, isDragging, saveToHistory, debouncedUpdatePreview]
+    [selectedImage, isDragging, saveToHistory, debouncedUpdatePreview],
   );
 
   const handleMouseDown = useCallback(
@@ -391,7 +391,7 @@ const CardSelector = () => {
         y: e.clientY - rect.top - rect.height / 2,
       });
     },
-    [selectedImage, saveToHistory]
+    [selectedImage, saveToHistory],
   );
 
   const handleMouseMove = useCallback(
@@ -407,7 +407,7 @@ const CardSelector = () => {
       setNamePosition({ x, y });
       debouncedUpdatePreview();
     },
-    [isDragging, selectedImage, dragOffset, debouncedUpdatePreview]
+    [isDragging, selectedImage, dragOffset, debouncedUpdatePreview],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -427,7 +427,7 @@ const CardSelector = () => {
         y: touch.clientY - rect.top - rect.height / 2,
       });
     },
-    [selectedImage, saveToHistory]
+    [selectedImage, saveToHistory],
   );
 
   const handleTouchMove = useCallback(
@@ -443,7 +443,7 @@ const CardSelector = () => {
       setNamePosition({ x, y });
       debouncedUpdatePreview();
     },
-    [isDragging, selectedImage, dragOffset, debouncedUpdatePreview]
+    [isDragging, selectedImage, dragOffset, debouncedUpdatePreview],
   );
 
   const handleTouchEnd = useCallback(() => {
@@ -465,7 +465,7 @@ const CardSelector = () => {
         0,
         0,
         selectedImage.width,
-        selectedImage.height
+        selectedImage.height,
       );
       if (name) {
         tempCtx.font = `${fontStyle === "bold" ? "700" : "400"} ${
@@ -524,7 +524,7 @@ const CardSelector = () => {
 
   return (
     <div
-      className="relative min-h-screen bg-gradient-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] flex flex-col font-sans bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
+      className="relative min-h-screen bg-linear-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] flex flex-col font-sans bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
       dir={i18n.language === "ar" ? "rtl" : "ltr"}
       ref={containerRef}
     >
@@ -588,7 +588,7 @@ const CardSelector = () => {
           </section>
         </AnimatedSection>
         {/* Divider */}
-        <div className="max-w-6xl mx-auto border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent h-px mb-12" />
+        <div className="max-w-6xl mx-auto border-b border-gray-300 dark:border-gray-600 bg-linear-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent h-px mb-12" />
 
         {/* Customization and Preview Section */}
         <AnimatedSection>
@@ -812,7 +812,7 @@ const CardSelector = () => {
                   aria-busy={isLoading}
                 >
                   {isLoading ? (
-                    <div className="w-full max-h-[480px] rounded-xl flex items-center justify-center bg-gray-100 dark:bg-gray-700">
+                    <div className="w-full max-h-120 rounded-xl flex items-center justify-center bg-gray-100 dark:bg-gray-700">
                       <div className="flex flex-col items-center">
                         <Loader2 className="w-8 sm:w-10 h-8 sm:h-10 text-blue-600 animate-spin mb-2" />
                         <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -828,7 +828,7 @@ const CardSelector = () => {
                       <div
                         id="card-preview"
                         ref={previewRef}
-                        className="relative rounded-xl shadow-xl bg-center bg-no-repeat bg-contain overflow-hidden cursor-pointer transition-transform duration-200 h-auto aspect-[16/9] w-full max-h-[540px] sm:max-h-[720px] lg:max-h-[810px]"
+                        className="relative rounded-xl shadow-xl bg-center bg-no-repeat bg-contain overflow-hidden cursor-pointer transition-transform duration-200 h-auto aspect-video w-full max-h-135 sm:max-h-180 lg:max-h-202.5"
                         onClick={handlePreviewClick}
                         onMouseDown={handleMouseDown}
                         onMouseMove={handleMouseMove}
@@ -850,7 +850,7 @@ const CardSelector = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="w-full max-h-[480px] rounded-xl flex items-center justify-center bg-gray-100 dark:bg-gray-700">
+                    <div className="w-full max-h-120 rounded-xl flex items-center justify-center bg-gray-100 dark:bg-gray-700">
                       <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                         {t("select_card")}
                       </p>
@@ -924,7 +924,7 @@ const CardSection = ({ title, cards, selectedImage, selectCard, type, id }) => (
                 ? "border-2 border-blue-600 ring-2 ring-blue-200/50"
                 : "border-2 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
             }
-            h-48 sm:h-64 aspect-[16/9]
+            h-48 sm:h-64 aspect-video
           `}
           onClick={() => selectCard(card)}
           onKeyDown={(e) => e.key === "Enter" && selectCard(card)}
