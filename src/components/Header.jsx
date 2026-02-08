@@ -178,21 +178,6 @@ const Header = () => {
               i18n.language === "ar" ? "Switch to English" : "Switch to Arabic"
             }
           >
-            {/* Current Language Flag */}
-            {/* <div className="w-4 h-4 rounded-sm overflow-hidden border border-white/20">
-              {i18n.language === "ar" ? (
-                // Language Flag
-                <div className="w-full h-full bg-[#1B3A5C] flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-white">ع</span>
-                </div>
-              ) : (
-                // US Flag
-                <div className="w-full h-full bg-gradient-to-b from-red-500 via-white to-blue-600 flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-blue-700">EN</span>
-                </div>
-              )}
-            </div> */}
-
             {/* Language Text */}
             <span
               className={`text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] group-hover:text-[#1B3A5C] dark:group-hover:text-[#C9A84C] transition-colors duration-300 ${

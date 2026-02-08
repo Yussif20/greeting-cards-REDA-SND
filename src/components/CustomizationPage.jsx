@@ -10,6 +10,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import debounce from "lodash/debounce";
 import {
   Download,
+  Share2,
   Palette,
   Type,
   ChevronsUpDown,
@@ -391,6 +392,90 @@ const CustomizationPage = () => {
     t,
   ]);
 
+  // Share functionality
+  const shareCard = useCallback(async () => {
+    if (!selectedImage || !name.trim()) {
+      setError(t("enter_name_first"));
+      return;
+    }
+
+    setActionLoading(true);
+    try {
+      const fontWeight =
+        fontStyle === "bold"
+          ? "bold"
+          : fontStyle === "italic"
+            ? "italic"
+            : "normal";
+
+      await document.fonts
+        .load(`${fontWeight} ${fontSize}px "${font}"`)
+        .catch(() => {});
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = selectedImage.width;
+      canvas.height = selectedImage.height;
+
+      ctx.drawImage(selectedImage, 0, 0);
+
+      ctx.font = `${fontWeight} ${fontSize}px "${font}", sans-serif`;
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      if (textShadow > 0) {
+        ctx.shadowColor = "rgba(0, 0, 0, 0.7)";
+        ctx.shadowBlur = textShadow * 2;
+        ctx.shadowOffsetX = textShadow;
+        ctx.shadowOffsetY = textShadow;
+      }
+
+      ctx.fillText(name, namePosition.x, namePosition.y);
+
+      const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, "image/png"),
+      );
+      const file = new File(
+        [blob],
+        `ramadan-greeting-${name.replace(/\s+/g, "-")}.png`,
+        { type: "image/png" },
+      );
+
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          title: t("share_card"),
+          text: t("share_message"),
+          files: [file],
+        });
+      } else {
+        const shareText = encodeURIComponent(t("share_message"));
+        window.open(
+          `https://api.whatsapp.com/send?text=${shareText}`,
+          "_blank",
+        );
+      }
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        console.error("Share error:", err);
+        setError(t("share_error"));
+      }
+    } finally {
+      setActionLoading(false);
+    }
+  }, [
+    selectedImage,
+    name,
+    color,
+    namePosition,
+    font,
+    fontStyle,
+    fontSize,
+    textShadow,
+    t,
+  ]);
+
   // Update preview when dependencies change
   useEffect(() => {
     debouncedUpdatePreview();
@@ -643,18 +728,32 @@ const CustomizationPage = () => {
                   </button>
                 </div>
 
-                <button
-                  onClick={downloadCard}
-                  disabled={actionLoading || !name.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-linear-to-r from-[#1B3A5C] to-[#C9A84C] hover:from-[#0F2641] hover:to-[#A68A3E] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-                >
-                  {actionLoading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <Download className="h-5 w-5" />
-                  )}
-                  {t("download_card")}
-                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={downloadCard}
+                    disabled={actionLoading || !name.trim()}
+                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-linear-to-r from-[#1B3A5C] to-[#C9A84C] hover:from-[#0F2641] hover:to-[#A68A3E] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    {actionLoading ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <Download className="h-5 w-5" />
+                    )}
+                    {t("download_card")}
+                  </button>
+                  <button
+                    onClick={shareCard}
+                    disabled={actionLoading || !name.trim()}
+                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-linear-to-r from-[#1B3A5C] to-[#C9A84C] hover:from-[#0F2641] hover:to-[#A68A3E] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    {actionLoading ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <Share2 className="h-5 w-5" />
+                    )}
+                    {t("share_card")}
+                  </button>
+                </div>
               </div>
             </div>
 

@@ -11,25 +11,18 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.14",
-    "canvas": "^3.1.0",
     "framer-motion": "^12.7.3",
-    "html2canvas": "^1.4.1",
     "i18next": "^24.2.3",
     "lodash": "^4.17.21",
     "lucide-react": "^0.488.0",
-    "prop-types": "^15.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
     "react-intersection-observer": "^9.16.0",
-    "react-router-dom": "^7.5.0",
-    "typescript": "^5.8.3",
-    "ui": "^0.2.4"
+    "react-router-dom": "^7.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.21.0",

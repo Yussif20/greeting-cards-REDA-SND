@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import CardSelector from "./components/CardSelector";
 import CardGallery from "./components/CardGallery";
 import CustomizationPage from "./components/CustomizationPage";
 import Header from "./components/Header";
@@ -23,8 +22,6 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/cards" element={<CardGallery />} />
             <Route path="/customize" element={<CustomizationPage />} />
-            {/* Keep the old route for backward compatibility */}
-            <Route path="/cards-old" element={<CardSelector />} />
           </Routes>
         </main>
         <Footer />
