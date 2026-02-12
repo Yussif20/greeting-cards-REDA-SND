@@ -1,8 +1,9 @@
 import { useTranslation } from "react-i18next";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { Link } from "react-router-dom";
-import { ExternalLink } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ExternalLink, RefreshCw } from "lucide-react";
 import { memo } from "react";
+import { useOccasion, OCCASIONS } from "../context/OccasionContext";
 
 // Reusable Logo component
 // NOTE: Logo colors updated for Ramadan theme
@@ -136,18 +137,32 @@ const Logo = ({ className, ariaLabel }) => (
 
 const Header = () => {
   const { t, i18n } = useTranslation();
+  const { occasion, clearOccasion } = useOccasion();
+  const navigate = useNavigate();
 
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === "en" ? "ar" : "en");
   };
 
+  const handleChangeOccasion = () => {
+    clearOccasion();
+    navigate("/");
+  };
+
+  const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
+
+  // Dynamic header border color based on occasion
+  const borderClass = isFoundingDay
+    ? "border-[#D4A574]/20"
+    : "border-[#C9A84C]/20";
+
   return (
     <header
-      className="w-full bg-white/90 dark:bg-gray-900/80 backdrop-blur-lg shadow-lg border-b border-gray-200/50 dark:border-[#C9A84C]/20 px-4 lg:px-8 py-4 transition-all duration-300"
+      className={`w-full bg-white/90 dark:bg-gray-900/80 backdrop-blur-lg shadow-lg border-b border-gray-200/50 dark:${borderClass} px-4 lg:px-8 py-4 transition-all duration-300`}
       dir={i18n.language === "ar" ? "rtl" : "ltr"}
     >
       <div className="container mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-4">
-        <Link to="/" aria-label="Home">
+        <Link to={occasion ? "/welcome" : "/"} aria-label="Home">
           <div className="dark:bg-transparent rounded-xl p-2">
             <Logo
               className="h-8 sm:h-10 w-auto max-w-50 sm:max-w-62.5"
@@ -156,31 +171,53 @@ const Header = () => {
           </div>
         </Link>
 
-        <a
-          href="https://www.redahazardcontrol.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`flex items-center gap-2 px-4 py-2 bg-linear-to-r from-[#243E87] to-[#1B3070] text-white font-medium rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-[#243E87]/20 ${
-            i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
-          }`}
-          aria-label={t("visit_website")}
-        >
-          <ExternalLink className="w-5 h-5" />
-          <span className="text-sm">{t("visit_website")}</span>
-        </a>
+        <div className="flex items-center gap-2 sm:gap-4 flex-wrap justify-center">
+          {/* Change Occasion Button - Only shown when occasion is selected */}
+          {occasion && (
+            <button
+              onClick={handleChangeOccasion}
+              className={`flex items-center gap-2 px-3 py-2 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm rounded-lg border ${isFoundingDay ? "border-[#D4A574]/30 hover:border-[#6B4E45]/50" : "border-[#C9A84C]/30 hover:border-[#1B3A5C]/50"} shadow-sm hover:shadow-md transition-all duration-300 ${
+                i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
+              }`}
+              aria-label={t("change_occasion")}
+            >
+              <RefreshCw
+                className={`w-4 h-4 ${isFoundingDay ? "text-[#6B4E45] dark:text-[#D4A574]" : "text-[#1B3A5C] dark:text-[#C9A84C]"}`}
+              />
+              <span
+                className={`text-sm font-medium ${isFoundingDay ? "text-[#6B4E45] dark:text-[#D4A574]" : "text-[#132E4A] dark:text-[#C9A84C]"}`}
+              >
+                {t("change_occasion")}
+              </span>
+            </button>
+          )}
+
+          <a
+            href="https://www.redahazardcontrol.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex items-center gap-2 px-4 py-2 bg-linear-to-r from-[#243E87] to-[#1B3070] text-white font-medium rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-[#243E87]/20 ${
+              i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
+            }`}
+            aria-label={t("visit_website")}
+          >
+            <ExternalLink className="w-5 h-5" />
+            <span className="text-sm">{t("visit_website")}</span>
+          </a>
+        </div>
 
         <div className="flex items-center gap-4">
           {/* Simple & Elegant Language Switcher */}
           <button
             onClick={toggleLanguage}
-            className="group flex items-center gap-2 px-3 py-2 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm rounded-lg border border-white/40 dark:border-[#C9A84C]/30 hover:border-[#1B3A5C]/50 dark:hover:border-[#C9A84C]/50 shadow-sm hover:shadow-md transition-all duration-300"
+            className={`group flex items-center gap-2 px-3 py-2 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm rounded-lg border border-white/40 ${isFoundingDay ? "dark:border-[#D4A574]/30 hover:border-[#6B4E45]/50 dark:hover:border-[#D4A574]/50" : "dark:border-[#C9A84C]/30 hover:border-[#1B3A5C]/50 dark:hover:border-[#C9A84C]/50"} shadow-sm hover:shadow-md transition-all duration-300`}
             aria-label={
               i18n.language === "ar" ? "Switch to English" : "Switch to Arabic"
             }
           >
             {/* Language Text */}
             <span
-              className={`text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] group-hover:text-[#1B3A5C] dark:group-hover:text-[#C9A84C] transition-colors duration-300 ${
+              className={`text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] ${isFoundingDay ? "group-hover:text-[#6B4E45] dark:group-hover:text-[#D4A574]" : "group-hover:text-[#1B3A5C] dark:group-hover:text-[#C9A84C]"} transition-colors duration-300 ${
                 i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
               }`}
             >
@@ -189,7 +226,7 @@ const Header = () => {
 
             {/* Simple Arrow */}
             <svg
-              className="w-3 h-3 text-[#132E4A] dark:text-[#F5E6CC] group-hover:text-[#1B3A5C] dark:group-hover:text-[#C9A84C] transition-all duration-300 group-hover:rotate-180"
+              className={`w-3 h-3 text-[#132E4A] dark:text-[#F5E6CC] ${isFoundingDay ? "group-hover:text-[#6B4E45] dark:group-hover:text-[#D4A574]" : "group-hover:text-[#1B3A5C] dark:group-hover:text-[#C9A84C]"} transition-all duration-300 group-hover:rotate-180`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

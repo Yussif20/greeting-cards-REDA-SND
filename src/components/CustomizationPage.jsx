@@ -23,19 +23,26 @@ import {
   ZoomOut,
 } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
+import { useOccasion, OCCASIONS } from "../context/OccasionContext";
 
 const CustomizationPage = () => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const selectedCard = location.state?.selectedCard;
+  const { occasion } = useOccasion();
 
-  // Redirect to card gallery if no card is selected
+  // Redirect to card gallery if no card is selected or no occasion
   useEffect(() => {
     if (!selectedCard) {
       navigate("/cards");
     }
-  }, [selectedCard, navigate]);
+    if (!occasion) {
+      navigate("/");
+    }
+  }, [selectedCard, occasion, navigate]);
+
+  const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [name, setName] = useState("");
@@ -481,20 +488,38 @@ const CustomizationPage = () => {
     debouncedUpdatePreview();
   }, [debouncedUpdatePreview]);
 
-  if (!selectedCard) {
-    return null; // Will redirect to cards page
+  if (!selectedCard || !occasion) {
+    return null; // Will redirect
   }
+
+  // Dynamic background classes based on occasion
+  const bgClasses = isFoundingDay
+    ? "from-[#FFF8F0] via-[#F5E6D3] to-[#E8D5C4] dark:from-[#2D1F1A] dark:via-[#4A352F] dark:to-[#2D1F1A] bg-[url('/founding-day-light.jpg')] dark:bg-[url('/founding-day-dark.jpg')]"
+    : "from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')]";
+
+  // Dynamic primary colors for buttons
+  const primaryGradient = isFoundingDay
+    ? "from-[#6B4E45] to-[#4A352F] hover:from-[#7A5A50] hover:to-[#5A453F]"
+    : "from-[#1B3A5C] to-[#0F2641] hover:from-[#0F2641] hover:to-[#070D18]";
+
+  const accentGradient = isFoundingDay
+    ? "from-[#6B4E45] to-[#D4A574] hover:from-[#4A352F] hover:to-[#B8906A]"
+    : "from-[#1B3A5C] to-[#C9A84C] hover:from-[#0F2641] hover:to-[#A68A3E]";
+
+  const loaderColor = isFoundingDay ? "text-[#6B4E45]" : "text-[#1B3A5C]";
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-[#1B3A5C]" />
+        <Loader2 className={`h-8 w-8 animate-spin ${loaderColor}`} />
       </div>
     );
   }
 
   return (
-    <div className="relative bg-linear-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] min-h-screen bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300">
+    <div
+      className={`relative bg-linear-to-br ${bgClasses} min-h-screen bg-cover bg-no-repeat bg-center transition-all duration-300`}
+    >
       <div className="absolute inset-0 bg-white/5 dark:bg-black/30 transition-all duration-300"></div>
 
       <div className="container mx-auto px-4 py-8 max-w-7xl relative z-10">
@@ -583,7 +608,7 @@ const CustomizationPage = () => {
                     onClick={() => setFontLanguage("arabic")}
                     className={`flex-1 px-4 py-2 rounded-lg transition-all duration-200 ${
                       fontLanguage === "arabic"
-                        ? "bg-linear-to-r from-[#1B3A5C] to-[#0F2641] text-white shadow-md"
+                        ? `bg-linear-to-r ${primaryGradient} text-white shadow-md`
                         : "bg-white/60 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"
                     }`}
                   >
@@ -593,7 +618,7 @@ const CustomizationPage = () => {
                     onClick={() => setFontLanguage("english")}
                     className={`flex-1 px-4 py-2 rounded-lg transition-all duration-200 ${
                       fontLanguage === "english"
-                        ? "bg-linear-to-r from-[#1B3A5C] to-[#0F2641] text-white shadow-md"
+                        ? `bg-linear-to-r ${primaryGradient} text-white shadow-md`
                         : "bg-white/60 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"
                     }`}
                   >
@@ -699,7 +724,7 @@ const CustomizationPage = () => {
                     <button
                       key={presetName}
                       onClick={() => applyPreset(presetName)}
-                      className={`px-3 py-2 text-sm rounded-lg bg-linear-to-r from-[#1B3A5C] to-[#0F2641] hover:from-[#0F2641] hover:to-[#070D18] text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
+                      className={`px-3 py-2 text-sm rounded-lg bg-linear-to-r ${primaryGradient} text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
                         i18n.language === "ar"
                           ? "font-elegant-ar"
                           : "font-elegant-en"
@@ -714,14 +739,14 @@ const CustomizationPage = () => {
                   <button
                     onClick={undo}
                     disabled={history.length === 0}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r from-[#1B3A5C] to-[#132E4A] hover:from-[#132E4A] hover:to-[#0F2641] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white transition-all duration-200 shadow-md hover:shadow-lg"
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r ${primaryGradient} disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white transition-all duration-200 shadow-md hover:shadow-lg`}
                   >
                     <ArrowLeft className="h-4 w-4" />
                     {t("undo")}
                   </button>
                   <button
                     onClick={reset}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r from-[#C9A84C] to-[#A68A3E] hover:from-[#A68A3E] hover:to-[#8B7333] text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r ${isFoundingDay ? "from-[#D4A574] to-[#B8906A] hover:from-[#B8906A] hover:to-[#9D7A5A]" : "from-[#C9A84C] to-[#A68A3E] hover:from-[#A68A3E] hover:to-[#8B7333]"} text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105`}
                   >
                     <RotateCcw className="h-4 w-4" />
                     {t("reset")}
@@ -732,7 +757,7 @@ const CustomizationPage = () => {
                   <button
                     onClick={downloadCard}
                     disabled={actionLoading || !name.trim()}
-                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-linear-to-r from-[#1B3A5C] to-[#C9A84C] hover:from-[#0F2641] hover:to-[#A68A3E] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-linear-to-r ${accentGradient} disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105`}
                   >
                     {actionLoading ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
@@ -744,7 +769,7 @@ const CustomizationPage = () => {
                   <button
                     onClick={shareCard}
                     disabled={actionLoading || !name.trim()}
-                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-linear-to-r from-[#1B3A5C] to-[#C9A84C] hover:from-[#0F2641] hover:to-[#A68A3E] disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-linear-to-r ${accentGradient} disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105`}
                   >
                     {actionLoading ? (
                       <Loader2 className="h-5 w-5 animate-spin" />

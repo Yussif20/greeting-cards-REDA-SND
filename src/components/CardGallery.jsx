@@ -1,14 +1,43 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { getAllCards } from "../data";
+import { getCardsByOccasion } from "../data";
+import { useOccasion, OCCASIONS } from "../context/OccasionContext";
 import AnimatedSection from "./AnimatedSection";
 
 const CardGallery = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { occasion } = useOccasion();
   const isArabic = i18n.language === "ar";
-  const cards = getAllCards();
+
+  // Redirect to occasion selector if no occasion is selected
+  useEffect(() => {
+    if (!occasion) {
+      navigate("/");
+    }
+  }, [occasion, navigate]);
+
+  if (!occasion) return null;
+
+  const cards = getCardsByOccasion(occasion);
+  const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
+
+  // Get occasion-specific greeting
+  const greetingKey = isFoundingDay
+    ? "founding_day_greeting"
+    : "ramadan_greeting";
+  const greetingEmoji = isFoundingDay ? "🏛️" : "🌙";
+
+  // Background classes based on occasion
+  const bgClasses = isFoundingDay
+    ? "from-[#FFF8F0] via-[#F5E6D3] to-[#E8D5C4] dark:from-[#2D1F1A] dark:via-[#4A352F] dark:to-[#2D1F1A] bg-[url('/founding-day-light.jpg')] dark:bg-[url('/founding-day-dark.jpg')]"
+    : "from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')]";
+
+  // Button color classes based on occasion
+  const buttonClasses = isFoundingDay
+    ? "bg-[#6B4E45] hover:bg-[#4A352F]"
+    : "bg-[#1B3A5C] hover:bg-[#0F2641]";
 
   const handleCardSelect = (card) => {
     // Navigate to customization page with selected card
@@ -17,7 +46,7 @@ const CardGallery = () => {
 
   return (
     <div
-      className="relative bg-linear-to-br from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] min-h-screen bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
+      className={`relative bg-linear-to-br ${bgClasses} min-h-screen bg-cover bg-no-repeat bg-center transition-all duration-300`}
       dir={isArabic ? "rtl" : "ltr"}
     >
       {/* Background Overlay */}
@@ -39,7 +68,7 @@ const CardGallery = () => {
                   isArabic ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
-                🌙 {t("ramadan_greeting")}
+                {greetingEmoji} {t(greetingKey)}
               </p>
             </div>
           </div>
@@ -65,7 +94,7 @@ const CardGallery = () => {
                       <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center">
                         <div className="p-4 text-center">
                           <button
-                            className={`px-6 py-2 bg-[#1B3A5C] hover:bg-[#0F2641] text-white rounded-lg font-medium transition-colors duration-200 ${
+                            className={`px-6 py-2 ${buttonClasses} text-white rounded-lg font-medium transition-colors duration-200 ${
                               isArabic ? "font-elegant-ar" : "font-elegant-en"
                             }`}
                           >
@@ -76,7 +105,7 @@ const CardGallery = () => {
                     </div>
                     <div className="p-4 bg-white/50 dark:bg-gray-900/40">
                       <h3
-                        className={`text-lg font-semibold text-[#0F2641] dark:text-[#F5E6CC] text-center ${
+                        className={`text-lg font-semibold ${isFoundingDay ? "text-[#6B4E45]" : "text-[#0F2641]"} dark:text-[#F5E6CC] text-center ${
                           isArabic ? "font-elegant-ar" : "font-elegant-en"
                         }`}
                       >

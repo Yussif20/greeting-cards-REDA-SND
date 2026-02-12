@@ -7,6 +7,29 @@ const resources = {
       // Common
       copyright: "© 2026 Reda Hazard Control. All rights reserved.",
 
+      // Occasion Selector
+      select_occasion: "Choose Your Occasion",
+      select_occasion_description:
+        "Select an occasion to create personalized greeting cards",
+      select: "Select",
+      ramadan_title: "Ramadan",
+      ramadan_occasion_description:
+        "Create beautiful Ramadan greeting cards for your loved ones",
+      founding_day_title: "Saudi Founding Day",
+      founding_day_occasion_description:
+        "Celebrate Saudi Arabia's founding with custom greeting cards",
+      change_occasion: "Change Occasion",
+
+      // Founding Day specific
+      founding_day_greeting: "Happy Founding Day!",
+      founding_day_message:
+        "Celebrate the founding of Saudi Arabia with personalized greeting cards for your loved ones.",
+      founding_day_preview_description:
+        "Preview of your custom Founding Day greeting card.",
+      founding_day_testimonial_message:
+        "Creating a custom Founding Day card was a wonderful way to celebrate our nation's heritage!",
+      founding_day_testimonial_author: "Fatima A.",
+
       // Header
       home: "Home",
       about: "About",
@@ -105,6 +128,27 @@ const resources = {
     translation: {
       // Common
       copyright: "© 2026 Reda Hazard Control. جميع الحقوق محفوظة.",
+
+      // Occasion Selector
+      select_occasion: "اختر المناسبة",
+      select_occasion_description: "اختر مناسبة لإنشاء بطاقات تهنئة مخصصة",
+      select: "اختر",
+      ramadan_title: "رمضان",
+      ramadan_occasion_description: "أنشئ بطاقات تهنئة رمضانية جميلة لأحبائك",
+      founding_day_title: "يوم التأسيس السعودي",
+      founding_day_occasion_description:
+        "احتفل بتأسيس المملكة العربية السعودية ببطاقات تهنئة مخصصة",
+      change_occasion: "تغيير المناسبة",
+
+      // Founding Day specific
+      founding_day_greeting: "يوم تأسيس سعيد!",
+      founding_day_message:
+        "احتفل بتأسيس المملكة العربية السعودية ببطاقات تهنئة مخصصة لأحبائك.",
+      founding_day_preview_description:
+        "معاينة بطاقة يوم التأسيس المخصصة الخاصة بك.",
+      founding_day_testimonial_message:
+        "إنشاء بطاقة يوم التأسيس المخصصة كانت طريقة رائعة للاحتفال بتراث وطننا!",
+      founding_day_testimonial_author: "فاطمة أ.",
 
       // Header
       home: "الرئيسية",

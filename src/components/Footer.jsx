@@ -30,13 +30,13 @@ const Footer = () => {
         </p>
 
         {/* Ramadan Badge */}
-        <div className="mt-2 px-3 py-1 bg-[#1B3A5C]/10 dark:bg-[#C9A84C]/10 backdrop-blur-sm rounded-full border border-[#1B3A5C]/20 dark:border-[#C9A84C]/20">
+        {/* <div className="mt-2 px-3 py-1 bg-[#1B3A5C]/10 dark:bg-[#C9A84C]/10 backdrop-blur-sm rounded-full border border-[#1B3A5C]/20 dark:border-[#C9A84C]/20">
           <span className="text-xs font-semibold text-[#1B3A5C] dark:text-[#C9A84C]">
             {i18n.language === "ar"
               ? "رمضان مبارك 2026 🌙"
               : "🌙 Ramadan Mubarak 2026"}
           </span>
-        </div>
+        </div> */}
       </div>
     </footer>
   );
