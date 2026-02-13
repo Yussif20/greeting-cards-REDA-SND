@@ -21,7 +21,7 @@ const resources = {
       change_occasion: "Change Occasion",
 
       // Founding Day specific
-      founding_day_greeting: "Happy Founding Day!",
+      founding_day_greeting: "Happy Saudi Founding Day!",
       founding_day_message:
         "Celebrate the founding of Saudi Arabia with personalized greeting cards for your loved ones.",
       founding_day_preview_description:
@@ -141,7 +141,7 @@ const resources = {
       change_occasion: "تغيير المناسبة",
 
       // Founding Day specific
-      founding_day_greeting: "يوم تأسيس سعيد!",
+      founding_day_greeting: "يوم التأسيس السعودي !",
       founding_day_message:
         "احتفل بتأسيس المملكة العربية السعودية ببطاقات تهنئة مخصصة لأحبائك.",
       founding_day_preview_description:
