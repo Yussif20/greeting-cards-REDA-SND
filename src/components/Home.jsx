@@ -5,11 +5,11 @@ import { memo, useEffect } from "react";
 import { Logo } from "./Header";
 import AnimatedSection from "./AnimatedSection";
 import { useOccasion, OCCASIONS } from "../context/OccasionContext";
-import sampleCard from "/cards/RHC.jpg";
+import sampleCard from "/eid/RHC.jpg";
 
 const Home = () => {
   const { t, i18n } = useTranslation();
-  const { occasion, theme } = useOccasion();
+  const { occasion } = useOccasion();
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
 
@@ -22,48 +22,33 @@ const Home = () => {
 
   if (!occasion) return null;
 
-  const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
+  const isEidFitr = occasion === OCCASIONS.EID_FITR;
+  // const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
 
   // Get occasion-specific content
-  const greetingKey = isFoundingDay
-    ? "founding_day_greeting"
-    : "ramadan_greeting";
-  const messageKey = isFoundingDay ? "founding_day_message" : "ramadan_message";
-  const previewDescKey = isFoundingDay
-    ? "founding_day_preview_description"
+  const greetingKey = isEidFitr ? "eid_fitr_greeting" : "eid_fitr_greeting";
+  const messageKey = isEidFitr ? "eid_fitr_message" : "eid_fitr_message";
+  const previewDescKey = isEidFitr
+    ? "eid_fitr_preview_description"
     : "preview_description";
-  const testimonialMsgKey = isFoundingDay
-    ? "founding_day_testimonial_message"
-    : "ramadan_testimonial_message";
-  const testimonialAuthorKey = isFoundingDay
-    ? "founding_day_testimonial_author"
-    : "ramadan_testimonial_author";
+  const testimonialMsgKey = isEidFitr
+    ? "eid_fitr_testimonial_message"
+    : "eid_fitr_testimonial_message";
+  const testimonialAuthorKey = isEidFitr
+    ? "eid_fitr_testimonial_author"
+    : "eid_fitr_testimonial_author";
 
-  // Get occasion-specific logo/image
-  const occasionLogo = isFoundingDay
-    ? {
-        light: "/founding-day-logo-light-theme.png",
-        dark: "/founding-day-logo-dark-theme.png",
-      }
-    : null;
+  // Background classes — Eid Al Fitr
+  const bgClasses =
+    "from-[#F0FFF4] via-[#F5FFF9] to-[#FDF6E3] dark:from-[#031D1F] dark:via-[#0D3B3E] dark:to-[#031D1F] bg-[url('/eid-light.jpg')] dark:bg-[url('/eid-dark.jpg')]";
 
-  // Background classes based on occasion
-  const bgClasses = isFoundingDay
-    ? "from-[#FFF8F0] via-[#F5E6D3] to-[#E8D5C4] dark:from-[#2D1F1A] dark:via-[#4A352F] dark:to-[#2D1F1A] bg-[url('/founding-day-light.jpg')] dark:bg-[url('/founding-day-dark.jpg')]"
-    : "from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')]";
+  // Button color classes — Eid teal
+  const buttonClasses =
+    "from-[#0D7377] to-[#065F56] hover:from-[#065F56] hover:to-[#044A42]";
 
-  // Button color classes based on occasion
-  const buttonClasses = isFoundingDay
-    ? "from-[#6B4E45] to-[#4A352F] hover:from-[#7A5A50] hover:to-[#5A453F]"
-    : "from-[#1B3A5C] to-[#0F2641]";
-
-  // Accent colors
-  const accentClass = isFoundingDay
-    ? "border-[#D4A574]/20"
-    : "border-[#C9A84C]/20";
-  const glassAccent = isFoundingDay
-    ? "dark:from-[#4A352F]/5"
-    : "dark:from-[#1B3A5C]/5";
+  // Accent colors — Eid gold
+  const accentClass = "border-[#D4AF37]/20";
+  const glassAccent = "dark:from-[#0D3B3E]/5";
 
   return (
     <div
@@ -86,44 +71,29 @@ const Home = () => {
 
             <div className="relative z-10">
               <div className="mb-6 sm:mb-8">
-                {isFoundingDay ? (
-                  <>
-                    <img
-                      src={occasionLogo.light}
-                      alt="Saudi Founding Day Logo"
-                      className="h-48 sm:h-64 w-auto max-w-160 mx-auto transition-transform duration-300 hover:scale-105 block dark:hidden"
-                    />
-                    <img
-                      src={occasionLogo.dark}
-                      alt="Saudi Founding Day Logo"
-                      className="h-48 sm:h-64 w-auto max-w-160 mx-auto transition-transform duration-300 hover:scale-105 hidden dark:block"
-                    />
-                  </>
-                ) : (
-                  <Logo
-                    className="h-16 sm:h-20 w-auto max-w-75 mx-auto transition-transform duration-300 hover:scale-105"
-                    ariaLabel="Ramadan Greeting Cards Logo"
-                  />
-                )}
+                <Logo
+                  className="h-16 sm:h-20 w-auto max-w-75 mx-auto transition-transform duration-300 hover:scale-105"
+                  ariaLabel="Eid Al Fitr Greeting Cards Logo"
+                />
               </div>
               <h1
-                className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#132E4A] dark:text-white mb-4 animate-slide-up drop-shadow-lg ${
+                className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#1A3C34] dark:text-white mb-4 animate-slide-up drop-shadow-lg ${
                   isArabic ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
                 {t(greetingKey)}
               </h1>
               <p
-                className={`text-lg sm:text-xl lg:text-2xl text-[#3D6B8A] dark:text-[#F5E6CC] mb-6 animate-slide-up delay-100 drop-shadow-md font-medium ${
+                className={`text-lg sm:text-xl lg:text-2xl text-[#3D7A6A] dark:text-[#E8F5E9] mb-6 animate-slide-up delay-100 drop-shadow-md font-medium ${
                   isArabic ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
                 {t(messageKey)}
               </p>
-              {!isFoundingDay && (
+              {!isEidFitr ? null : (
                 <div className="mb-8 relative">
                   <div
-                    className={`w-full max-w-125 sm:max-w-150 mx-auto bg-white/30 dark:bg-[#1B3A5C]/20 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl transition-all duration-300 hover:shadow-2xl border border-white/40 ${accentClass} hover:border-white/60`}
+                    className={`w-full max-w-125 sm:max-w-150 mx-auto bg-white/30 dark:bg-[#0D3B3E]/20 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl transition-all duration-300 hover:shadow-2xl border border-white/40 ${accentClass} hover:border-white/60`}
                   >
                     <div className="relative w-full aspect-4/3 overflow-hidden rounded-lg">
                       <img
@@ -133,7 +103,7 @@ const Home = () => {
                       />
                     </div>
                     <p
-                      className={`text-sm text-[#132E4A] dark:text-[#F5E6CC] mt-3 sm:mt-4 font-medium ${
+                      className={`text-sm text-[#1A3C34] dark:text-[#E8F5E9] mt-3 sm:mt-4 font-medium ${
                         isArabic ? "font-elegant-ar" : "font-elegant-en"
                       }`}
                     >
@@ -171,14 +141,14 @@ const Home = () => {
 
             <div className="relative z-10">
               <p
-                className={`text-lg sm:text-xl text-[#132E4A] dark:text-[#F5E6CC] italic mb-4 font-medium ${
+                className={`text-lg sm:text-xl text-[#1A3C34] dark:text-[#E8F5E9] italic mb-4 font-medium ${
                   isArabic ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
                 "{t(testimonialMsgKey)}"
               </p>
               <p
-                className={`text-sm ${isFoundingDay ? "text-[#6B4E45] dark:text-[#D4A574]" : "text-[#3D6B8A] dark:text-[#C9A84C]"} font-semibold ${
+                className={`text-sm text-[#0D7377] dark:text-[#D4AF37] font-semibold ${
                   isArabic ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >

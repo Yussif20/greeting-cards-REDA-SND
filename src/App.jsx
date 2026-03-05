@@ -17,10 +17,18 @@ const AppContent = () => {
 
   // Dynamic background based on occasion
   const appClassName = useMemo(() => {
-    if (occasion === OCCASIONS.FOUNDING_DAY) {
-      return "flex flex-col min-h-screen bg-gradient-to-br from-[#FFF8F0] to-[#E8D5C4] dark:from-[#2D1F1A] dark:to-[#4A352F] transition-colors duration-300";
+    // Eid Al Fitr theme (active)
+    if (occasion === OCCASIONS.EID_FITR) {
+      return "flex flex-col min-h-screen bg-gradient-to-br from-[#F0FFF4] to-[#FDF6E3] dark:from-[#031D1F] dark:to-[#0D3B3E] transition-colors duration-300";
     }
-    return "flex flex-col min-h-screen bg-gradient-to-br from-[#FFF8F0] to-[#F5E6CC] dark:from-[#070D18] dark:to-[#1B3A5C] transition-colors duration-300";
+    // Fallback (same as Eid)
+    return "flex flex-col min-h-screen bg-gradient-to-br from-[#F0FFF4] to-[#FDF6E3] dark:from-[#031D1F] dark:to-[#0D3B3E] transition-colors duration-300";
+    /*
+    // Ramadan theme
+    // return "flex flex-col min-h-screen bg-gradient-to-br from-[#FFF8F0] to-[#F5E6CC] dark:from-[#070D18] dark:to-[#1B3A5C] transition-colors duration-300";
+    // Founding Day theme
+    // return "flex flex-col min-h-screen bg-gradient-to-br from-[#FFF8F0] to-[#E8D5C4] dark:from-[#2D1F1A] dark:to-[#4A352F] transition-colors duration-300";
+    */
   }, [occasion]);
 
   return (

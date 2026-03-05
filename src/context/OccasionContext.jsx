@@ -3,12 +3,28 @@ import { createContext, useContext, useState, useEffect } from "react";
 const OccasionContext = createContext();
 
 export const OCCASIONS = {
-  RAMADAN: "ramadan",
-  FOUNDING_DAY: "founding-day",
+  EID_FITR: "eid-fitr",
+  // RAMADAN: "ramadan",
+  // FOUNDING_DAY: "founding-day",
 };
 
 // Theme configurations for each occasion
 export const OCCASION_THEMES = {
+  [OCCASIONS.EID_FITR]: {
+    primary: "#0D7377",
+    secondary: "#065F56",
+    accent: "#D4AF37",
+    lightBg: "from-[#F0FFF4] via-[#F5FFF9] to-[#FDF6E3]",
+    darkBg: "from-[#031D1F] via-[#0D3B3E] to-[#031D1F]",
+    lightBgImage: "/eid-light.jpg",
+    darkBgImage: "/eid-dark.jpg",
+    cardsPath: "/eid",
+    logo: {
+      light: "/eid/RHC.jpg",
+      dark: "/eid/RHC.jpg",
+    },
+  },
+  /*
   [OCCASIONS.RAMADAN]: {
     primary: "#1B3A5C",
     secondary: "#0F2641",
@@ -19,7 +35,7 @@ export const OCCASION_THEMES = {
     darkBgImage: "/ramadan-dark.jpg",
     cardsPath: "/cards",
     logo: {
-      light: "/cards/RHC.jpg", // Sample card as logo for now
+      light: "/cards/RHC.jpg",
       dark: "/cards/RHC.jpg",
     },
   },
@@ -37,13 +53,13 @@ export const OCCASION_THEMES = {
       dark: "/founding-day-logo-light-theme.png",
     },
   },
+  */
 };
 
 export const OccasionProvider = ({ children }) => {
   const [occasion, setOccasion] = useState(() => {
-    // Try to get saved occasion from localStorage
-    const saved = localStorage.getItem("selectedOccasion");
-    return saved || null;
+    // Auto-select Eid Al Fitr as the only active occasion
+    return OCCASIONS.EID_FITR;
   });
 
   useEffect(() => {

@@ -7,11 +7,11 @@ const Footer = () => {
 
   return (
     <footer
-      className="py-6 w-full min-h-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-t border-white/20 dark:border-[#C9A84C]/20 text-[#0F2641] dark:text-[#F5E6CC] flex flex-col items-center justify-center px-6 shadow-lg transition-all duration-300"
+      className="py-6 w-full min-h-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-t border-white/20 dark:border-[#D4AF37]/20 text-[#1A3C34] dark:text-[#E8F5E9] flex flex-col items-center justify-center px-6 shadow-lg transition-all duration-300"
       dir={i18n.language === "ar" ? "rtl" : "ltr"} // Dynamic text direction
     >
       {/* Glass effect overlay */}
-      <div className="absolute inset-0 bg-linear-to-t from-[#1B3A5C]/5 to-transparent dark:from-[#C9A84C]/5 dark:to-transparent"></div>
+      <div className="absolute inset-0 bg-linear-to-t from-[#0D7377]/5 to-transparent dark:from-[#D4AF37]/5 dark:to-transparent"></div>
 
       <div className="relative z-10 flex flex-col items-center">
         {/* Logo */}
@@ -25,18 +25,18 @@ const Footer = () => {
         </div>
 
         {/* Copyright Text */}
-        <p className="text-sm sm:text-base text-center font-medium bg-linear-to-r from-[#1B3A5C] to-[#0F2641] dark:from-[#C9A84C] dark:to-[#F5E6CC] bg-clip-text text-transparent">
+        <p className="text-sm sm:text-base text-center font-medium bg-linear-to-r from-[#0D7377] to-[#065F56] dark:from-[#D4AF37] dark:to-[#E8F5E9] bg-clip-text text-transparent">
           {t("copyright")}
         </p>
 
-        {/* Ramadan Badge */}
-        {/* <div className="mt-2 px-3 py-1 bg-[#1B3A5C]/10 dark:bg-[#C9A84C]/10 backdrop-blur-sm rounded-full border border-[#1B3A5C]/20 dark:border-[#C9A84C]/20">
-          <span className="text-xs font-semibold text-[#1B3A5C] dark:text-[#C9A84C]">
+        {/* Eid Badge */}
+        <div className="mt-2 px-3 py-1 bg-[#0D7377]/10 dark:bg-[#D4AF37]/10 backdrop-blur-sm rounded-full border border-[#0D7377]/20 dark:border-[#D4AF37]/20">
+          <span className="text-xs font-semibold text-[#0D7377] dark:text-[#D4AF37]">
             {i18n.language === "ar"
-              ? "رمضان مبارك 2026 🌙"
-              : "🌙 Ramadan Mubarak 2026"}
+              ? "عيد مبارك 2026 ✨"
+              : "✨ Eid Mubarak 2026"}
           </span>
-        </div> */}
+        </div>
       </div>
     </footer>
   );

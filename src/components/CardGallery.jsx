@@ -21,23 +21,18 @@ const CardGallery = () => {
   if (!occasion) return null;
 
   const cards = getCardsByOccasion(occasion);
-  const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
+  const isEidFitr = occasion === OCCASIONS.EID_FITR;
 
   // Get occasion-specific greeting
-  const greetingKey = isFoundingDay
-    ? "founding_day_greeting"
-    : "ramadan_greeting";
-  const greetingEmoji = isFoundingDay ? "🏛️" : "🌙";
+  const greetingKey = isEidFitr ? "eid_fitr_greeting" : "eid_fitr_greeting";
+  const greetingEmoji = "✨";
 
-  // Background classes based on occasion
-  const bgClasses = isFoundingDay
-    ? "from-[#FFF8F0] via-[#F5E6D3] to-[#E8D5C4] dark:from-[#2D1F1A] dark:via-[#4A352F] dark:to-[#2D1F1A] bg-[url('/founding-day-light.jpg')] dark:bg-[url('/founding-day-dark.jpg')]"
-    : "from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')]";
+  // Background classes — Eid Al Fitr
+  const bgClasses =
+    "from-[#F0FFF4] via-[#F5FFF9] to-[#FDF6E3] dark:from-[#031D1F] dark:via-[#0D3B3E] dark:to-[#031D1F] bg-[url('/eid-light.jpg')] dark:bg-[url('/eid-dark.jpg')]";
 
-  // Button color classes based on occasion
-  const buttonClasses = isFoundingDay
-    ? "bg-[#6B4E45] hover:bg-[#4A352F]"
-    : "bg-[#1B3A5C] hover:bg-[#0F2641]";
+  // Button color classes — Eid teal
+  const buttonClasses = "bg-[#0D7377] hover:bg-[#065F56]";
 
   const handleCardSelect = (card) => {
     // Navigate to customization page with selected card
@@ -64,7 +59,7 @@ const CardGallery = () => {
                 {t("select_card")}
               </h1>
               <p
-                className={`text-lg sm:text-xl lg:text-2xl text-[#132E4A] dark:text-[#F5E6CC] mb-2 animate-slide-up delay-100 font-medium ${
+                className={`text-lg sm:text-xl lg:text-2xl text-[#1A3C34] dark:text-[#E8F5E9] mb-2 animate-slide-up delay-100 font-medium ${
                   isArabic ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
@@ -105,7 +100,7 @@ const CardGallery = () => {
                     </div>
                     <div className="p-4 bg-white/50 dark:bg-gray-900/40">
                       <h3
-                        className={`text-lg font-semibold ${isFoundingDay ? "text-[#6B4E45]" : "text-[#0F2641]"} dark:text-[#F5E6CC] text-center ${
+                        className={`text-lg font-semibold text-[#0D7377] dark:text-[#E8F5E9] text-center ${
                           isArabic ? "font-elegant-ar" : "font-elegant-en"
                         }`}
                       >

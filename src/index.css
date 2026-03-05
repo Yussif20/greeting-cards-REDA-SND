@@ -2,30 +2,30 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* CSS Variables - Ramadan Theme */
+/* CSS Variables - Eid Al Fitr Theme */
 :root {
-  --background: #FFF8F0; /* Soft cream background */
-  --foreground: #132E4A; /* Dark navy text for better contrast */
+  --background: #f0fff4; /* Soft mint background */
+  --foreground: #1a3c34; /* Dark teal text for better contrast */
   --card-bg: #ffffff; /* white */
   --card-gradient-start: #ffffff; /* white */
-  --card-gradient-end: #F5E6CC; /* Warm cream */
-  --border: #C9A84C; /* Ramadan gold border */
-  --ramadan-navy: #1B3A5C; /* Primary night sky navy */
-  --ramadan-gold: #C9A84C; /* Warm gold */
-  --deep-navy: #132E4A; /* Deep navy for readability */
-  --light-gold: #F5E6CC; /* Warm cream */
-  --primary-text: #132E4A; /* Primary text color */
-  --secondary-text: #3D6B8A; /* Secondary text color */
-  --accent-text: #C9A84C; /* Accent text color (warm gold) */
+  --card-gradient-end: #fdf6e3; /* Warm cream */
+  --border: #d4af37; /* Eid gold border */
+  --eid-teal: #0d7377; /* Primary festive teal */
+  --eid-gold: #d4af37; /* Royal gold */
+  --deep-teal: #1a3c34; /* Deep teal for readability */
+  --light-gold: #fdf6e3; /* Warm cream */
+  --primary-text: #1a3c34; /* Primary text color */
+  --secondary-text: #3d7a6a; /* Secondary text color */
+  --accent-text: #d4af37; /* Accent text color (royal gold) */
 }
 
 .dark {
-  --background: #070D18; /* Deep night background */
-  --foreground: #F5E6CC; /* Warm cream text */
-  --card-bg: #1B3A5C; /* Night sky navy cards */
-  --card-gradient-start: #1B3A5C; /* Night sky navy */
-  --card-gradient-end: #0F2641; /* Deep night navy */
-  --border: #C9A84C; /* Gold border in dark mode */
+  --background: #031d1f; /* Deep night teal background */
+  --foreground: #e8f5e9; /* Soft mint white text */
+  --card-bg: #0d3b3e; /* Rich teal cards */
+  --card-gradient-start: #0d3b3e; /* Rich teal */
+  --card-gradient-end: #031d1f; /* Deep night teal */
+  --border: #d4af37; /* Gold border in dark mode */
 }
 
 /* Apply variables */
@@ -120,7 +120,8 @@ button {
   }
 
   .shadow-card {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
       0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 
@@ -204,16 +205,16 @@ button {
 }
 
 /* Pulse animation for active language indicator */
-@keyframes pulse-ramadan {
+@keyframes pulse-eid {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4);
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(201, 168, 76, 0);
+    box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
   }
 }
 
-.pulse-ramadan {
-  animation: pulse-ramadan 2s infinite;
+.pulse-eid {
+  animation: pulse-eid 2s infinite;
 }

@@ -42,7 +42,8 @@ const CustomizationPage = () => {
     }
   }, [selectedCard, occasion, navigate]);
 
-  const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
+  // const isEidFitr = occasion === OCCASIONS.EID_FITR;
+  // const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [name, setName] = useState("");
@@ -378,7 +379,7 @@ const CustomizationPage = () => {
       ctx.fillText(name, namePosition.x, namePosition.y);
 
       const link = document.createElement("a");
-      link.download = `ramadan-greeting-${name.replace(/\s+/g, "-")}.png`;
+      link.download = `eid-greeting-${name.replace(/\s+/g, "-")}.png`;
       link.href = canvas.toDataURL();
       link.click();
     } catch (err) {
@@ -446,7 +447,7 @@ const CustomizationPage = () => {
       );
       const file = new File(
         [blob],
-        `ramadan-greeting-${name.replace(/\s+/g, "-")}.png`,
+        `eid-greeting-${name.replace(/\s+/g, "-")}.png`,
         { type: "image/png" },
       );
 
@@ -492,21 +493,18 @@ const CustomizationPage = () => {
     return null; // Will redirect
   }
 
-  // Dynamic background classes based on occasion
-  const bgClasses = isFoundingDay
-    ? "from-[#FFF8F0] via-[#F5E6D3] to-[#E8D5C4] dark:from-[#2D1F1A] dark:via-[#4A352F] dark:to-[#2D1F1A] bg-[url('/founding-day-light.jpg')] dark:bg-[url('/founding-day-dark.jpg')]"
-    : "from-[#FFF8F0] via-[#FDF5EB] to-[#F5E6CC] dark:from-[#0F2641] dark:via-[#1B3A5C] dark:to-[#0F2641] bg-[url('/ramadan-light.jpg')] dark:bg-[url('/ramadan-dark.jpg')]";
+  // Dynamic background classes — Eid Al Fitr
+  const bgClasses =
+    "from-[#F0FFF4] via-[#F5FFF9] to-[#FDF6E3] dark:from-[#031D1F] dark:via-[#0D3B3E] dark:to-[#031D1F] bg-[url('/eid-light.jpg')] dark:bg-[url('/eid-dark.jpg')]";
 
-  // Dynamic primary colors for buttons
-  const primaryGradient = isFoundingDay
-    ? "from-[#6B4E45] to-[#4A352F] hover:from-[#7A5A50] hover:to-[#5A453F]"
-    : "from-[#1B3A5C] to-[#0F2641] hover:from-[#0F2641] hover:to-[#070D18]";
+  // Dynamic primary colors for buttons — Eid teal
+  const primaryGradient =
+    "from-[#0D7377] to-[#065F56] hover:from-[#065F56] hover:to-[#044A42]";
 
-  const accentGradient = isFoundingDay
-    ? "from-[#6B4E45] to-[#D4A574] hover:from-[#4A352F] hover:to-[#B8906A]"
-    : "from-[#1B3A5C] to-[#C9A84C] hover:from-[#0F2641] hover:to-[#A68A3E]";
+  const accentGradient =
+    "from-[#0D7377] to-[#D4AF37] hover:from-[#065F56] hover:to-[#B8962F]";
 
-  const loaderColor = isFoundingDay ? "text-[#6B4E45]" : "text-[#1B3A5C]";
+  const loaderColor = "text-[#0D7377]";
 
   if (isLoading) {
     return (
@@ -545,7 +543,7 @@ const CustomizationPage = () => {
             {/* Customization Panel */}
             <div className="bg-white/60 dark:bg-gray-800/20 rounded-xl p-6 backdrop-blur-sm border border-white/70 dark:border-gray-700/30 shadow-xl">
               <h2
-                className={`text-2xl font-bold text-[#0A1A2E] dark:text-[#F5E6CC] mb-6 ${
+                className={`text-2xl font-bold text-[#0A1A2E] dark:text-[#E8F5E9] mb-6 ${
                   i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
@@ -555,7 +553,7 @@ const CustomizationPage = () => {
               {/* Name Input */}
               <div className="mb-6">
                 <label
-                  className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
+                  className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
                     i18n.language === "ar"
                       ? "font-elegant-ar"
                       : "font-elegant-en"
@@ -567,7 +565,7 @@ const CustomizationPage = () => {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white/80 dark:bg-gray-900/50 focus:ring-2 focus:ring-[#1B3A5C] focus:border-transparent text-gray-900 dark:text-gray-100"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white/80 dark:bg-gray-900/50 focus:ring-2 focus:ring-[#0D7377] focus:border-transparent text-gray-900 dark:text-gray-100"
                   placeholder={t("enter_name")}
                   dir={fontLanguage === "arabic" ? "rtl" : "ltr"}
                 />
@@ -576,7 +574,7 @@ const CustomizationPage = () => {
               {/* Color Picker */}
               <div className="mb-6">
                 <label
-                  className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
+                  className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
                     i18n.language === "ar"
                       ? "font-elegant-ar"
                       : "font-elegant-en"
@@ -595,7 +593,7 @@ const CustomizationPage = () => {
               {/* Font Language Toggle */}
               <div className="mb-6">
                 <label
-                  className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
+                  className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
                     i18n.language === "ar"
                       ? "font-elegant-ar"
                       : "font-elegant-en"
@@ -632,7 +630,7 @@ const CustomizationPage = () => {
                 {fontLanguage === "arabic" ? (
                   <div>
                     <label
-                      className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
+                      className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
                         i18n.language === "ar"
                           ? "font-elegant-ar"
                           : "font-elegant-en"
@@ -663,7 +661,7 @@ const CustomizationPage = () => {
                 ) : (
                   <div>
                     <label
-                      className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
+                      className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
                         i18n.language === "ar"
                           ? "font-elegant-ar"
                           : "font-elegant-en"
@@ -695,7 +693,7 @@ const CustomizationPage = () => {
 
                 <div>
                   <label
-                    className={`block text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] mb-2 ${
+                    className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
                       i18n.language === "ar"
                         ? "font-elegant-ar"
                         : "font-elegant-en"
@@ -746,7 +744,7 @@ const CustomizationPage = () => {
                   </button>
                   <button
                     onClick={reset}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r ${isFoundingDay ? "from-[#D4A574] to-[#B8906A] hover:from-[#B8906A] hover:to-[#9D7A5A]" : "from-[#C9A84C] to-[#A68A3E] hover:from-[#A68A3E] hover:to-[#8B7333]"} text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105`}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r ${"from-[#D4AF37] to-[#B8962F] hover:from-[#B8962F] hover:to-[#9D7F28]"} text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105`}
                   >
                     <RotateCcw className="h-4 w-4" />
                     {t("reset")}
@@ -785,7 +783,7 @@ const CustomizationPage = () => {
             {/* Preview Panel */}
             <div className="bg-white/60 dark:bg-gray-800/20 rounded-xl p-6 backdrop-blur-sm border border-white/70 dark:border-gray-700/30 shadow-xl">
               <h3
-                className={`text-xl font-semibold text-[#0A1A2E] dark:text-[#F5E6CC] mb-4 ${
+                className={`text-xl font-semibold text-[#0A1A2E] dark:text-[#E8F5E9] mb-4 ${
                   i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >

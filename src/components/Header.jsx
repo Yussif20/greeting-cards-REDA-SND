@@ -149,12 +149,11 @@ const Header = () => {
     navigate("/");
   };
 
-  const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
+  const isEidFitr = occasion === OCCASIONS.EID_FITR;
+  // const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
 
-  // Dynamic header border color based on occasion
-  const borderClass = isFoundingDay
-    ? "border-[#D4A574]/20"
-    : "border-[#C9A84C]/20";
+  // Dynamic header border color — Eid gold
+  const borderClass = "border-[#D4AF37]/20";
 
   return (
     <header
@@ -176,17 +175,13 @@ const Header = () => {
           {occasion && (
             <button
               onClick={handleChangeOccasion}
-              className={`flex items-center gap-2 px-3 py-2 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm rounded-lg border ${isFoundingDay ? "border-[#D4A574]/30 hover:border-[#6B4E45]/50" : "border-[#C9A84C]/30 hover:border-[#1B3A5C]/50"} shadow-sm hover:shadow-md transition-all duration-300 ${
+              className={`flex items-center gap-2 px-3 py-2 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm rounded-lg border border-[#D4AF37]/30 hover:border-[#0D7377]/50 shadow-sm hover:shadow-md transition-all duration-300 ${
                 i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
               }`}
               aria-label={t("change_occasion")}
             >
-              <RefreshCw
-                className={`w-4 h-4 ${isFoundingDay ? "text-[#6B4E45] dark:text-[#D4A574]" : "text-[#1B3A5C] dark:text-[#C9A84C]"}`}
-              />
-              <span
-                className={`text-sm font-medium ${isFoundingDay ? "text-[#6B4E45] dark:text-[#D4A574]" : "text-[#132E4A] dark:text-[#C9A84C]"}`}
-              >
+              <RefreshCw className="w-4 h-4 text-[#0D7377] dark:text-[#D4AF37]" />
+              <span className="text-sm font-medium text-[#1A3C34] dark:text-[#D4AF37]">
                 {t("change_occasion")}
               </span>
             </button>
@@ -210,14 +205,14 @@ const Header = () => {
           {/* Simple & Elegant Language Switcher */}
           <button
             onClick={toggleLanguage}
-            className={`group flex items-center gap-2 px-3 py-2 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm rounded-lg border border-white/40 ${isFoundingDay ? "dark:border-[#D4A574]/30 hover:border-[#6B4E45]/50 dark:hover:border-[#D4A574]/50" : "dark:border-[#C9A84C]/30 hover:border-[#1B3A5C]/50 dark:hover:border-[#C9A84C]/50"} shadow-sm hover:shadow-md transition-all duration-300`}
+            className={`group flex items-center gap-2 px-3 py-2 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm rounded-lg border border-white/40 dark:border-[#D4AF37]/30 hover:border-[#0D7377]/50 dark:hover:border-[#D4AF37]/50 shadow-sm hover:shadow-md transition-all duration-300`}
             aria-label={
               i18n.language === "ar" ? "Switch to English" : "Switch to Arabic"
             }
           >
             {/* Language Text */}
             <span
-              className={`text-sm font-medium text-[#132E4A] dark:text-[#F5E6CC] ${isFoundingDay ? "group-hover:text-[#6B4E45] dark:group-hover:text-[#D4A574]" : "group-hover:text-[#1B3A5C] dark:group-hover:text-[#C9A84C]"} transition-colors duration-300 ${
+              className={`text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] group-hover:text-[#0D7377] dark:group-hover:text-[#D4AF37] transition-colors duration-300 ${
                 i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
               }`}
             >
@@ -226,7 +221,7 @@ const Header = () => {
 
             {/* Simple Arrow */}
             <svg
-              className={`w-3 h-3 text-[#132E4A] dark:text-[#F5E6CC] ${isFoundingDay ? "group-hover:text-[#6B4E45] dark:group-hover:text-[#D4A574]" : "group-hover:text-[#1B3A5C] dark:group-hover:text-[#C9A84C]"} transition-all duration-300 group-hover:rotate-180`}
+              className="w-3 h-3 text-[#1A3C34] dark:text-[#E8F5E9] group-hover:text-[#0D7377] dark:group-hover:text-[#D4AF37] transition-all duration-300 group-hover:rotate-180"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
