@@ -10,10 +10,10 @@ const OccasionSelector = () => {
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
 
-  // Auto-select Eid Al Fitr and redirect (single active occasion)
+  // Auto-select Eid Al Adha and redirect (single active occasion)
   useEffect(() => {
     if (!occasion) {
-      setOccasion(OCCASIONS.EID_FITR);
+      setOccasion(OCCASIONS.EID_ADHA);
     }
     navigate("/welcome");
   }, [occasion, setOccasion, navigate]);
@@ -39,14 +39,14 @@ const OccasionSelector = () => {
                   isArabic ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
-                {t("eid_fitr_greeting")}
+                {t("eid_adha_greeting")}
               </h1>
               <p
                 className={`text-lg sm:text-xl text-[#3D7A6A] dark:text-gray-300 animate-slide-up delay-100 ${
                   isArabic ? "font-elegant-ar" : "font-elegant-en"
                 }`}
               >
-                {t("eid_fitr_occasion_description")}
+                {t("eid_adha_occasion_description")}
               </p>
             </div>
           </div>

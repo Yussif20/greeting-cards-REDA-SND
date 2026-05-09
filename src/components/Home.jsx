@@ -5,7 +5,8 @@ import { memo, useEffect } from "react";
 import { Logo } from "./Header";
 import AnimatedSection from "./AnimatedSection";
 import { useOccasion, OCCASIONS } from "../context/OccasionContext";
-import sampleCard from "/eid/RHC.jpg";
+import { EightPointStar, PanelCorners, StarDivider } from "./Ornaments";
+import sampleCard from "/eid-adha/RHC.jpg";
 
 const Home = () => {
   const { t, i18n } = useTranslation();
@@ -13,7 +14,6 @@ const Home = () => {
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
 
-  // Redirect to occasion selector if no occasion is selected
   useEffect(() => {
     if (!occasion) {
       navigate("/");
@@ -22,137 +22,134 @@ const Home = () => {
 
   if (!occasion) return null;
 
-  const isEidFitr = occasion === OCCASIONS.EID_FITR;
-  // const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
-
-  // Get occasion-specific content
-  const greetingKey = isEidFitr ? "eid_fitr_greeting" : "eid_fitr_greeting";
-  const messageKey = isEidFitr ? "eid_fitr_message" : "eid_fitr_message";
-  const previewDescKey = isEidFitr
-    ? "eid_fitr_preview_description"
+  const isEidAdha = occasion === OCCASIONS.EID_ADHA;
+  const greetingKey = isEidAdha ? "eid_adha_greeting" : "eid_adha_greeting";
+  const messageKey = isEidAdha ? "eid_adha_message" : "eid_adha_message";
+  const previewDescKey = isEidAdha
+    ? "eid_adha_preview_description"
     : "preview_description";
-  const testimonialMsgKey = isEidFitr
-    ? "eid_fitr_testimonial_message"
-    : "eid_fitr_testimonial_message";
-  const testimonialAuthorKey = isEidFitr
-    ? "eid_fitr_testimonial_author"
-    : "eid_fitr_testimonial_author";
-
-  // Background classes — Eid Al Fitr
-  const bgClasses =
-    "from-[#F0FFF4] via-[#F5FFF9] to-[#FDF6E3] dark:from-[#031D1F] dark:via-[#0D3B3E] dark:to-[#031D1F] bg-[url('/eid-light.jpg')] dark:bg-[url('/eid-dark.jpg')]";
-
-  // Button color classes — Eid teal
-  const buttonClasses =
-    "from-[#0D7377] to-[#065F56] hover:from-[#065F56] hover:to-[#044A42]";
-
-  // Accent colors — Eid gold
-  const accentClass = "border-[#D4AF37]/20";
-  const glassAccent = "dark:from-[#0D3B3E]/5";
+  const testimonialMsgKey = isEidAdha
+    ? "eid_adha_testimonial_message"
+    : "eid_adha_testimonial_message";
+  const testimonialAuthorKey = isEidAdha
+    ? "eid_adha_testimonial_author"
+    : "eid_adha_testimonial_author";
 
   return (
     <div
-      className={`relative bg-linear-to-br ${bgClasses} min-h-screen flex flex-col items-center justify-center font-sans bg-cover bg-no-repeat bg-center transition-all duration-300`}
+      className="relative min-h-screen flex flex-col items-center justify-center font-sans bg-[url('/eid-light.jpg')] dark:bg-[url('/eid-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
       dir={isArabic ? "rtl" : "ltr"}
     >
-      {/* Background Overlay for better readability */}
-      <div className="absolute inset-0 bg-white/5 dark:bg-black/30 transition-all duration-300"></div>
+      {/* Jewel-tone overlay — saturates the underlying bg image into velvet ground */}
+      <div className="absolute inset-0 jewel-overlay-light dark:jewel-overlay-dark transition-all duration-300" />
 
-      <main className="container mx-auto px-4 py-12 lg:px-8 lg:py-16 max-w-7xl relative z-10">
-        {/* Hero Section */}
+      <main className="container mx-auto px-4 py-12 lg:px-8 lg:py-16 max-w-5xl relative z-10">
+        {/* Hero panel — ornate gold double-rule with corner arabesques */}
         <AnimatedSection>
-          <div
-            className={`bg-white/10 dark:bg-gray-900/30 rounded-3xl shadow-2xl border border-white/50 ${accentClass} p-6 sm:p-8 lg:p-12 text-center relative overflow-hidden glass-hover`}
-          >
-            {/* Glass effect enhancement */}
-            <div
-              className={`absolute inset-0 bg-linear-to-br from-white/20 to-transparent ${glassAccent} dark:to-transparent rounded-3xl`}
-            ></div>
+          <div className="ornate-panel p-8 sm:p-12 lg:p-16 text-center relative overflow-hidden">
+            <PanelCorners />
 
-            <div className="relative z-10">
-              <div className="mb-6 sm:mb-8">
+            <div className="relative z-10 max-w-3xl mx-auto">
+              {/* Logo */}
+              <div className="mb-8">
                 <Logo
-                  className="h-16 sm:h-20 w-auto max-w-75 mx-auto transition-transform duration-300 hover:scale-105"
-                  ariaLabel="Eid Al Fitr Greeting Cards Logo"
+                  className="logo-on-dark h-14 sm:h-16 w-auto max-w-64 mx-auto"
+                  ariaLabel="Eid Al Adha Greeting Cards Logo"
                 />
               </div>
+
+              {/* Arabic display greeting */}
               <h1
-                className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#1A3C34] dark:text-white mb-4 animate-slide-up drop-shadow-lg ${
-                  isArabic ? "font-elegant-ar" : "font-elegant-en"
-                }`}
+                className="font-display-ar text-5xl sm:text-6xl lg:text-7xl text-[var(--jewel-gold)] mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]"
+                dir="rtl"
               >
-                {t(greetingKey)}
+                {isArabic ? t("eid_adha_greeting") : "عيد مبارك"}
               </h1>
+
+              <StarDivider className="my-6" />
+
+              {/* English display subtitle */}
+              <p className="font-display-en text-2xl sm:text-3xl lg:text-4xl text-[var(--ivory)] dark:text-[var(--ivory)] uppercase mb-3 tracking-[0.2em]">
+                {isArabic ? "Eid Mubarak" : t("eid_adha_greeting")}
+              </p>
+
+              {/* Subtitle / wishes */}
               <p
-                className={`text-lg sm:text-xl lg:text-2xl text-[#3D7A6A] dark:text-[#E8F5E9] mb-6 animate-slide-up delay-100 drop-shadow-md font-medium ${
-                  isArabic ? "font-elegant-ar" : "font-elegant-en"
+                className={`text-base sm:text-lg text-[var(--parchment)] dark:text-[var(--parchment)] opacity-85 mb-10 max-w-xl mx-auto ${
+                  isArabic ? "font-display-ar leading-relaxed" : "font-italic-display"
                 }`}
               >
                 {t(messageKey)}
               </p>
-              {!isEidFitr ? null : (
-                <div className="mb-8 relative">
-                  <div
-                    className={`w-full max-w-125 sm:max-w-150 mx-auto bg-white/30 dark:bg-[#0D3B3E]/20 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl transition-all duration-300 hover:shadow-2xl border border-white/40 ${accentClass} hover:border-white/60`}
-                  >
-                    <div className="relative w-full aspect-4/3 overflow-hidden rounded-lg">
-                      <img
-                        src={sampleCard}
-                        alt={t("sample_card")}
-                        className="w-full h-full object-contain rounded-lg"
-                      />
-                    </div>
-                    <p
-                      className={`text-sm text-[#1A3C34] dark:text-[#E8F5E9] mt-3 sm:mt-4 font-medium ${
-                        isArabic ? "font-elegant-ar" : "font-elegant-en"
-                      }`}
-                    >
-                      {t(previewDescKey)}
-                    </p>
-                  </div>
+
+              {/* Sample card in mihrab arch */}
+              <div className="relative mb-10 max-w-sm sm:max-w-md mx-auto">
+                {/* Finial above the arch */}
+                <div className="flex justify-center mb-1 relative z-10">
+                  <EightPointStar
+                    size={20}
+                    className="text-[var(--jewel-gold)]"
+                  />
                 </div>
-              )}
+                <div className="mihrab-frame aspect-[4/5]">
+                  <img
+                    src={sampleCard}
+                    alt={t("sample_card")}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <p
+                  className={`text-xs text-[var(--jewel-gold)] mt-3 tracking-wider uppercase opacity-80 ${
+                    isArabic ? "font-display-ar" : "font-display-en"
+                  }`}
+                >
+                  {t(previewDescKey)}
+                </p>
+              </div>
+
+              {/* CTA */}
               <Link
                 to="/cards"
-                className={`inline-flex items-center gap-3 px-6 py-3 bg-linear-to-r ${buttonClasses} text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 animate-slide-up delay-200 ${
-                  isArabic ? "font-elegant-ar" : "font-elegant-en"
+                className={`cta-gold inline-flex items-center gap-3 px-8 py-3.5 font-semibold rounded-sm uppercase tracking-[0.18em] text-sm sm:text-base ${
+                  isArabic ? "font-display-ar" : "font-display-en"
                 }`}
                 aria-label={t("create_card")}
               >
+                <EightPointStar size={12} />
                 {t("create_card")}
                 <ChevronRight
-                  size={20}
-                  className={isArabic ? "ml-2 transform rotate-180" : "ml-2"}
+                  size={18}
+                  className={isArabic ? "transform rotate-180" : ""}
                 />
               </Link>
             </div>
           </div>
         </AnimatedSection>
 
-        {/* Testimonial Section */}
+        {/* Testimonial — smaller framed panel */}
         <AnimatedSection delay={400}>
-          <div
-            className={`mt-12 p-6 bg-white/10 dark:bg-gray-900/30 backdrop-blur-xl rounded-2xl border border-white/50 ${accentClass} text-center shadow-xl relative overflow-hidden`}
-          >
-            {/* Glass effect for testimonial */}
-            <div
-              className={`absolute inset-0 bg-linear-to-br from-white/20 to-transparent ${glassAccent} dark:to-transparent rounded-2xl`}
-            ></div>
+          <div className="ornate-panel mt-10 p-8 sm:p-10 text-center relative overflow-hidden">
+            <PanelCorners className="text-[var(--jewel-gold)] scale-75" />
 
-            <div className="relative z-10">
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <EightPointStar
+                size={14}
+                className="text-[var(--jewel-gold)] mx-auto mb-4 opacity-70"
+              />
               <p
-                className={`text-lg sm:text-xl text-[#1A3C34] dark:text-[#E8F5E9] italic mb-4 font-medium ${
-                  isArabic ? "font-elegant-ar" : "font-elegant-en"
+                className={`text-lg sm:text-xl text-[var(--parchment)] dark:text-[var(--parchment)] mb-5 ${
+                  isArabic ? "font-display-ar leading-relaxed" : "font-italic-display"
                 }`}
               >
                 "{t(testimonialMsgKey)}"
               </p>
+              <StarDivider width="max-w-xs" />
               <p
-                className={`text-sm text-[#0D7377] dark:text-[#D4AF37] font-semibold ${
-                  isArabic ? "font-elegant-ar" : "font-elegant-en"
+                className={`mt-5 text-sm text-[var(--jewel-gold)] tracking-[0.2em] uppercase ${
+                  isArabic ? "font-display-ar" : "font-display-en"
                 }`}
               >
-                - {t(testimonialAuthorKey)}
+                {t(testimonialAuthorKey)}
               </p>
             </div>
           </div>

@@ -2,30 +2,60 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* CSS Variables - Eid Al Fitr Theme */
+/* CSS Variables - Eid Al Adha Jewel-Tone Theme */
 :root {
-  --background: #f0fff4; /* Soft mint background */
-  --foreground: #1a3c34; /* Dark teal text for better contrast */
-  --card-bg: #ffffff; /* white */
-  --card-gradient-start: #ffffff; /* white */
-  --card-gradient-end: #fdf6e3; /* Warm cream */
-  --border: #d4af37; /* Eid gold border */
-  --eid-teal: #0d7377; /* Primary festive teal */
-  --eid-gold: #d4af37; /* Royal gold */
-  --deep-teal: #1a3c34; /* Deep teal for readability */
-  --light-gold: #fdf6e3; /* Warm cream */
-  --primary-text: #1a3c34; /* Primary text color */
-  --secondary-text: #3d7a6a; /* Secondary text color */
-  --accent-text: #d4af37; /* Accent text color (royal gold) */
+  /* Brand colors (Reda Hazard Control) */
+  --brand-red: #ee2e3a;
+  --brand-red-deep: #b9242e; /* Darker hover state */
+  --brand-sapphire: #243e87;
+  --brand-sapphire-deep: #1b3070; /* Darker hover state */
+  --brand-sapphire-bright: #4a6bc9; /* Lighter for dark-mode contrast */
+
+  /* Jewel-tone palette */
+  --jewel-emerald: #0b4f3a; /* Deep emerald */
+  --jewel-emerald-dark: #06311f; /* Darker emerald */
+  --jewel-sapphire: #1e3a8a; /* Royal sapphire */
+  --jewel-plum: #5c2a4a; /* Rich plum */
+  --jewel-gold: #c8a24a; /* Royal gold leaf */
+  --jewel-gold-bright: #e0c270; /* Brighter highlight gold */
+  --jewel-gold-deep: #8a6b1f; /* Deeper antique gold for shadow */
+  --parchment: #efe6d2; /* Warm champagne */
+  --parchment-light: #f5eedb; /* Lighter champagne */
+  --ivory: #ece4cf; /* Warm ivory text */
+  --ink: #1a1410; /* Deep ink black */
+
+  --background: var(--parchment);
+  --foreground: var(--ink);
+  --card-bg: #ffffff;
+  --card-gradient-start: #ffffff;
+  --card-gradient-end: var(--parchment-light);
+  --border: var(--jewel-gold);
+  --primary-text: var(--ink);
+  --secondary-text: #5a4a32;
+  --accent-text: var(--jewel-gold);
+
+  /* Chrome text — used in Header / Footer / chips that sit on light cream surfaces.
+     Sapphire reads cleanly on parchment and aligns with the brand. */
+  --chrome-text: var(--brand-sapphire);
+  --chrome-text-soft: #5a4a32; /* deep antique brown for inactive chrome labels */
+  --chrome-border: #8a6b1f; /* deep antique gold rule on cream */
 }
 
 .dark {
-  --background: #031d1f; /* Deep night teal background */
-  --foreground: #e8f5e9; /* Soft mint white text */
-  --card-bg: #0d3b3e; /* Rich teal cards */
-  --card-gradient-start: #0d3b3e; /* Rich teal */
-  --card-gradient-end: #031d1f; /* Deep night teal */
-  --border: #d4af37; /* Gold border in dark mode */
+  --background: #06140f; /* Deep midnight emerald-black */
+  --foreground: var(--ivory);
+  --card-bg: #0a1e18;
+  --card-gradient-start: #0a1e18;
+  --card-gradient-end: #06140f;
+  --border: #d4a847; /* Antique gold in dark */
+  --jewel-gold: #d4a847;
+  --jewel-gold-bright: #ecd28a;
+  --jewel-gold-deep: #8a6b2e;
+
+  /* Chrome text in dark mode — gold reads well on midnight bg. */
+  --chrome-text: #d4a847;
+  --chrome-text-soft: rgba(212, 168, 71, 0.6);
+  --chrome-border: #d4a847; /* bright gold rule on midnight */
 }
 
 /* Apply variables */
@@ -50,6 +80,26 @@ body {
 .font-elegant-mixed {
   font-family: "Lora", "Amiri", "Cairo", serif;
   font-weight: 500;
+}
+
+/* Jewel-tone Display Typography (used in hero) */
+.font-display-en {
+  font-family: "Cinzel", "Cormorant Garamond", "Playfair Display", serif;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.font-display-ar {
+  font-family: "Aref Ruqaa", "Amiri", serif;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.font-italic-display {
+  font-family: "Cormorant Garamond", "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 /* Language-specific improvements */
@@ -140,6 +190,268 @@ button {
 
   .transition-all {
     transition: all 0.3s ease;
+  }
+
+  /* Jewel-tone hero overlay — saturates background image into a velvet ground.
+     Pairs with /eid-light.jpg or /eid-dark.jpg underneath. */
+  .jewel-overlay-light {
+    background:
+      radial-gradient(
+        ellipse at top left,
+        rgba(30, 58, 138, 0.45) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse at bottom right,
+        rgba(92, 42, 74, 0.4) 0%,
+        transparent 55%
+      ),
+      linear-gradient(
+        135deg,
+        rgba(11, 79, 58, 0.55) 0%,
+        rgba(239, 230, 210, 0.15) 50%,
+        rgba(92, 42, 74, 0.5) 100%
+      );
+  }
+
+  .jewel-overlay-dark {
+    background:
+      radial-gradient(
+        ellipse at top left,
+        rgba(200, 162, 74, 0.18) 0%,
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse at bottom right,
+        rgba(30, 58, 138, 0.35) 0%,
+        transparent 60%
+      ),
+      linear-gradient(
+        135deg,
+        rgba(6, 20, 15, 0.92) 0%,
+        rgba(10, 30, 24, 0.88) 50%,
+        rgba(6, 20, 15, 0.95) 100%
+      );
+  }
+
+  /* Ornate panel — dark velvet medallion with double-rule gold border.
+     Same dark background in both modes; only the surrounding page bg differs.
+     Add corner ornaments and content as children. */
+  .ornate-panel {
+    position: relative;
+    border: 1px solid var(--jewel-gold);
+    border-radius: 4px;
+    box-shadow:
+      0 0 0 1px rgba(200, 162, 74, 0.2) inset,
+      0 0 0 6px transparent inset,
+      0 0 0 7px var(--jewel-gold) inset,
+      0 0 0 8px rgba(0, 0, 0, 0.5) inset,
+      0 25px 50px -12px rgba(0, 0, 0, 0.55),
+      0 0 80px rgba(200, 162, 74, 0.1);
+    background:
+      linear-gradient(
+        180deg,
+        rgba(11, 79, 58, 0.85) 0%,
+        rgba(6, 20, 15, 0.92) 100%
+      ),
+      #08130e;
+  }
+
+  .dark .ornate-panel {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(11, 79, 58, 0.55) 0%,
+        rgba(6, 20, 15, 0.9) 100%
+      ),
+      #08130e;
+    box-shadow:
+      0 0 0 1px rgba(200, 162, 74, 0.15) inset,
+      0 0 0 6px transparent inset,
+      0 0 0 7px var(--jewel-gold) inset,
+      0 0 0 8px rgba(0, 0, 0, 0.5) inset,
+      0 25px 50px -12px rgba(0, 0, 0, 0.8),
+      0 0 100px rgba(200, 162, 74, 0.12);
+  }
+
+  /* Mihrab arch frame for the sample card */
+  .mihrab-frame {
+    position: relative;
+    border-radius: 50% 50% 6px 6px / 35% 35% 6px 6px;
+    border: 2px solid var(--jewel-gold);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.4),
+      0 0 0 5px transparent,
+      0 0 0 6px rgba(200, 162, 74, 0.4),
+      0 12px 30px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+  }
+
+  /* CTA gold-rule outline button */
+  .cta-gold {
+    position: relative;
+    border: 1px solid var(--jewel-gold);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(200, 162, 74, 0.15) 0%,
+        rgba(200, 162, 74, 0.05) 100%
+      );
+    box-shadow:
+      0 0 0 4px transparent,
+      0 0 0 5px rgba(200, 162, 74, 0.3) inset,
+      0 8px 20px rgba(0, 0, 0, 0.3);
+    color: var(--jewel-gold);
+    transition: all 0.3s ease;
+  }
+
+  .cta-gold:hover {
+    background:
+      linear-gradient(
+        135deg,
+        var(--jewel-gold) 0%,
+        var(--jewel-gold-deep) 100%
+      );
+    color: var(--ink);
+    box-shadow:
+      0 0 0 5px rgba(200, 162, 74, 0.5) inset,
+      0 12px 30px rgba(200, 162, 74, 0.35);
+  }
+
+  .dark .cta-gold:hover {
+    color: #06140f;
+  }
+
+  /* Smaller ornate panel for gallery cards — same dark velvet in both modes */
+  .ornate-card {
+    position: relative;
+    border: 1px solid var(--jewel-gold);
+    border-radius: 4px;
+    box-shadow:
+      0 0 0 1px rgba(200, 162, 74, 0.2) inset,
+      0 0 0 4px transparent inset,
+      0 0 0 5px rgba(200, 162, 74, 0.7) inset,
+      0 0 0 6px rgba(0, 0, 0, 0.4) inset,
+      0 12px 25px -8px rgba(0, 0, 0, 0.5);
+    background:
+      linear-gradient(
+        180deg,
+        rgba(11, 79, 58, 0.8) 0%,
+        rgba(6, 20, 15, 0.9) 100%
+      ),
+      #08130e;
+    transition:
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.35s ease;
+  }
+
+  .dark .ornate-card {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(11, 79, 58, 0.5) 0%,
+        rgba(6, 20, 15, 0.88) 100%
+      ),
+      #08130e;
+  }
+
+  .ornate-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.3) inset,
+      0 0 0 4px transparent inset,
+      0 0 0 5px var(--jewel-gold-bright) inset,
+      0 0 0 6px rgba(0, 0, 0, 0.3) inset,
+      0 20px 35px -8px rgba(0, 0, 0, 0.6),
+      0 0 60px rgba(200, 162, 74, 0.25);
+  }
+
+  /* Gold-rule input — used for text/select fields in customizer */
+  .input-gold {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--jewel-gold);
+    color: var(--ink);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.2) inset,
+      0 0 0 3px transparent inset,
+      0 0 0 4px rgba(200, 162, 74, 0.3) inset;
+    transition: all 0.2s ease;
+  }
+
+  .input-gold:focus {
+    outline: none;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.2) inset,
+      0 0 0 3px transparent inset,
+      0 0 0 4px var(--jewel-gold) inset,
+      0 0 20px rgba(200, 162, 74, 0.3);
+  }
+
+  .dark .input-gold {
+    background: rgba(6, 20, 15, 0.6);
+    color: var(--ivory);
+  }
+
+  /* Range slider — gold themed */
+  .range-gold {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(
+      to right,
+      var(--jewel-gold) 0%,
+      var(--jewel-gold-deep) 100%
+    );
+    border-radius: 2px;
+    outline: none;
+  }
+
+  .range-gold::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--jewel-gold-bright);
+    border: 2px solid var(--jewel-gold-deep);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s ease;
+  }
+
+  .range-gold::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+  }
+
+  .range-gold::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--jewel-gold-bright);
+    border: 2px solid var(--jewel-gold-deep);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Force the Logo to render in dark-mode colors regardless of theme.
+     Used when the Logo sits on a dark velvet panel even in light mode. */
+  .logo-on-dark [data-color="2"] {
+    fill: #ece4cf !important;
+  }
+
+  /* Section heading underline — small rule beneath panel section titles */
+  .heading-rule {
+    display: inline-block;
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      var(--jewel-gold) 50%,
+      transparent 100%
+    );
+    margin: 8px auto 0;
   }
 }
 

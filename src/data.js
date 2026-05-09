@@ -1,10 +1,18 @@
-// Import Eid Al Fitr greeting cards
-import eidRhc from "/eid/RHC.jpg";
-import eidFhc from "/eid/FHC.jpg";
-import eidGreen from "/eid/Green.jpg";
-import eidProcess from "/eid/Process.jpg";
-import eidSafe from "/eid/Safe.jpg";
-import eidVerdifor from "/eid/Verdifor.jpg";
+// Import Eid Al Adha greeting cards
+import eidAdhaRhc from "/eid-adha/RHC.jpg";
+import eidAdhaFhc from "/eid-adha/FHC.jpg";
+import eidAdhaGreen from "/eid-adha/Green.jpg";
+import eidAdhaProcess from "/eid-adha/Process.jpg";
+import eidAdhaSafe from "/eid-adha/Safe.jpg";
+import eidAdhaVerdifor from "/eid-adha/Verdifor.jpg";
+
+// Import Eid Al Fitr greeting cards (commented out — kept for next Eid Al Fitr)
+// import eidRhc from "/eid/RHC.jpg";
+// import eidFhc from "/eid/FHC.jpg";
+// import eidGreen from "/eid/Green.jpg";
+// import eidProcess from "/eid/Process.jpg";
+// import eidSafe from "/eid/Safe.jpg";
+// import eidVerdifor from "/eid/Verdifor.jpg";
 
 // Import your 6 Ramadan greeting cards
 // import rhc1 from "/cards/RHC.jpg";
@@ -22,15 +30,25 @@ import eidVerdifor from "/eid/Verdifor.jpg";
 // import fdSafe from "/founding-day-cards/Safe.jpg";
 // import fdVerdifor from "/founding-day-cards/Verdifor.jpg";
 
-// All Eid Al Fitr greeting cards
-export const eidFitrCards = [
-  { src: eidRhc, name: "RHC" },
-  { src: eidFhc, name: "FHC" },
-  { src: eidGreen, name: "Green" },
-  { src: eidProcess, name: "Process" },
-  { src: eidSafe, name: "Safe" },
-  { src: eidVerdifor, name: "Verdifor" },
+// All Eid Al Adha greeting cards
+export const eidAdhaCards = [
+  { src: eidAdhaRhc, name: "RHC" },
+  { src: eidAdhaFhc, name: "FHC" },
+  { src: eidAdhaGreen, name: "Green" },
+  { src: eidAdhaProcess, name: "Process" },
+  { src: eidAdhaSafe, name: "Safe" },
+  { src: eidAdhaVerdifor, name: "Verdifor" },
 ];
+
+// All Eid Al Fitr greeting cards (commented out — kept for next Eid Al Fitr)
+// export const eidFitrCards = [
+//   { src: eidRhc, name: "RHC" },
+//   { src: eidFhc, name: "FHC" },
+//   { src: eidGreen, name: "Green" },
+//   { src: eidProcess, name: "Process" },
+//   { src: eidSafe, name: "Safe" },
+//   { src: eidVerdifor, name: "Verdifor" },
+// ];
 
 // All your Ramadan greeting cards in one simple array
 // export const ramadanCards = [
@@ -53,21 +71,23 @@ export const eidFitrCards = [
 // ];
 
 // Legacy export for backwards compatibility
-export const cards = eidFitrCards;
+export const cards = eidAdhaCards;
 
 // Function to get cards by occasion
 export const getCardsByOccasion = (occasion) => {
   switch (occasion) {
-    case "eid-fitr":
-      return eidFitrCards;
+    case "eid-adha":
+      return eidAdhaCards;
+    // case "eid-fitr":
+    //   return eidFitrCards;
     // case "founding-day":
     //   return foundingDayCards;
     // case "ramadan":
     //   return ramadanCards;
     default:
-      return eidFitrCards;
+      return eidAdhaCards;
   }
 };
 
 // Simple function to get all cards (legacy)
-export const getAllCards = () => eidFitrCards;
+export const getAllCards = () => eidAdhaCards;

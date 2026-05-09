@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
 import { useOccasion, OCCASIONS } from "../context/OccasionContext";
+import { EightPointStar, PanelCorners, StarDivider } from "./Ornaments";
 
 const CustomizationPage = () => {
   const { t, i18n } = useTranslation();
@@ -42,7 +43,7 @@ const CustomizationPage = () => {
     }
   }, [selectedCard, occasion, navigate]);
 
-  // const isEidFitr = occasion === OCCASIONS.EID_FITR;
+  // const isEidAdha = occasion === OCCASIONS.EID_ADHA;
   // const isFoundingDay = occasion === OCCASIONS.FOUNDING_DAY;
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -493,286 +494,251 @@ const CustomizationPage = () => {
     return null; // Will redirect
   }
 
-  // Dynamic background classes — Eid Al Fitr
-  const bgClasses =
-    "from-[#F0FFF4] via-[#F5FFF9] to-[#FDF6E3] dark:from-[#031D1F] dark:via-[#0D3B3E] dark:to-[#031D1F] bg-[url('/eid-light.jpg')] dark:bg-[url('/eid-dark.jpg')]";
-
-  // Dynamic primary colors for buttons — Eid teal
-  const primaryGradient =
-    "from-[#0D7377] to-[#065F56] hover:from-[#065F56] hover:to-[#044A42]";
-
-  const accentGradient =
-    "from-[#0D7377] to-[#D4AF37] hover:from-[#065F56] hover:to-[#B8962F]";
-
-  const loaderColor = "text-[#0D7377]";
+  const isArabic = i18n.language === "ar";
+  const labelFont = isArabic ? "font-display-ar" : "font-display-en";
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className={`h-8 w-8 animate-spin ${loaderColor}`} />
+      <div className="flex justify-center items-center min-h-screen bg-[var(--background)]">
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--jewel-gold)]" />
       </div>
     );
   }
 
+  // Section heading — small uppercase Cinzel + hairline rule.
+  const SectionLabel = ({ children }) => (
+    <label
+      className={`block text-xs uppercase tracking-[0.2em] text-[var(--jewel-gold)] mb-3 ${labelFont}`}
+    >
+      {children}
+    </label>
+  );
+
   return (
     <div
-      className={`relative bg-linear-to-br ${bgClasses} min-h-screen bg-cover bg-no-repeat bg-center transition-all duration-300`}
+      className="relative min-h-screen bg-[url('/eid-light.jpg')] dark:bg-[url('/eid-dark.jpg')] bg-cover bg-no-repeat bg-center transition-all duration-300"
+      dir={isArabic ? "rtl" : "ltr"}
     >
-      <div className="absolute inset-0 bg-white/5 dark:bg-black/30 transition-all duration-300"></div>
+      <div className="absolute inset-0 jewel-overlay-light dark:jewel-overlay-dark transition-all duration-300" />
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl relative z-10">
+      <div className="container mx-auto px-4 py-8 lg:py-12 max-w-7xl relative z-10">
         {/* Back button */}
         <div className="mb-6">
           <button
             onClick={() => navigate("/cards")}
-            className="flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-gray-800/20 rounded-lg backdrop-blur-sm border border-white/70 dark:border-gray-700/30 hover:bg-white/80 dark:hover:bg-gray-800/30 transition-colors duration-200 text-gray-800 dark:text-gray-200"
+            className={`inline-flex items-center gap-2 px-5 py-2 text-sm uppercase tracking-[0.18em] text-[var(--chrome-text)] border border-[var(--chrome-border)] hover:bg-[var(--chrome-border)]/10 transition-all duration-300 rounded-sm ${labelFont}`}
           >
-            <ArrowLeft className="h-5 w-5" />
-            <span
-              className={
-                i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
-              }
-            >
-              {t("back_to_cards")}
-            </span>
+            <ArrowLeft
+              className={`h-4 w-4 ${isArabic ? "rotate-180" : ""}`}
+            />
+            {t("back_to_cards")}
           </button>
         </div>
 
         <AnimatedSection>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Customization Panel */}
-            <div className="bg-white/60 dark:bg-gray-800/20 rounded-xl p-6 backdrop-blur-sm border border-white/70 dark:border-gray-700/30 shadow-xl">
-              <h2
-                className={`text-2xl font-bold text-[#0A1A2E] dark:text-[#E8F5E9] mb-6 ${
-                  i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
-                }`}
-              >
-                {t("guide_name")}
-              </h2>
+            <div className="ornate-panel p-6 sm:p-8 relative overflow-hidden">
+              <PanelCorners className="text-[var(--jewel-gold)] scale-75" />
 
-              {/* Name Input */}
-              <div className="mb-6">
-                <label
-                  className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
-                    i18n.language === "ar"
-                      ? "font-elegant-ar"
-                      : "font-elegant-en"
-                  }`}
-                >
-                  {t("enter_name")}
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white/80 dark:bg-gray-900/50 focus:ring-2 focus:ring-[#0D7377] focus:border-transparent text-gray-900 dark:text-gray-100"
-                  placeholder={t("enter_name")}
-                  dir={fontLanguage === "arabic" ? "rtl" : "ltr"}
-                />
-              </div>
-
-              {/* Color Picker */}
-              <div className="mb-6">
-                <label
-                  className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
-                    i18n.language === "ar"
-                      ? "font-elegant-ar"
-                      : "font-elegant-en"
-                  }`}
-                >
-                  {t("guide_color")}
-                </label>
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  className="w-full h-12 rounded-lg border border-gray-400 dark:border-gray-600 cursor-pointer"
-                />
-              </div>
-
-              {/* Font Language Toggle */}
-              <div className="mb-6">
-                <label
-                  className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
-                    i18n.language === "ar"
-                      ? "font-elegant-ar"
-                      : "font-elegant-en"
-                  }`}
-                >
-                  {t("font_language")}
-                </label>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setFontLanguage("arabic")}
-                    className={`flex-1 px-4 py-2 rounded-lg transition-all duration-200 ${
-                      fontLanguage === "arabic"
-                        ? `bg-linear-to-r ${primaryGradient} text-white shadow-md`
-                        : "bg-white/60 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"
-                    }`}
-                  >
-                    {i18n.language === "ar" ? "عربي" : "Arabic"}
-                  </button>
-                  <button
-                    onClick={() => setFontLanguage("english")}
-                    className={`flex-1 px-4 py-2 rounded-lg transition-all duration-200 ${
-                      fontLanguage === "english"
-                        ? `bg-linear-to-r ${primaryGradient} text-white shadow-md`
-                        : "bg-white/60 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"
-                    }`}
-                  >
-                    {i18n.language === "ar" ? "إنجليزي" : "English"}
-                  </button>
-                </div>
-              </div>
-
-              {/* Conditional Font Selector */}
-              <div className="space-y-4 mb-6">
-                {fontLanguage === "arabic" ? (
-                  <div>
-                    <label
-                      className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
-                        i18n.language === "ar"
-                          ? "font-elegant-ar"
-                          : "font-elegant-en"
-                      }`}
-                    >
-                      {t("arabic_font")}
-                    </label>
-                    <select
-                      value={arabicFont}
-                      onChange={(e) => {
-                        setArabicFont(e.target.value);
-                        setFont(e.target.value);
-                      }}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white/80 dark:bg-gray-900/50 text-gray-900 dark:text-gray-100"
-                      style={{ fontFamily: arabicFont }}
-                    >
-                      {fontConfig.arabic.map((fontName) => (
-                        <option
-                          key={fontName}
-                          value={fontName}
-                          style={{ fontFamily: fontName }}
-                        >
-                          {fontName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ) : (
-                  <div>
-                    <label
-                      className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
-                        i18n.language === "ar"
-                          ? "font-elegant-ar"
-                          : "font-elegant-en"
-                      }`}
-                    >
-                      {t("english_font")}
-                    </label>
-                    <select
-                      value={englishFont}
-                      onChange={(e) => {
-                        setEnglishFont(e.target.value);
-                        setFont(e.target.value);
-                      }}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white/80 dark:bg-gray-900/50 text-gray-900 dark:text-gray-100"
-                      style={{ fontFamily: englishFont }}
-                    >
-                      {fontConfig.english.map((fontName) => (
-                        <option
-                          key={fontName}
-                          value={fontName}
-                          style={{ fontFamily: fontName }}
-                        >
-                          {fontName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                <div>
-                  <label
-                    className={`block text-sm font-medium text-[#1A3C34] dark:text-[#E8F5E9] mb-2 ${
-                      i18n.language === "ar"
-                        ? "font-elegant-ar"
-                        : "font-elegant-en"
-                    }`}
-                  >
-                    {t("guide_font_size")}
-                  </label>
-                  <input
-                    type="range"
-                    min="30"
-                    max="120"
-                    value={fontSize}
-                    onChange={(e) => setFontSize(parseInt(e.target.value))}
-                    className="w-full"
+              <div className="relative z-10">
+                {/* Header */}
+                <div className="text-center mb-8">
+                  <EightPointStar
+                    size={16}
+                    className="text-[var(--jewel-gold)] mx-auto mb-3 opacity-80"
                   />
-                  <span className="text-sm text-gray-800 dark:text-gray-400">
-                    {fontSize}px
-                  </span>
+                  <h2
+                    className={`text-2xl sm:text-3xl uppercase tracking-[0.18em] text-[var(--ivory)] ${labelFont}`}
+                  >
+                    {t("guide_name")}
+                  </h2>
+                  <StarDivider className="mt-3" width="max-w-xs" />
                 </div>
-              </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-2">
-                  {Object.keys(presets).map((presetName) => (
+                {/* Name Input */}
+                <div className="mb-6">
+                  <SectionLabel>{t("enter_name")}</SectionLabel>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="input-gold w-full px-4 py-2.5 rounded-sm placeholder:text-[var(--jewel-gold)]/50"
+                    placeholder={t("enter_name")}
+                    dir={fontLanguage === "arabic" ? "rtl" : "ltr"}
+                  />
+                </div>
+
+                {/* Color Picker */}
+                <div className="mb-6">
+                  <SectionLabel>{t("guide_color")}</SectionLabel>
+                  <div className="input-gold w-full h-12 rounded-sm overflow-hidden">
+                    <input
+                      type="color"
+                      value={color}
+                      onChange={(e) => setColor(e.target.value)}
+                      className="w-full h-full cursor-pointer border-0 bg-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Font Language Toggle */}
+                <div className="mb-6">
+                  <SectionLabel>{t("font_language")}</SectionLabel>
+                  <div className="flex gap-3">
                     <button
-                      key={presetName}
-                      onClick={() => applyPreset(presetName)}
-                      className={`px-3 py-2 text-sm rounded-lg bg-linear-to-r ${primaryGradient} text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
-                        i18n.language === "ar"
-                          ? "font-elegant-ar"
-                          : "font-elegant-en"
-                      }`}
+                      onClick={() => setFontLanguage("arabic")}
+                      className={`flex-1 px-4 py-2.5 rounded-sm uppercase tracking-[0.18em] text-sm transition-all duration-300 ${
+                        fontLanguage === "arabic"
+                          ? "bg-gradient-to-br from-[var(--jewel-gold)] to-[var(--jewel-gold-deep)] text-[var(--ink)] shadow-md"
+                          : "border border-[var(--jewel-gold)]/50 text-[var(--jewel-gold)] hover:bg-[var(--jewel-gold)]/10"
+                      } ${labelFont}`}
                     >
-                      {t(presetName)}
+                      {isArabic ? "عربي" : "Arabic"}
                     </button>
-                  ))}
+                    <button
+                      onClick={() => setFontLanguage("english")}
+                      className={`flex-1 px-4 py-2.5 rounded-sm uppercase tracking-[0.18em] text-sm transition-all duration-300 ${
+                        fontLanguage === "english"
+                          ? "bg-gradient-to-br from-[var(--jewel-gold)] to-[var(--jewel-gold-deep)] text-[var(--ink)] shadow-md"
+                          : "border border-[var(--jewel-gold)]/50 text-[var(--jewel-gold)] hover:bg-[var(--jewel-gold)]/10"
+                      } ${labelFont}`}
+                    >
+                      {isArabic ? "إنجليزي" : "English"}
+                    </button>
+                  </div>
                 </div>
 
-                <div className="flex gap-2">
+                {/* Font Selector */}
+                <div className="space-y-4 mb-6">
+                  {fontLanguage === "arabic" ? (
+                    <div>
+                      <SectionLabel>{t("arabic_font")}</SectionLabel>
+                      <select
+                        value={arabicFont}
+                        onChange={(e) => {
+                          setArabicFont(e.target.value);
+                          setFont(e.target.value);
+                        }}
+                        className="input-gold w-full px-4 py-2.5 rounded-sm"
+                        style={{ fontFamily: arabicFont }}
+                      >
+                        {fontConfig.arabic.map((fontName) => (
+                          <option
+                            key={fontName}
+                            value={fontName}
+                            style={{ fontFamily: fontName }}
+                          >
+                            {fontName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : (
+                    <div>
+                      <SectionLabel>{t("english_font")}</SectionLabel>
+                      <select
+                        value={englishFont}
+                        onChange={(e) => {
+                          setEnglishFont(e.target.value);
+                          setFont(e.target.value);
+                        }}
+                        className="input-gold w-full px-4 py-2.5 rounded-sm"
+                        style={{ fontFamily: englishFont }}
+                      >
+                        {fontConfig.english.map((fontName) => (
+                          <option
+                            key={fontName}
+                            value={fontName}
+                            style={{ fontFamily: fontName }}
+                          >
+                            {fontName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Font Size */}
+                  <div>
+                    <SectionLabel>
+                      {t("guide_font_size")}{" "}
+                      <span className="text-[var(--ivory)]/70 normal-case tracking-normal">
+                        — {fontSize}px
+                      </span>
+                    </SectionLabel>
+                    <input
+                      type="range"
+                      min="30"
+                      max="120"
+                      value={fontSize}
+                      onChange={(e) => setFontSize(parseInt(e.target.value))}
+                      className="range-gold"
+                    />
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <StarDivider className="my-6" width="max-w-xs" />
+
+                {/* Presets */}
+                <div className="mb-5">
+                  <SectionLabel>{t("preview")}</SectionLabel>
+                  <div className="grid grid-cols-3 gap-2">
+                    {Object.keys(presets).map((presetName) => (
+                      <button
+                        key={presetName}
+                        onClick={() => applyPreset(presetName)}
+                        className={`cta-gold px-3 py-2 text-xs uppercase tracking-[0.18em] rounded-sm ${labelFont}`}
+                      >
+                        {t(presetName)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Undo / Reset */}
+                <div className="grid grid-cols-2 gap-3 mb-5">
                   <button
                     onClick={undo}
                     disabled={history.length === 0}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r ${primaryGradient} disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white transition-all duration-200 shadow-md hover:shadow-lg`}
+                    className={`cta-gold inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm uppercase tracking-[0.18em] rounded-sm disabled:opacity-40 disabled:cursor-not-allowed ${labelFont}`}
                   >
                     <ArrowLeft className="h-4 w-4" />
                     {t("undo")}
                   </button>
                   <button
                     onClick={reset}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r ${"from-[#D4AF37] to-[#B8962F] hover:from-[#B8962F] hover:to-[#9D7F28]"} text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105`}
+                    className={`cta-gold inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm uppercase tracking-[0.18em] rounded-sm ${labelFont}`}
                   >
                     <RotateCcw className="h-4 w-4" />
                     {t("reset")}
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                {/* Download / Share — primary filled */}
+                <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={downloadCard}
                     disabled={actionLoading || !name.trim()}
-                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-linear-to-r ${accentGradient} disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105`}
+                    className={`inline-flex items-center justify-center gap-2 px-6 py-3 text-sm uppercase tracking-[0.18em] rounded-sm bg-gradient-to-br from-[var(--jewel-gold)] to-[var(--jewel-gold-deep)] text-[var(--ink)] shadow-md hover:shadow-[0_12px_30px_rgba(200,162,74,0.4)] hover:from-[var(--jewel-gold-bright)] hover:to-[var(--jewel-gold)] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed ${labelFont}`}
                   >
                     {actionLoading ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      <Download className="h-5 w-5" />
+                      <Download className="h-4 w-4" />
                     )}
                     {t("download_card")}
                   </button>
                   <button
                     onClick={shareCard}
                     disabled={actionLoading || !name.trim()}
-                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-linear-to-r ${accentGradient} disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105`}
+                    className={`inline-flex items-center justify-center gap-2 px-6 py-3 text-sm uppercase tracking-[0.18em] rounded-sm bg-gradient-to-br from-[var(--jewel-gold)] to-[var(--jewel-gold-deep)] text-[var(--ink)] shadow-md hover:shadow-[0_12px_30px_rgba(200,162,74,0.4)] hover:from-[var(--jewel-gold-bright)] hover:to-[var(--jewel-gold)] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed ${labelFont}`}
                   >
                     {actionLoading ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      <Share2 className="h-5 w-5" />
+                      <Share2 className="h-4 w-4" />
                     )}
                     {t("share_card")}
                   </button>
@@ -781,58 +747,71 @@ const CustomizationPage = () => {
             </div>
 
             {/* Preview Panel */}
-            <div className="bg-white/60 dark:bg-gray-800/20 rounded-xl p-6 backdrop-blur-sm border border-white/70 dark:border-gray-700/30 shadow-xl">
-              <h3
-                className={`text-xl font-semibold text-[#0A1A2E] dark:text-[#E8F5E9] mb-4 ${
-                  i18n.language === "ar" ? "font-elegant-ar" : "font-elegant-en"
-                }`}
-              >
-                {t("card_preview")}
-              </h3>
+            <div className="ornate-panel p-6 sm:p-8 relative overflow-hidden">
+              <PanelCorners className="text-[var(--jewel-gold)] scale-75" />
 
-              <div className="relative">
-                <canvas
-                  ref={previewRef}
-                  onClick={handlePreviewClick}
-                  className="w-full max-w-md mx-auto border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg cursor-crosshair"
-                  style={{
-                    transform: `scale(${zoomLevel})`,
-                    transformOrigin: "center top",
-                  }}
-                />
+              <div className="relative z-10">
+                {/* Header */}
+                <div className="text-center mb-6">
+                  <EightPointStar
+                    size={16}
+                    className="text-[var(--jewel-gold)] mx-auto mb-3 opacity-80"
+                  />
+                  <h3
+                    className={`text-xl sm:text-2xl uppercase tracking-[0.18em] text-[var(--ivory)] ${labelFont}`}
+                  >
+                    {t("card_preview")}
+                  </h3>
+                  <StarDivider className="mt-3" width="max-w-xs" />
+                </div>
 
-                {!name.trim() && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <p
-                      className={`text-gray-500 dark:text-gray-400 text-center ${
-                        i18n.language === "ar"
-                          ? "font-elegant-ar"
-                          : "font-elegant-en"
-                      }`}
-                    >
-                      {t("position_tip")}
-                    </p>
+                {/* Canvas */}
+                <div className="relative flex justify-center">
+                  <div className="mihrab-frame inline-block max-w-md">
+                    <canvas
+                      ref={previewRef}
+                      onClick={handlePreviewClick}
+                      className="w-full block cursor-crosshair"
+                      style={{
+                        transform: `scale(${zoomLevel})`,
+                        transformOrigin: "center top",
+                      }}
+                    />
                   </div>
-                )}
-              </div>
 
-              {/* Zoom Controls */}
-              <div className="flex justify-center gap-2 mt-4">
-                <button
-                  onClick={() => setZoomLevel(Math.max(0.5, zoomLevel - 0.1))}
-                  className="p-2 rounded-lg bg-white/40 dark:bg-white/20 hover:bg-white/60 dark:hover:bg-white/30 transition-colors duration-200 text-gray-800 dark:text-gray-200"
-                >
-                  <ZoomOut className="h-4 w-4" />
-                </button>
-                <span className="px-3 py-2 text-sm text-gray-800 dark:text-gray-200 bg-white/30 dark:bg-gray-800/30 rounded-lg">
-                  {Math.round(zoomLevel * 100)}%
-                </span>
-                <button
-                  onClick={() => setZoomLevel(Math.min(2, zoomLevel + 0.1))}
-                  className="p-2 rounded-lg bg-white/40 dark:bg-white/20 hover:bg-white/60 dark:hover:bg-white/30 transition-colors duration-200 text-gray-800 dark:text-gray-200"
-                >
-                  <ZoomIn className="h-4 w-4" />
-                </button>
+                  {!name.trim() && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <p
+                        className={`px-4 py-2 bg-[var(--ink)]/70 text-[var(--jewel-gold)] text-sm uppercase tracking-[0.2em] rounded-sm ${labelFont}`}
+                      >
+                        {t("position_tip")}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Zoom Controls */}
+                <div className="flex justify-center items-center gap-3 mt-6">
+                  <button
+                    onClick={() => setZoomLevel(Math.max(0.5, zoomLevel - 0.1))}
+                    className="cta-gold p-2 rounded-sm"
+                    aria-label={t("zoom_out")}
+                  >
+                    <ZoomOut className="h-4 w-4" />
+                  </button>
+                  <span
+                    className={`px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-[var(--jewel-gold)] border border-[var(--jewel-gold)]/40 rounded-sm ${labelFont}`}
+                  >
+                    {Math.round(zoomLevel * 100)}%
+                  </span>
+                  <button
+                    onClick={() => setZoomLevel(Math.min(2, zoomLevel + 0.1))}
+                    className="cta-gold p-2 rounded-sm"
+                    aria-label={t("zoom_in")}
+                  >
+                    <ZoomIn className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -840,11 +819,11 @@ const CustomizationPage = () => {
 
         {/* Error Display */}
         {error && (
-          <div className="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">
+          <div className="fixed bottom-4 right-4 bg-[var(--jewel-plum)] text-[var(--ivory)] border border-[var(--jewel-gold)] px-5 py-3 rounded-sm shadow-2xl z-50">
             {error}
             <button
               onClick={() => setError(null)}
-              className="ml-2 text-white hover:text-gray-200"
+              className="ml-3 text-[var(--jewel-gold)] hover:text-[var(--jewel-gold-bright)]"
             >
               ×
             </button>

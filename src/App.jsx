@@ -17,8 +17,8 @@ const AppContent = () => {
 
   // Dynamic background based on occasion
   const appClassName = useMemo(() => {
-    // Eid Al Fitr theme (active)
-    if (occasion === OCCASIONS.EID_FITR) {
+    // Eid Al Adha theme (active)
+    if (occasion === OCCASIONS.EID_ADHA) {
       return "flex flex-col min-h-screen bg-gradient-to-br from-[#F0FFF4] to-[#FDF6E3] dark:from-[#031D1F] dark:to-[#0D3B3E] transition-colors duration-300";
     }
     // Fallback (same as Eid)

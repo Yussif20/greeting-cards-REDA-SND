@@ -13,18 +13,27 @@ const resources = {
         "Select an occasion to create personalized greeting cards",
       select: "Select",
 
-      // Eid Al Fitr
-      eid_fitr_title: "Eid Al Fitr",
-      eid_fitr_occasion_description:
-        "Celebrate Eid Al Fitr with beautiful personalized greeting cards",
-      eid_fitr_greeting: "Eid Mubarak!",
-      eid_fitr_message:
-        "Celebrate the joyous occasion of Eid Al Fitr with personalized greeting cards for your loved ones.",
-      eid_fitr_preview_description:
-        "Preview of your custom Eid Al Fitr greeting card.",
-      eid_fitr_testimonial_message:
+      // Eid Al Adha
+      eid_adha_title: "Eid Al Adha",
+      eid_adha_occasion_description:
+        "Celebrate Eid Al Adha with beautiful personalized greeting cards",
+      eid_adha_greeting: "Eid Mubarak!",
+      eid_adha_message:
+        "Celebrate the joyous occasion of Eid Al Adha with personalized greeting cards for your loved ones.",
+      eid_adha_preview_description:
+        "Preview of your custom Eid Al Adha greeting card.",
+      eid_adha_testimonial_message:
         "Creating a custom Eid card brought so much joy to my family and friends!",
-      eid_fitr_testimonial_author: "Ahmed S.",
+      eid_adha_testimonial_author: "Ahmed S.",
+
+      // Eid Al Fitr (commented out — kept for next Eid Al Fitr)
+      // eid_fitr_title: "Eid Al Fitr",
+      // eid_fitr_occasion_description: "Celebrate Eid Al Fitr with beautiful personalized greeting cards",
+      // eid_fitr_greeting: "Eid Mubarak!",
+      // eid_fitr_message: "Celebrate the joyous occasion of Eid Al Fitr with personalized greeting cards for your loved ones.",
+      // eid_fitr_preview_description: "Preview of your custom Eid Al Fitr greeting card.",
+      // eid_fitr_testimonial_message: "Creating a custom Eid card brought so much joy to my family and friends!",
+      // eid_fitr_testimonial_author: "Ahmed S.",
 
       // Ramadan (commented out — kept for future use)
       // ramadan_title: "Ramadan",
@@ -55,9 +64,9 @@ const resources = {
 
       // Home
       greeting: "Eid Mubarak",
-      wishes: "Wishing you and your family a joyous and blessed Eid Al Fitr",
+      wishes: "Wishing you and your family a joyous and blessed Eid Al Adha",
       description:
-        "At Reda Hazard Control, we celebrate the joyous occasion of Eid Al Fitr by creating personalized greeting cards to share happiness and blessings",
+        "At Reda Hazard Control, we celebrate the joyous occasion of Eid Al Adha by creating personalized greeting cards to share happiness and blessings",
       create_card: "Create Your Card Now",
       visit_website: "Visit Website",
       cards_downloaded: "{count} cards downloaded so far",
@@ -117,17 +126,17 @@ const resources = {
       save_card: "Save Card",
       share_card: "Share Card",
       greeting_card: "Greeting Card",
-      share_message: "Check out my custom Eid Al Fitr greeting card!",
+      share_message: "Check out my custom Eid Al Adha greeting card!",
       loading_fonts: "Loading fonts...",
       font_load_error_retry: "Failed to load fonts. Please try again.",
       image_load_error: "Failed to load image. Please select another card.",
       download_error: "Failed to download card. Please try again.",
       share_error: "Failed to share card. Please try again.",
       retry: "Retry",
-      sample_card: "Sample Eid Al Fitr greeting card",
+      sample_card: "Sample Eid Al Adha greeting card",
       enter_name_first: "Please enter your name first",
       download_card: "Download Card",
-      preview_description: "Preview of your custom Eid Al Fitr greeting card.",
+      preview_description: "Preview of your custom Eid Al Adha greeting card.",
       cards_created: "Cards Created",
       happy_users: "Happy Users",
       support_available: "Support Available",
@@ -143,17 +152,27 @@ const resources = {
       select_occasion_description: "اختر مناسبة لإنشاء بطاقات تهنئة مخصصة",
       select: "اختر",
 
-      // Eid Al Fitr
-      eid_fitr_title: "عيد الفطر",
-      eid_fitr_occasion_description:
-        "احتفل بعيد الفطر المبارك ببطاقات تهنئة مخصصة جميلة",
-      eid_fitr_greeting: "عيد مبارك!",
-      eid_fitr_message:
-        "احتفل بمناسبة عيد الفطر السعيدة ببطاقات تهنئة مخصصة لأحبائك.",
-      eid_fitr_preview_description: "معاينة بطاقة عيد الفطر المخصصة الخاصة بك.",
-      eid_fitr_testimonial_message:
+      // Eid Al Adha
+      eid_adha_title: "عيد الأضحى",
+      eid_adha_occasion_description:
+        "احتفل بعيد الأضحى المبارك ببطاقات تهنئة مخصصة جميلة",
+      eid_adha_greeting: "عيد مبارك!",
+      eid_adha_message:
+        "احتفل بمناسبة عيد الأضحى السعيدة ببطاقات تهنئة مخصصة لأحبائك.",
+      eid_adha_preview_description:
+        "معاينة بطاقة عيد الأضحى المخصصة الخاصة بك.",
+      eid_adha_testimonial_message:
         "إنشاء بطاقة عيد مخصصة أدخل الفرح على عائلتي وأصدقائي!",
-      eid_fitr_testimonial_author: "أحمد س.",
+      eid_adha_testimonial_author: "أحمد س.",
+
+      // Eid Al Fitr (commented out — kept for next Eid Al Fitr)
+      // eid_fitr_title: "عيد الفطر",
+      // eid_fitr_occasion_description: "احتفل بعيد الفطر المبارك ببطاقات تهنئة مخصصة جميلة",
+      // eid_fitr_greeting: "عيد مبارك!",
+      // eid_fitr_message: "احتفل بمناسبة عيد الفطر السعيدة ببطاقات تهنئة مخصصة لأحبائك.",
+      // eid_fitr_preview_description: "معاينة بطاقة عيد الفطر المخصصة الخاصة بك.",
+      // eid_fitr_testimonial_message: "إنشاء بطاقة عيد مخصصة أدخل الفرح على عائلتي وأصدقائي!",
+      // eid_fitr_testimonial_author: "أحمد س.",
 
       // Ramadan (commented out — kept for future use)
       // ramadan_title: "رمضان",
@@ -184,9 +203,9 @@ const resources = {
 
       // Home
       greeting: "عيد مبارك",
-      wishes: "نتمنى لكم ولعائلتكم عيد فطر سعيد ومبارك",
+      wishes: "نتمنى لكم ولعائلتكم عيد أضحى سعيد ومبارك",
       description:
-        "في رضا للسيطرة على المخاطر، نحتفل بمناسبة عيد الفطر السعيدة بإنشاء بطاقات تهنئة مخصصة لمشاركة السعادة والبركة",
+        "في رضا للسيطرة على المخاطر، نحتفل بمناسبة عيد الأضحى السعيدة بإنشاء بطاقات تهنئة مخصصة لمشاركة السعادة والبركة",
       create_card: "أنشئ بطاقتك الآن",
       visit_website: "زيارة الموقع",
       cards_downloaded: "تم تنزيل {count} بطاقة حتى الآن",
@@ -244,17 +263,17 @@ const resources = {
       save_card: "حفظ البطاقة",
       share_card: "مشاركة البطاقة",
       greeting_card: "بطاقة تهنئة",
-      share_message: "شاهد بطاقة عيد الفطر المخصصة الخاصة بي!",
+      share_message: "شاهد بطاقة عيد الأضحى المخصصة الخاصة بي!",
       loading_fonts: "جارٍ تحميل الخطوط...",
       font_load_error_retry: "فشل تحميل الخطوط. يرجى المحاولة مرة أخرى.",
       image_load_error: "فشل تحميل الصورة. يرجى اختيار بطاقة أخرى.",
       download_error: "فشل تنزيل البطاقة. يرجى المحاولة مرة أخرى.",
       share_error: "فشل مشاركة البطاقة. يرجى المحاولة مرة أخرى.",
       retry: "إعادة المحاولة",
-      sample_card: "نموذج بطاقة تهنئة عيد الفطر",
+      sample_card: "نموذج بطاقة تهنئة عيد الأضحى",
       enter_name_first: "يرجى إدخال اسمك أولاً",
       download_card: "تحميل البطاقة",
-      preview_description: "معاينة بطاقة عيد الفطر المخصصة الخاصة بك.",
+      preview_description: "معاينة بطاقة عيد الأضحى المخصصة الخاصة بك.",
       cards_created: "بطاقات تم إنشاؤها",
       happy_users: "مستخدمون سعداء",
       support_available: "الدعم المتاح",

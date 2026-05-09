@@ -1,41 +1,44 @@
-// src/components/Footer.jsx
 import { useTranslation } from "react-i18next";
-import { Logo } from "./Header"; // Import the Logo component
+import { Logo } from "./Header";
+import { EightPointStar } from "./Ornaments";
 
 const Footer = () => {
   const { t, i18n } = useTranslation();
+  const isArabic = i18n.language === "ar";
+  const labelFont = isArabic ? "font-display-ar" : "font-display-en";
 
   return (
     <footer
-      className="py-6 w-full min-h-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-t border-white/20 dark:border-[#D4AF37]/20 text-[#1A3C34] dark:text-[#E8F5E9] flex flex-col items-center justify-center px-6 shadow-lg transition-all duration-300"
-      dir={i18n.language === "ar" ? "rtl" : "ltr"} // Dynamic text direction
+      className="relative w-full bg-[var(--parchment-light)]/95 dark:bg-[#06140f]/95 backdrop-blur-lg py-8 px-6 transition-all duration-300"
+      dir={isArabic ? "rtl" : "ltr"}
     >
-      {/* Glass effect overlay */}
-      <div className="absolute inset-0 bg-linear-to-t from-[#0D7377]/5 to-transparent dark:from-[#D4AF37]/5 dark:to-transparent"></div>
+      {/* Double gold rule along the top edge */}
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-[var(--chrome-border)]" />
+      <div className="absolute top-[3px] left-0 right-0 h-[1px] bg-[var(--chrome-border)]/50" />
 
-      <div className="relative z-10 flex flex-col items-center">
+      <div className="relative z-10 flex flex-col items-center gap-4">
         {/* Logo */}
-        <div className="mb-3">
-          <div className="dark:bg-transparent rounded-xl p-2">
-            <Logo
-              className="h-8 w-auto max-w-30 transition-transform duration-300 hover:scale-105"
-              ariaLabel="Reda Hazard Control Logo"
-            />
-          </div>
-        </div>
+        <Logo
+          className="h-7 w-auto max-w-32 transition-transform duration-300 hover:scale-105"
+          ariaLabel="Reda Hazard Control Logo"
+        />
 
-        {/* Copyright Text */}
-        <p className="text-sm sm:text-base text-center font-medium bg-linear-to-r from-[#0D7377] to-[#065F56] dark:from-[#D4AF37] dark:to-[#E8F5E9] bg-clip-text text-transparent">
+        {/* Copyright */}
+        <p
+          className={`text-xs uppercase tracking-[0.2em] text-center text-[var(--chrome-text)] opacity-80 ${labelFont}`}
+        >
           {t("copyright")}
         </p>
 
-        {/* Eid Badge */}
-        <div className="mt-2 px-3 py-1 bg-[#0D7377]/10 dark:bg-[#D4AF37]/10 backdrop-blur-sm rounded-full border border-[#0D7377]/20 dark:border-[#D4AF37]/20">
-          <span className="text-xs font-semibold text-[#0D7377] dark:text-[#D4AF37]">
-            {i18n.language === "ar"
-              ? "عيد مبارك 2026 ✨"
-              : "✨ Eid Mubarak 2026"}
+        {/* Eid badge — ornate gold-rule chip with stars on either side */}
+        <div className="inline-flex items-center gap-3 px-5 py-2 border border-[var(--chrome-border)] rounded-sm bg-[var(--chrome-border)]/5">
+          <EightPointStar size={10} className="text-[var(--chrome-text)]" />
+          <span
+            className={`text-xs uppercase tracking-[0.22em] text-[var(--chrome-text)] ${labelFont}`}
+          >
+            {isArabic ? "عيد مبارك ٢٠٢٦" : "Eid Mubarak 2026"}
           </span>
+          <EightPointStar size={10} className="text-[var(--chrome-text)]" />
         </div>
       </div>
     </footer>

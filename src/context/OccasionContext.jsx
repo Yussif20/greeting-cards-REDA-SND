@@ -3,13 +3,29 @@ import { createContext, useContext, useState, useEffect } from "react";
 const OccasionContext = createContext();
 
 export const OCCASIONS = {
-  EID_FITR: "eid-fitr",
+  EID_ADHA: "eid-adha",
+  // EID_FITR: "eid-fitr",
   // RAMADAN: "ramadan",
   // FOUNDING_DAY: "founding-day",
 };
 
 // Theme configurations for each occasion
 export const OCCASION_THEMES = {
+  [OCCASIONS.EID_ADHA]: {
+    primary: "#0D7377",
+    secondary: "#065F56",
+    accent: "#D4AF37",
+    lightBg: "from-[#F0FFF4] via-[#F5FFF9] to-[#FDF6E3]",
+    darkBg: "from-[#031D1F] via-[#0D3B3E] to-[#031D1F]",
+    lightBgImage: "/eid-light.jpg",
+    darkBgImage: "/eid-dark.jpg",
+    cardsPath: "/eid-adha",
+    logo: {
+      light: "/eid-adha/RHC.jpg",
+      dark: "/eid-adha/RHC.jpg",
+    },
+  },
+  /*
   [OCCASIONS.EID_FITR]: {
     primary: "#0D7377",
     secondary: "#065F56",
@@ -24,7 +40,6 @@ export const OCCASION_THEMES = {
       dark: "/eid/RHC.jpg",
     },
   },
-  /*
   [OCCASIONS.RAMADAN]: {
     primary: "#1B3A5C",
     secondary: "#0F2641",
@@ -58,8 +73,8 @@ export const OCCASION_THEMES = {
 
 export const OccasionProvider = ({ children }) => {
   const [occasion, setOccasion] = useState(() => {
-    // Auto-select Eid Al Fitr as the only active occasion
-    return OCCASIONS.EID_FITR;
+    // Auto-select Eid Al Adha as the only active occasion
+    return OCCASIONS.EID_ADHA;
   });
 
   useEffect(() => {
