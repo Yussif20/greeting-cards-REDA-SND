@@ -5,6 +5,7 @@ import eidAdhaGreen from "/eid-adha/Green.jpg";
 import eidAdhaProcess from "/eid-adha/Process.jpg";
 import eidAdhaSafe from "/eid-adha/Safe.jpg";
 import eidAdhaVerdifor from "/eid-adha/Verdifor.jpg";
+import eidAdhaGuard from "/eid-adha/GUARD.JPEG";
 
 // Import Eid Al Fitr greeting cards (commented out — kept for next Eid Al Fitr)
 // import eidRhc from "/eid/RHC.jpg";
@@ -38,6 +39,7 @@ export const eidAdhaCards = [
   { src: eidAdhaProcess, name: "Process" },
   { src: eidAdhaSafe, name: "Safe" },
   { src: eidAdhaVerdifor, name: "Verdifor" },
+  { src: eidAdhaGuard, name: "Guard" },
 ];
 
 // All Eid Al Fitr greeting cards (commented out — kept for next Eid Al Fitr)
