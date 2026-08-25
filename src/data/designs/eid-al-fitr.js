@@ -8,12 +8,12 @@
 
 const DIR = "/cards/eid-al-fitr";
 
-// Calligraphy occupies 0.30-0.55 and the "EID MUBARAK" line sits at ~0.62.
+// Calligraphy occupies 0.28-0.56 and the "EID MUBARAK" line sits at ~0.62.
 const layout = () => ({
-  safeArea: { x: 0.08, y: 0.70, w: 0.84, h: 0.24 },
-  name: { x: 0.5, y: 0.77, size: 0.052, align: "center", maxWidth: 0.84 },
-  jobTitle: { x: 0.5, y: 0.845, size: 0.024, align: "center", maxWidth: 0.84 },
-  logo: { x: 0.5, y: 0.92, width: 0.28 },
+  safeArea: { x: 0.08, y: 0.72, w: 0.84, h: 0.20 },
+  name: { x: 0.5, y: 0.78, size: 0.05, align: "center", maxWidth: 0.84 },
+  jobTitle: { x: 0.5, y: 0.855, size: 0.023, align: "center", maxWidth: 0.84 },
+  logo: { x: 0.5, y: 0.92, width: 0.26 },
   palette: ["#FFFFFF", "#E7C873", "#8FB8E8", "#EE2E3A", "#0B1A33"],
   defaultColor: "#FFFFFF",
   fontId: "din-next-arabic",

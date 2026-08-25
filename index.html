@@ -1,21 +1,45 @@
-<!DOCTYPE html>
-<html dir="ltr" lang="en">
+<!doctype html>
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      sizes="192x192"
-      href="https://static.wixstatic.com/media/1399b2_06a7995bee2b4a83a92d0151e70241d3%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/1399b2_06a7995bee2b4a83a92d0151e70241d3%7Emv2.png"
-      type="image/png"
+    <meta name="theme-color" content="#0f5f4a" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1412" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="description"
+      content="Official REDA greeting cards for every occasion, all year round."
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Scheherazade:wght@400;700&family=Lateef&family=Arial&family=Roboto:wght@400;700&family=Lora:wght@400;700&family=Playfair+Display:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
-      rel="stylesheet"
-    />
-    <title>Greeting Cards REDA</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <title>REDA Cards</title>
+
+    <meta property="og:title" content="REDA Cards" />
+    <meta property="og:description" content="Celebrate Every Occasion" />
+    <meta property="og:type" content="website" />
+
+    <!-- Applied before first paint so the page never flashes light-then-dark,
+         nor LTR-then-RTL. Keys match ThemeSwitcher and src/i18n/index.js. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (!t) {
+            t = window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          }
+          if (t === "dark") document.documentElement.classList.add("dark");
+
+          var l = localStorage.getItem("reda-lang");
+          if (l === "ar" || l === "en") {
+            document.documentElement.lang = l;
+            document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+          }
+        } catch (e) {
+          /* private mode: fall through to the markup defaults */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

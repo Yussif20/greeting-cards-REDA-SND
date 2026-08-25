@@ -1,173 +1,135 @@
-# 🌙 Ramadan Greeting Cards
+# REDA Cards
 
-A stunning, modern web application for creating personalized Ramadan greeting cards with premium glass morphism design and an elegant night sky theme.
+Personalised corporate greeting cards for REDA, in Arabic and English, for six
+occasions across the year.
 
-## ✨ Features
+Pick an occasion, pick a design, add a name and job title, then download the
+card as a full-resolution image.
 
-### 🎨 **Premium Design System**
-
-- **Glass Morphism UI**: Modern transparent design with backdrop blur effects
-- **Ramadan Theme Colors**: Night sky navy (#1B3A5C) and warm gold (#C9A84C) color palette
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **Dark/Light Modes**: Seamless theme switching with Ramadan-inspired colors
-
-### 🌍 **Internationalization**
-
-- **Bilingual Support**: Full Arabic and English localization
-- **RTL Layout**: Complete right-to-left layout support for Arabic
-- **Cultural Sensitivity**: Respectful representation of Islamic culture and Ramadan traditions
-- **Stylish Language Switcher**: Glass morphism switcher with smooth transitions
-
-### 🖼️ **Card Customization**
-
-- **Drag & Drop Text**: Interactive text positioning
-- **Font Customization**: Multiple Arabic and English fonts
-- **Color Controls**: Text color, shadow, and styling options
-- **Zoom & Preview**: Real-time card preview with zoom functionality
-- **Download Options**: High-quality card downloads
-
-### 🕌 **Ramadan Cultural Elements**
-
-- **Ramadan Theming**: Dedicated to the holy month of Ramadan
-- **Spiritual Messaging**: Authentic Arabic and English Ramadan greetings
-- **Islamic Imagery**: Crescent moons, lanterns, mosques, and stars
-- **Elegant Design**: Night sky aesthetic with warm golden accents
-
-## 🛠️ **Technology Stack**
-
-- **Frontend**: React 19 with modern hooks
-- **Build Tool**: Vite for fast development and optimized builds
-- **Styling**: Tailwind CSS with custom CSS variables
-- **Icons**: Lucide React for consistent iconography
-- **Internationalization**: react-i18next with full RTL support
-- **Animations**: Custom CSS animations with smooth transitions
-
-## 🚀 **Getting Started**
-
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/Yussif20/greeting-cards-REDA-SND.git
-   cd greeting-cards-REDA-SND
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Start development server**
-
-   ```bash
-   npm run dev
-   ```
-
-4. **Open in browser**
-   ```
-   http://localhost:5173
-   ```
-
-### Build for Production
+## Running it
 
 ```bash
-npm run build
+npm install
+npm run dev       # http://localhost:5173
+npm run build     # production build
+npm run preview   # serve the build -- exercises the real SPA fallback
+npm run lint
+npm run assets    # regenerate optimised images (see "Artwork" below)
 ```
 
-### Preview Production Build
+## How it is put together
 
-```bash
-npm run preview
-```
-
-## 📁 **Project Structure**
+- **React 19 + Vite 6**, plain JSX, no TypeScript.
+- **Tailwind CSS v4** via `@tailwindcss/vite`. There is no `tailwind.config.js` —
+  configuration is CSS-first in `src/index.css`.
+- **react-router 7**, with occasion and design in the URL.
+- **i18next**, Arabic and English, with direction handled on `<html>`.
+- Cards are drawn with the **2D canvas API**. No html2canvas, no image libraries.
 
 ```
 src/
-├── components/              # React components
-│   ├── Header.jsx           # Glass morphism header with language switcher
-│   ├── Home.jsx             # Landing page with hero section
-│   ├── Footer.jsx           # Ramadan-themed footer
-│   ├── CardGallery.jsx      # Card browsing gallery
-│   ├── CustomizationPage.jsx # Card customization editor
-│   ├── CardSelector.jsx     # Legacy card selector (backward compat)
-│   ├── ThemeSwitcher.jsx    # Dark/light mode toggle
-│   └── AnimatedSection.jsx  # Animation wrapper
-├── data.js                  # Card data and configuration
-├── i18n.js                  # Internationalization setup (EN + AR)
-├── index.css                # Global styles and CSS variables
-├── App.jsx                  # Router and root layout
-└── main.jsx                 # Application entry point
+  data/      the registries: occasions, designs, brands, fonts
+  lib/       canvas rendering, layer geometry, export, drafts
+  hooks/     editor state, pointer interaction, URL params
+  i18n/      UI strings (en/ar)
+  components/  layout · brand · ui · occasions · designs · editor
+  pages/     OccasionsPage · DesignsPage · EditorPage · NotFoundPage
 ```
 
-## 🎨 **Design System**
+### Routing
 
-### **Color Palette**
+| Path | Page |
+|---|---|
+| `/` | all six occasions |
+| `/:occasion` | design chooser (`?style=` filters) |
+| `/:occasion/:designId` | editor |
 
-- **Primary**: Night Sky Navy (#1B3A5C)
-- **Accent**: Warm Gold (#C9A84C)
-- **Company Blue**: Reda Blue (#243E87) — used in logo and brand elements
-- **Supporting**: Deep Night (#0F2641), Warm Cream (#F5E6CC)
-- **Background**: Soft Cream (#FFF8F0) for light mode, Deep Night (#070D18) for dark mode
+Everything the editor needs comes from the URL, so links are shareable and a
+refresh keeps you where you were. Nothing is passed through `location.state`.
 
-### **Glass Morphism Standards**
+### The registries
 
-- **Transparency**: 20-30% for main elements
-- **Backdrop Blur**: `backdrop-blur-xl` for optimal readability
-- **Borders**: Semi-transparent with gold/navy theme colors
-- **Shadows**: Layered shadows for depth and elevation
+`src/data/occasions.js` and `src/data/designs/*.js` are the single source of
+truth. Adding an occasion or a design is a data edit — no component changes.
 
-### **Typography**
+Occasion copy lives in the registry as `{ ar, en }` objects rather than as
+i18n keys, because an occasion is a domain entity rather than interface text.
+`src/lib/localize.js` resolves it. UI chrome stays in `src/i18n/`.
 
-- **Arabic Fonts**: Amiri, Cairo, Tajawal for authentic Arabic text
-- **English Fonts**: Playfair Display, Lora for elegant serif styling
-- **Responsive Scaling**: Optimized for all screen sizes
+**All design geometry is stored as a fraction of the native image, never in
+pixels.** That is what keeps the live preview, the exported file and the grid
+thumbnail in agreement, and it lets artwork of different sizes coexist.
 
-## 🔧 **Development**
+### Cards and brands
 
-### **Available Scripts**
+Each design declares whether its brand logo is already part of the artwork:
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+- `brandBakedIn: true` (all current artwork) — the brand selector picks a
+  *different design*, since the logo is in the pixels.
+- `brandBakedIn: false` — the brand becomes a layer composited at render time
+  from `src/data/brands.js`.
 
-### **Environment Setup**
+Both paths render the same control, so the interface does not change when
+logo-free artwork is supplied.
 
-The application works out of the box with no additional environment configuration required.
+### Rendering
 
-## 🎯 **Project Goals**
+`src/lib/renderCard.js` is the only place a card is drawn. The preview, the
+download and the share all call it.
 
-1. **Ramadan Celebration**: Honor the holy month with respectful, elegant representation
-2. **Modern Design**: Night sky aesthetic with glass morphism and warm golden accents
-3. **Accessibility**: Ensure inclusive design for all users with WCAG-compliant contrast
-4. **Performance**: Deliver fast, smooth user experience
-5. **Internationalization**: Full Arabic and English support with RTL layout
+It draws **only pixels that belong in the exported file**. Selection chrome —
+the dashed box, corner handles, guides — is a DOM overlay
+(`SelectionOverlay.jsx`), so it cannot leak into a download and stays crisp at
+any pixel ratio.
 
-## 🤝 **Contributing**
+Run the contract check with:
 
-We welcome contributions to improve this Ramadan celebration platform. Please ensure all contributions respect cultural and religious sensitivity and maintain the high-quality design standards.
+```bash
+node scripts/verify-render.mjs
+```
 
-## 📄 **License**
+It renders the same scene at preview scale and at export scale and asserts the
+results agree.
 
-This project is developed for celebrating the holy month of Ramadan. Please respect the cultural and religious significance and use responsibly.
+## Artwork
 
-## 🙏 **Acknowledgments**
+Optimised images under `public/` are generated, not hand-edited. Originals go
+in `assets-src/` (gitignored); `npm run assets` produces:
 
-- Islamic cultural heritage and Ramadan traditions
-- Reda Hazard Control company branding
-- Modern web design best practices
-- Accessibility and internationalization standards
+- `public/occasions/<slug>/hero.{avif,webp,jpg}` plus `@2x`
+- `public/cards/<slug>/NN.jpg` — masters, re-encoded
+- `public/cards/<slug>/thumbs/NN.webp` — grid thumbnails
 
----
+Card files are numbered `01…07`; the brand each one carries is recorded in
+`src/data/designs/<slug>.js`, not in the filename.
 
-**Ramadan Mubarak 2025** 🌙
+### Occasions still using borrowed artwork
 
-_Built with ❤️ by Reda Hazard Control_
+Saudi National Day, the Hijri New Year and the Gregorian New Year have no
+artwork of their own yet and display another occasion's cards, marked "sample
+artwork" in the interface. **The Hijri and Gregorian New Year samples still read
+"Ramadan Mubarak".**
+
+To retire a placeholder: add the real files, add a
+`src/data/designs/<slug>.js`, register it in `designs/index.js`, and set
+`artStatus: "final"` in `occasions.js`.
+
+## Known gaps
+
+- **The REDA Cards logo** in the header and footer is hand-authored from the
+  design mockup (`components/brand/RedaCardsLogo.jsx`). Replace it with the
+  official vector.
+- **Brand logos** are not available as transparent files, so `logo` is `null`
+  throughout `src/data/brands.js` and the compositing path is inert. The Arabic
+  company names there are provisional.
+- **The card font** in the design spec is DIN Next Arabic, a licensed Monotype
+  face. IBM Plex Sans Arabic is self-hosted as a close stand-in. If REDA holds a
+  *web* licence, add the `.woff2` to `public/fonts/`, declare an `@font-face`,
+  and set `available: true` in `src/data/fonts.js`.
+- **Style tags** on designs were assigned by eye and are provisional — one line
+  each in `src/data/designs/<slug>.js`.
+- **Edition numbers** (Saudi National Day "96") are hardcoded and need an annual
+  review.
+- **Saudi Founding Day artwork** is a fully composed poster with very little
+  clear space; its personalisation band is narrow and its type is set smaller
+  than the other occasions as a result.

@@ -1,127 +1,233 @@
 @import "tailwindcss";
 
+/* Self-hosted card + UI faces. Vite fingerprints these, and canvas font loading
+   is far more predictable with local faces than with a CDN <link>. */
+@import "@fontsource/ibm-plex-sans-arabic/400.css";
+@import "@fontsource/ibm-plex-sans-arabic/500.css";
+@import "@fontsource/ibm-plex-sans-arabic/600.css";
+@import "@fontsource/ibm-plex-sans-arabic/700.css";
+@import "@fontsource/cairo/400.css";
+@import "@fontsource/cairo/700.css";
+@import "@fontsource/tajawal/400.css";
+@import "@fontsource/tajawal/700.css";
+@import "@fontsource/almarai/400.css";
+@import "@fontsource/almarai/700.css";
+@import "@fontsource/amiri/400.css";
+@import "@fontsource/amiri/700.css";
+
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* CSS Variables - Eid Al Adha Jewel-Tone Theme */
+/* ---------------------------------------------------------------------------
+   Tier 1 -- raw palette. Static, so it belongs in @theme and becomes utilities
+   like bg-teal-700 directly.
+   --------------------------------------------------------------------------- */
+@theme {
+  --font-sans:
+    "IBM Plex Sans Arabic", "Inter", system-ui, -apple-system, sans-serif;
+
+  --color-teal-900: #0b3b31;
+  --color-teal-800: #0b4636;
+  --color-teal-700: #0f5f4a;
+  --color-teal-600: #157055;
+  --color-teal-500: #1e7a4b;
+  --color-teal-300: #4fbf85;
+  --color-teal-200: #6fd3a0;
+
+  --color-gold-600: #a8861f;
+  --color-gold-500: #c9a227;
+  --color-gold-300: #e0c063;
+
+  --color-sand-100: #faf8f4;
+  --color-sand-200: #f2efe9;
+  --color-sand-300: #e4e0d8;
+}
+
+/* ---------------------------------------------------------------------------
+   Tier 2 -- semantic tokens. These must respond to .dark, which @theme values
+   cannot do, so they are plain custom properties and are re-exported as
+   utilities through @theme inline below.
+   --------------------------------------------------------------------------- */
 :root {
-  /* Brand colors (Reda Hazard Control) */
-  --brand-red: #ee2e3a;
-  --brand-red-deep: #b9242e; /* Darker hover state */
-  --brand-sapphire: #243e87;
-  --brand-sapphire-deep: #1b3070; /* Darker hover state */
-  --brand-sapphire-bright: #4a6bc9; /* Lighter for dark-mode contrast */
+  --surface: #faf8f4;
+  --surface-2: #ffffff;
+  --surface-3: #f2efe9;
+  --ink: #0e2a24;
+  --ink-2: #3c534d;
+  --ink-3: #7c8b86;
+  --line: #e4e0d8;
+  --brand: #0f5f4a;
+  --brand-strong: #0b4636;
+  --brand-soft: #e8f1ed;
+  --on-brand: #ffffff;
+  --gold: #c9a227;
+  --gold-soft: #f3e7c6;
+  --danger: #b3261e;
+  --danger-soft: #fbeceb;
+  --focus: #1e7a4b;
 
-  /* Jewel-tone palette */
-  --jewel-emerald: #0b4f3a; /* Deep emerald */
-  --jewel-emerald-dark: #06311f; /* Darker emerald */
-  --jewel-sapphire: #1e3a8a; /* Royal sapphire */
-  --jewel-plum: #5c2a4a; /* Rich plum */
-  --jewel-gold: #c8a24a; /* Royal gold leaf */
-  --jewel-gold-bright: #e0c270; /* Brighter highlight gold */
-  --jewel-gold-deep: #8a6b1f; /* Deeper antique gold for shadow */
-  --parchment: #efe6d2; /* Warm champagne */
-  --parchment-light: #f5eedb; /* Lighter champagne */
-  --ivory: #ece4cf; /* Warm ivory text */
-  --ink: #1a1410; /* Deep ink black */
+  /* An inverted surface: derivation breaks in dark mode, so it is explicit. */
+  --chip-active-bg: #0e2a24;
+  --chip-active-fg: #ffffff;
 
-  --background: var(--parchment);
-  --foreground: var(--ink);
-  --card-bg: #ffffff;
-  --card-gradient-start: #ffffff;
-  --card-gradient-end: var(--parchment-light);
-  --border: var(--jewel-gold);
-  --primary-text: var(--ink);
-  --secondary-text: #5a4a32;
-  --accent-text: var(--jewel-gold);
+  --shadow-card: 0 1px 2px rgb(14 42 36 / 0.06), 0 8px 24px rgb(14 42 36 / 0.08);
+  --shadow-card-hover: 0 2px 4px rgb(14 42 36 / 0.08),
+    0 16px 40px rgb(14 42 36 / 0.14);
 
-  /* Chrome text — used in Header / Footer / chips that sit on light cream surfaces.
-     Sapphire reads cleanly on parchment and aligns with the brand. */
-  --chrome-text: var(--brand-sapphire);
-  --chrome-text-soft: #5a4a32; /* deep antique brown for inactive chrome labels */
-  --chrome-border: #8a6b1f; /* deep antique gold rule on cream */
+  /* Per-occasion accent. Pages set this from the registry; these are defaults. */
+  --occasion-accent: var(--brand);
+  --occasion-accent-soft: var(--brand-soft);
+  --occasion-on-accent: var(--on-brand);
 }
 
 .dark {
-  --background: #06140f; /* Deep midnight emerald-black */
-  --foreground: var(--ivory);
-  --card-bg: #0a1e18;
-  --card-gradient-start: #0a1e18;
-  --card-gradient-end: #06140f;
-  --border: #d4a847; /* Antique gold in dark */
-  --jewel-gold: #d4a847;
-  --jewel-gold-bright: #ecd28a;
-  --jewel-gold-deep: #8a6b2e;
+  --surface: #0b1412;
+  --surface-2: #101c18;
+  --surface-3: #172622;
+  --ink: #e9f1ec;
+  --ink-2: #b4c6bf;
+  --ink-3: #7e948d;
+  --line: #24352f;
+  --brand: #4fbf85;
+  --brand-strong: #6fd3a0;
+  --brand-soft: #12261d;
+  --on-brand: #06140f;
+  --gold: #e0c063;
+  --gold-soft: #2a2416;
+  --danger: #f2b8b5;
+  --danger-soft: #2a1614;
+  --focus: #4fbf85;
 
-  /* Chrome text in dark mode — gold reads well on midnight bg. */
-  --chrome-text: #d4a847;
-  --chrome-text-soft: rgba(212, 168, 71, 0.6);
-  --chrome-border: #d4a847; /* bright gold rule on midnight */
+  --chip-active-bg: #e9f1ec;
+  --chip-active-fg: #0b1412;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.45);
+  --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.5), 0 16px 40px rgb(0 0 0 / 0.6);
 }
 
-/* Apply variables */
-body {
-  @apply bg-[var(--background)] text-[var(--foreground)] font-sans;
-  font-family: "Lora", "Cairo", serif;
+/* Expose Tier 2 as real utilities while keeping the var() indirection, so
+   `bg-surface text-ink border-line` works in both themes from one class. */
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-on-brand: var(--on-brand);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-chip-active: var(--chip-active-bg);
+  --color-chip-active-fg: var(--chip-active-fg);
+  --color-accent: var(--occasion-accent);
+  --color-accent-soft: var(--occasion-accent-soft);
+  --color-on-accent: var(--occasion-on-accent);
 }
 
-/* Elegant Typography Classes */
-.font-elegant-en {
-  font-family: "Playfair Display", "Lora", serif;
-  font-weight: 500;
-  letter-spacing: 0.02em;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  a,
+  button {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--brand);
+    color: var(--on-brand);
+  }
+
+  /* Arabic numerals read better than Eastern ones inside Latin UI chrome. */
+  [lang="ar"] {
+    font-variant-numeric: lining-nums;
+  }
 }
 
-.font-elegant-ar {
-  font-family: "Amiri", "Cairo", "Tajawal", sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+/* Geometric arabesque watermark. An SVG tile: ~2KB and crisp at any DPR,
+   where a PNG would be ~200KB and visibly repeat on retina. */
+@utility bg-arabesque {
+  background-color: var(--surface);
+  background-image: url("/patterns/arabesque-light.svg");
+  background-size: 320px 320px;
+  background-position: center top;
+  background-repeat: repeat;
 }
 
-.font-elegant-mixed {
-  font-family: "Lora", "Amiri", "Cairo", serif;
-  font-weight: 500;
+.dark .bg-arabesque {
+  background-image: url("/patterns/arabesque-dark.svg");
 }
 
-/* Jewel-tone Display Typography (used in hero) */
-.font-display-en {
-  font-family: "Cinzel", "Cormorant Garamond", "Playfair Display", serif;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+/* Card-like surface used by occasion tiles, design cards and editor panels. */
+@utility panel {
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-card);
 }
 
-.font-display-ar {
-  font-family: "Aref Ruqaa", "Amiri", serif;
-  font-weight: 700;
-  letter-spacing: 0;
+@utility hover-lift {
+  transition:
+    transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.font-italic-display {
-  font-family: "Cormorant Garamond", "Playfair Display", serif;
-  font-style: italic;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
 }
 
-/* Language-specific improvements */
-[lang="ar"],
-[dir="rtl"] {
-  font-family: "Amiri", "Cairo", "Tajawal", sans-serif;
+/* Checkerboard behind the card preview, so a light design still reads as an
+   image rather than blending into the panel. */
+@utility bg-checker {
+  background-image:
+    linear-gradient(45deg, var(--surface-3) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--surface-3) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--surface-3) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--surface-3) 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0px;
 }
 
-[lang="en"],
-[dir="ltr"] {
-  font-family: "Playfair Display", "Lora", serif;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-a,
-button {
-  @apply cursor-pointer;
-}
-
-/* Scrollbar Styles */
+/* Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -129,404 +235,25 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(100, 116, 139, 0.5); /* slate-500 */
-  border-radius: 10px;
-  transition: background-color 0.3s ease;
+  background-color: var(--line);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(100, 116, 139, 0.7);
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background-color: rgba(203, 213, 225, 0.4); /* slate-200 */
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(203, 213, 225, 0.6);
+  background-color: var(--ink-3);
+  background-clip: content-box;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(100, 116, 139, 0.5) transparent;
+  scrollbar-color: var(--line) transparent;
 }
 
-.dark * {
-  scrollbar-color: rgba(203, 213, 225, 0.4) transparent;
-}
-
-/* Custom Utilities */
-@layer utilities {
-  .bg-card {
-    background-color: var(--card-bg);
-  }
-
-  .bg-gradient-card {
-    background-image: linear-gradient(
-      to bottom right,
-      var(--card-gradient-start),
-      var(--card-gradient-end)
-    );
-  }
-
-  .shadow-card {
-    box-shadow:
-      0 10px 15px -3px rgba(0, 0, 0, 0.1),
-      0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-
-  .border {
-    border-color: var(--border);
-  }
-
-  .scrollbar-hidden {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .scrollbar-hidden::-webkit-scrollbar {
-    display: none;
-  }
-
-  .transition-all {
-    transition: all 0.3s ease;
-  }
-
-  /* Jewel-tone hero overlay — saturates background image into a velvet ground.
-     Pairs with /eid-light.jpg or /eid-dark.jpg underneath. */
-  .jewel-overlay-light {
-    background:
-      radial-gradient(
-        ellipse at top left,
-        rgba(30, 58, 138, 0.45) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        ellipse at bottom right,
-        rgba(92, 42, 74, 0.4) 0%,
-        transparent 55%
-      ),
-      linear-gradient(
-        135deg,
-        rgba(11, 79, 58, 0.55) 0%,
-        rgba(239, 230, 210, 0.15) 50%,
-        rgba(92, 42, 74, 0.5) 100%
-      );
-  }
-
-  .jewel-overlay-dark {
-    background:
-      radial-gradient(
-        ellipse at top left,
-        rgba(200, 162, 74, 0.18) 0%,
-        transparent 55%
-      ),
-      radial-gradient(
-        ellipse at bottom right,
-        rgba(30, 58, 138, 0.35) 0%,
-        transparent 60%
-      ),
-      linear-gradient(
-        135deg,
-        rgba(6, 20, 15, 0.92) 0%,
-        rgba(10, 30, 24, 0.88) 50%,
-        rgba(6, 20, 15, 0.95) 100%
-      );
-  }
-
-  /* Ornate panel — dark velvet medallion with double-rule gold border.
-     Same dark background in both modes; only the surrounding page bg differs.
-     Add corner ornaments and content as children. */
-  .ornate-panel {
-    position: relative;
-    border: 1px solid var(--jewel-gold);
-    border-radius: 4px;
-    box-shadow:
-      0 0 0 1px rgba(200, 162, 74, 0.2) inset,
-      0 0 0 6px transparent inset,
-      0 0 0 7px var(--jewel-gold) inset,
-      0 0 0 8px rgba(0, 0, 0, 0.5) inset,
-      0 25px 50px -12px rgba(0, 0, 0, 0.55),
-      0 0 80px rgba(200, 162, 74, 0.1);
-    background:
-      linear-gradient(
-        180deg,
-        rgba(11, 79, 58, 0.85) 0%,
-        rgba(6, 20, 15, 0.92) 100%
-      ),
-      #08130e;
-  }
-
-  .dark .ornate-panel {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(11, 79, 58, 0.55) 0%,
-        rgba(6, 20, 15, 0.9) 100%
-      ),
-      #08130e;
-    box-shadow:
-      0 0 0 1px rgba(200, 162, 74, 0.15) inset,
-      0 0 0 6px transparent inset,
-      0 0 0 7px var(--jewel-gold) inset,
-      0 0 0 8px rgba(0, 0, 0, 0.5) inset,
-      0 25px 50px -12px rgba(0, 0, 0, 0.8),
-      0 0 100px rgba(200, 162, 74, 0.12);
-  }
-
-  /* Mihrab arch frame for the sample card */
-  .mihrab-frame {
-    position: relative;
-    border-radius: 50% 50% 6px 6px / 35% 35% 6px 6px;
-    border: 2px solid var(--jewel-gold);
-    box-shadow:
-      0 0 0 1px rgba(0, 0, 0, 0.4),
-      0 0 0 5px transparent,
-      0 0 0 6px rgba(200, 162, 74, 0.4),
-      0 12px 30px rgba(0, 0, 0, 0.4);
-    overflow: hidden;
-  }
-
-  /* CTA gold-rule outline button */
-  .cta-gold {
-    position: relative;
-    border: 1px solid var(--jewel-gold);
-    background:
-      linear-gradient(
-        135deg,
-        rgba(200, 162, 74, 0.15) 0%,
-        rgba(200, 162, 74, 0.05) 100%
-      );
-    box-shadow:
-      0 0 0 4px transparent,
-      0 0 0 5px rgba(200, 162, 74, 0.3) inset,
-      0 8px 20px rgba(0, 0, 0, 0.3);
-    color: var(--jewel-gold);
-    transition: all 0.3s ease;
-  }
-
-  .cta-gold:hover {
-    background:
-      linear-gradient(
-        135deg,
-        var(--jewel-gold) 0%,
-        var(--jewel-gold-deep) 100%
-      );
-    color: var(--ink);
-    box-shadow:
-      0 0 0 5px rgba(200, 162, 74, 0.5) inset,
-      0 12px 30px rgba(200, 162, 74, 0.35);
-  }
-
-  .dark .cta-gold:hover {
-    color: #06140f;
-  }
-
-  /* Smaller ornate panel for gallery cards — same dark velvet in both modes */
-  .ornate-card {
-    position: relative;
-    border: 1px solid var(--jewel-gold);
-    border-radius: 4px;
-    box-shadow:
-      0 0 0 1px rgba(200, 162, 74, 0.2) inset,
-      0 0 0 4px transparent inset,
-      0 0 0 5px rgba(200, 162, 74, 0.7) inset,
-      0 0 0 6px rgba(0, 0, 0, 0.4) inset,
-      0 12px 25px -8px rgba(0, 0, 0, 0.5);
-    background:
-      linear-gradient(
-        180deg,
-        rgba(11, 79, 58, 0.8) 0%,
-        rgba(6, 20, 15, 0.9) 100%
-      ),
-      #08130e;
-    transition:
-      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 0.35s ease;
-  }
-
-  .dark .ornate-card {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(11, 79, 58, 0.5) 0%,
-        rgba(6, 20, 15, 0.88) 100%
-      ),
-      #08130e;
-  }
-
-  .ornate-card:hover {
-    transform: translateY(-4px);
-    box-shadow:
-      0 0 0 1px rgba(0, 0, 0, 0.3) inset,
-      0 0 0 4px transparent inset,
-      0 0 0 5px var(--jewel-gold-bright) inset,
-      0 0 0 6px rgba(0, 0, 0, 0.3) inset,
-      0 20px 35px -8px rgba(0, 0, 0, 0.6),
-      0 0 60px rgba(200, 162, 74, 0.25);
-  }
-
-  /* Gold-rule input — used for text/select fields in customizer */
-  .input-gold {
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid var(--jewel-gold);
-    color: var(--ink);
-    box-shadow:
-      0 0 0 1px rgba(0, 0, 0, 0.2) inset,
-      0 0 0 3px transparent inset,
-      0 0 0 4px rgba(200, 162, 74, 0.3) inset;
-    transition: all 0.2s ease;
-  }
-
-  .input-gold:focus {
-    outline: none;
-    box-shadow:
-      0 0 0 1px rgba(0, 0, 0, 0.2) inset,
-      0 0 0 3px transparent inset,
-      0 0 0 4px var(--jewel-gold) inset,
-      0 0 20px rgba(200, 162, 74, 0.3);
-  }
-
-  .dark .input-gold {
-    background: rgba(6, 20, 15, 0.6);
-    color: var(--ivory);
-  }
-
-  /* Range slider — gold themed */
-  .range-gold {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(
-      to right,
-      var(--jewel-gold) 0%,
-      var(--jewel-gold-deep) 100%
-    );
-    border-radius: 2px;
-    outline: none;
-  }
-
-  .range-gold::-webkit-slider-thumb {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--jewel-gold-bright);
-    border: 2px solid var(--jewel-gold-deep);
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-    transition: transform 0.15s ease;
-  }
-
-  .range-gold::-webkit-slider-thumb:hover {
-    transform: scale(1.15);
-  }
-
-  .range-gold::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--jewel-gold-bright);
-    border: 2px solid var(--jewel-gold-deep);
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  }
-
-  /* Force the Logo to render in dark-mode colors regardless of theme.
-     Used when the Logo sits on a dark velvet panel even in light mode. */
-  .logo-on-dark [data-color="2"] {
-    fill: #ece4cf !important;
-  }
-
-  /* Section heading underline — small rule beneath panel section titles */
-  .heading-rule {
-    display: inline-block;
-    width: 60px;
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      transparent 0%,
-      var(--jewel-gold) 50%,
-      transparent 100%
-    );
-    margin: 8px auto 0;
-  }
-}
-
-/* RTL Support */
-[dir="rtl"] {
-  .ms-2 {
-    margin-inline: 0.5rem;
-  }
-
-  .me-2 {
-    margin-inline: 0.5rem;
-  }
-
-  .transform.rotate-180 {
-    transform: rotate(-180deg);
-  }
-}
-
-/* Animations */
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 0.6;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 8s infinite ease-in-out;
-}
-
-/* Glass morphism hover effects */
-.glass-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glass-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* Subtle background animation */
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.float-animation {
-  animation: float 6s ease-in-out infinite;
-}
-
-/* Language Switcher Enhanced Animations */
-.lang-switcher-glow {
-  position: relative;
-}
-
-/* Pulse animation for active language indicator */
-@keyframes pulse-eid {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
-  }
-}
-
-.pulse-eid {
-  animation: pulse-eid 2s infinite;
+/* Brand logo variants. `mono` collapses the two-colour REDA wordmark onto
+   currentColor for use on dark or tinted surfaces. */
+[data-variant="mono"] [data-color="1"],
+[data-variant="mono"] [data-color="2"] {
+  fill: currentColor;
 }

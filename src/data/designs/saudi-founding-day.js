@@ -8,13 +8,15 @@
 
 const DIR = "/cards/saudi-founding-day";
 
-// Type occupies 0.10-0.30 and the pattern band sits at ~0.45, so the clear
-// blush field between them is where personalisation belongs.
+// This artwork is densely filled: display type runs 0.20-0.44, the subtitle
+// to 0.52, the Najdi pattern band 0.58-0.72, and the Diriyah photograph from
+// 0.80. The only clear field is the blush band between them, so the type is
+// set smaller here than on the other occasions.
 const layout = () => ({
-  safeArea: { x: 0.10, y: 0.30, w: 0.80, h: 0.13 },
-  name: { x: 0.5, y: 0.345, size: 0.044, align: "center", maxWidth: 0.80 },
-  jobTitle: { x: 0.5, y: 0.405, size: 0.021, align: "center", maxWidth: 0.80 },
-  logo: { x: 0.5, y: 0.55, width: 0.24 },
+  safeArea: { x: 0.10, y: 0.71, w: 0.80, h: 0.075 },
+  name: { x: 0.5, y: 0.734, size: 0.033, align: "center", maxWidth: 0.80 },
+  jobTitle: { x: 0.5, y: 0.771, size: 0.016, align: "center", maxWidth: 0.80 },
+  logo: { x: 0.5, y: 0.66, width: 0.20 },
   palette: ["#8E2B34", "#3A2A22", "#A87A4A", "#FFFFFF", "#1A1410"],
   defaultColor: "#8E2B34",
   fontId: "din-next-arabic",

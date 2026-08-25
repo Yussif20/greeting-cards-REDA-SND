@@ -10,12 +10,13 @@
 
 const DIR = "/cards/eid-al-adha";
 
-// The "عيد مبارك" lockup sits around y=0.62, so personalisation goes beneath it.
+// The "عيد مبارك" lockup runs to y=0.71 and its Latin caption to 0.75,
+// so personalisation sits in the clear field beneath it.
 const layout = (defaultColor = "#FFFFFF") => ({
-  safeArea: { x: 0.08, y: 0.72, w: 0.84, h: 0.24 },
-  name: { x: 0.5, y: 0.79, size: 0.052, align: "center", maxWidth: 0.84 },
-  jobTitle: { x: 0.5, y: 0.865, size: 0.024, align: "center", maxWidth: 0.84 },
-  logo: { x: 0.5, y: 0.93, width: 0.28 },
+  safeArea: { x: 0.08, y: 0.77, w: 0.84, h: 0.18 },
+  name: { x: 0.5, y: 0.82, size: 0.05, align: "center", maxWidth: 0.84 },
+  jobTitle: { x: 0.5, y: 0.89, size: 0.023, align: "center", maxWidth: 0.84 },
+  logo: { x: 0.5, y: 0.95, width: 0.26 },
   palette: ["#FFFFFF", "#E7C873", "#7FD4F5", "#B8C6E0", "#0B1A33"],
   defaultColor,
   fontId: "din-next-arabic",
