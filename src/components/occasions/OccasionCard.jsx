@@ -24,10 +24,10 @@ const OccasionCard = ({ occasion, eager = false }) => {
     <Link
       to={`/${occasion.slug}`}
       aria-label={t("home.openOccasion", { name: english })}
-      className="hover-lift group relative block overflow-hidden rounded-2xl border border-line shadow-[var(--shadow-card)] focus-visible:outline-2 focus-visible:outline-offset-2"
+      className="hover-lift group relative block h-full overflow-hidden rounded-2xl border border-line shadow-[var(--shadow-card)] focus-visible:outline-2 focus-visible:outline-offset-2"
       style={{ outlineColor: theme.light.accent }}
     >
-      <div className="relative aspect-16/9 w-full overflow-hidden bg-surface-3">
+      <div className="relative aspect-16/9 w-full overflow-hidden bg-surface-3 desktop:aspect-auto desktop:h-full">
         <picture>
           <source
             type="image/avif"
@@ -63,17 +63,17 @@ const OccasionCard = ({ occasion, eager = false }) => {
           }}
         />
 
-        <div className="absolute inset-x-0 bottom-0 flex items-end gap-3 p-4 sm:p-5">
+        <div className="absolute inset-x-0 bottom-0 flex items-end gap-3 p-4 sm:p-5 desktop:p-4">
           <OccasionIcon
             name={occasion.icon}
-            className="mb-1 h-10 w-10 shrink-0 text-gold-300 opacity-90 sm:h-11 sm:w-11"
+            className="mb-0.5 h-9 w-9 shrink-0 text-gold-300 opacity-90 sm:h-11 sm:w-11 desktop:h-10 desktop:w-10"
           />
 
           <div className="min-w-0 flex-1">
             <h2
               lang="ar"
               dir="rtl"
-              className="truncate text-lg font-bold text-white sm:text-xl"
+              className="truncate text-lg font-bold text-white sm:text-xl desktop:text-lg"
             >
               {lang === "ar" ? title : arabic}
             </h2>

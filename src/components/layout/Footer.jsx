@@ -12,8 +12,8 @@ const Footer = () => {
   const { t } = useTranslation();
 
   return (
-    <footer className="border-t border-line bg-surface-2">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-10 sm:px-8 sm:py-14">
+    <footer className="shrink-0 border-t border-line bg-surface-2">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 px-4 py-8 sm:px-8 sm:py-10 lg:py-7">
         <RedaHazardControlLogo className="h-8 w-auto sm:h-9" />
 
         <div className="flex w-full max-w-lg items-center gap-5">

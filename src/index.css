@@ -20,6 +20,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Wide enough for the three-column grid AND tall enough to hold two rows of it
+   without crushing them. Used by the home page, which fills exactly one
+   viewport; anywhere smaller it scrolls like any other page.
+
+   736px is where the two tile rows still clear roughly 145px each after the
+   header, hero, footer and padding -- enough for a tile's overlay to breathe.
+   A 1366x768 laptop lands just under it and scrolls, which beats squashing. */
+@custom-variant desktop (@media (width >= 64rem) and (height >= 46rem));
+
 /* ---------------------------------------------------------------------------
    Tier 1 -- raw palette. Static, so it belongs in @theme and becomes utilities
    like bg-teal-700 directly.

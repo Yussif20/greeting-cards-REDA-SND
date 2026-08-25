@@ -12,7 +12,9 @@ const App = () => (
     <ScrollToTop />
     <div className="flex min-h-screen flex-col bg-surface">
       <Header />
-      <main className="flex-1">
+      {/* A flex column all the way down, so a page can opt into filling
+          exactly one viewport without relying on percentage heights. */}
+      <main className="flex min-h-0 flex-1 flex-col">
         <Routes>
           <Route path="/" element={<OccasionsPage />} />
           <Route path="/:occasion" element={<DesignsPage />} />

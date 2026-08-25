@@ -55,6 +55,26 @@ cause of "the downloaded card has the wrong font".
 Fonts are self-hosted via `@fontsource`. Note the family registered by the
 variable package is `Space Grotesk Variable`, not `Space Grotesk`.
 
+### The home page fills one viewport
+
+On a desktop-sized screen the home page is exactly `100vh` — no scrolling. The
+flex column runs `App` → `main` → `PageShell` → the tile grid, which takes
+whatever height the hero and chrome leave and splits it between two rows. Tiles
+therefore size themselves to the screen rather than imposing a fixed aspect
+ratio, so the page never grows past the fold.
+
+It is gated on a `desktop:` variant (`src/index.css`) that requires the viewport
+to be both wide **and** tall enough:
+
+```css
+@custom-variant desktop (@media (width >= 64rem) and (height >= 46rem));
+```
+
+Anywhere smaller the page scrolls normally. Six tiles will never fit a phone,
+and on a short laptop crushing them into the viewport reads worse than a
+scroll. Percentage heights are avoided throughout — a child of a flex item
+cannot resolve `height: 100%` reliably, so the chain is flex all the way down.
+
 ### Routing
 
 | Path | Page |
