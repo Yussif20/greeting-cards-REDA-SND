@@ -6,8 +6,11 @@ import { useLanguage } from "../../hooks/useLanguage.js";
 import OccasionIcon from "./OccasionIcon.jsx";
 
 /**
- * Photo tile: full-bleed hero under a bottom scrim, gold line icon, bilingual
- * title, one-line description, and a circular chevron.
+ * Photo tile: full-bleed hero under a bottom scrim, gold line icon, title,
+ * one-line description, and a circular chevron.
+ *
+ * Text is shown in the active language only. Nothing here needs its own lang or
+ * dir attribute, because it always matches the one on <html>.
  *
  * `eager` marks the above-the-fold tiles so the LCP image is not lazy.
  */
@@ -16,14 +19,12 @@ const OccasionCard = ({ occasion, eager = false }) => {
   const { lang } = useLanguage();
 
   const title = occasionHeading(occasion, lang);
-  const english = loc(occasion.title, "en");
-  const arabic = loc(occasion.title, "ar");
   const { hero, theme } = occasion;
 
   return (
     <Link
       to={`/${occasion.slug}`}
-      aria-label={t("home.openOccasion", { name: english })}
+      aria-label={t("home.openOccasion", { name: title })}
       className="hover-lift group relative block h-full overflow-hidden rounded-2xl border border-line shadow-[var(--shadow-card)] focus-visible:outline-2 focus-visible:outline-offset-2"
       style={{ outlineColor: theme.light.accent }}
     >
@@ -70,22 +71,11 @@ const OccasionCard = ({ occasion, eager = false }) => {
           />
 
           <div className="min-w-0 flex-1">
-            <h2
-              lang="ar"
-              dir="rtl"
-              className="truncate text-lg font-bold text-white sm:text-xl desktop:text-lg"
-            >
-              {lang === "ar" ? title : arabic}
+            <h2 className="line-clamp-2 text-lg font-bold text-white sm:text-xl desktop:text-lg">
+              {title}
             </h2>
-            <p lang="en" dir="ltr" className="truncate text-sm text-white/85">
-              {lang === "ar" ? english : title}
-            </p>
-            <p
-              lang="ar"
-              dir="rtl"
-              className="mt-1 truncate text-xs text-white/70"
-            >
-              {loc(occasion.tagline, "ar")}
+            <p className="mt-0.5 truncate text-xs text-white/75 sm:text-sm">
+              {loc(occasion.tagline, lang)}
             </p>
           </div>
 
