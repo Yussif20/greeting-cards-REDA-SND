@@ -63,7 +63,6 @@ export default {
       move: "Move",
       size: "Size",
       align: "Align",
-      layers: "Layers",
     },
     align: {
       left: "Left",
@@ -73,17 +72,6 @@ export default {
       middle: "Middle",
       bottom: "Bottom",
       distribute: "Distribute evenly",
-    },
-    layer: {
-      name: "Name",
-      jobTitle: "Job title",
-      logo: "Brand logo",
-      moveUp: "Move up",
-      moveDown: "Move down",
-      show: "Show",
-      hide: "Hide",
-      lock: "Lock",
-      unlock: "Unlock",
     },
     size: { label: "Size", nudge: "Use arrow keys to nudge the selected layer" },
     action: {

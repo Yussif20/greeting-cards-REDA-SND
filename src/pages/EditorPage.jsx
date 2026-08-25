@@ -14,7 +14,7 @@ import { occasionHeading, occasionShortHeading } from "../lib/localize.js";
 import { loadImage } from "../lib/canvas.js";
 import { preloadFont } from "../lib/fonts.js";
 import { renderToBlob, downloadBlob, shareBlob, buildFilename } from "../lib/exportCard.js";
-import { saveDraft, loadDraft } from "../lib/draft.js";
+import { saveDraft, loadDraft, clearDraft } from "../lib/draft.js";
 import { NAME_LAYER } from "../lib/layers.js";
 
 import PageShell from "../components/layout/PageShell.jsx";
@@ -28,7 +28,6 @@ import CardPreview from "../components/editor/preview/CardPreview.jsx";
 import MovePanel from "../components/editor/panels/MovePanel.jsx";
 import SizePanel from "../components/editor/panels/SizePanel.jsx";
 import AlignPanel from "../components/editor/panels/AlignPanel.jsx";
-import LayersPanel from "../components/editor/panels/LayersPanel.jsx";
 import NotFoundPage from "./NotFoundPage.jsx";
 
 const EditorPage = () => {
@@ -144,6 +143,8 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
 
   const handleReset = () => {
     dispatch({ type: "reset", design });
+    // Otherwise the saved draft survives and a refresh undoes the reset.
+    clearDraft(slug, design.id);
     setToast({ tone: "info", message: t("editor.resetDone") });
   };
 
@@ -187,9 +188,6 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
     }
   };
 
-  // Move, Size and Align act on a selection; Layers always has something to show.
-  const needsLayer = state.activeTool !== "layers";
-
   const panels = {
     move: <MovePanel layer={selectedLayer} dispatch={dispatch} />,
     size: <SizePanel layer={selectedLayer} dispatch={dispatch} />,
@@ -198,13 +196,6 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
         design={design}
         layer={selectedLayer}
         layers={state.layers}
-        dispatch={dispatch}
-      />
-    ),
-    layers: (
-      <LayersPanel
-        layers={state.layers}
-        selectedLayerId={state.selectedLayerId}
         dispatch={dispatch}
       />
     ),
@@ -278,7 +269,7 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
           />
 
           <div className="rounded-2xl border border-line bg-surface-2 p-4">
-            {needsLayer && !selectedLayer ? (
+            {!selectedLayer ? (
               <p className="py-2 text-center text-sm text-ink-3">
                 {t("editor.selectLayerHint")}
               </p>

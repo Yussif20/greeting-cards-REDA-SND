@@ -62,7 +62,6 @@ export default {
       move: "تحريك",
       size: "الحجم",
       align: "المحاذاة",
-      layers: "الطبقات",
     },
     align: {
       left: "يسار",
@@ -72,17 +71,6 @@ export default {
       middle: "منتصف",
       bottom: "أسفل",
       distribute: "توزيع متساوٍ",
-    },
-    layer: {
-      name: "الاسم",
-      jobTitle: "المسمى الوظيفي",
-      logo: "شعار الشركة",
-      moveUp: "تحريك لأعلى",
-      moveDown: "تحريك لأسفل",
-      show: "إظهار",
-      hide: "إخفاء",
-      lock: "قفل",
-      unlock: "إلغاء القفل",
     },
     size: { label: "الحجم", nudge: "استخدم مفاتيح الأسهم لتحريك الطبقة المحددة" },
     action: {

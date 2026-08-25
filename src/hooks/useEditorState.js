@@ -194,17 +194,6 @@ function reducer(state, action) {
         }),
       };
 
-    case "reorder": {
-      const ordered = [...state.layers].sort((a, b) => a.z - b.z);
-      const i = ordered.findIndex((l) => l.id === action.id);
-      const j = i + action.direction;
-      if (i < 0 || j < 0 || j >= ordered.length) return state;
-      const zi = ordered[i].z;
-      ordered[i] = { ...ordered[i], z: ordered[j].z };
-      ordered[j] = { ...ordered[j], z: zi };
-      return withHistory(state, { ...state, layers: ordered });
-    }
-
     // Push history so a slider drag records one entry, not one per frame.
     case "commit":
       return withHistory(state, state);

@@ -21,6 +21,9 @@ import { useLanguage } from "../../../hooks/useLanguage.js";
  * Both render the same control, so the UI does not change shape when artwork is
  * upgraded.
  */
+/** Rendered height of the logo preview, in px. */
+const SWATCH_H = 44;
+
 const BrandSelect = ({ occasionSlug, design, value, onChange }) => {
   const { t } = useTranslation();
   const { lang } = useLanguage();
@@ -56,15 +59,20 @@ const BrandSelect = ({ occasionSlug, design, value, onChange }) => {
           <div
             role="img"
             aria-label={brandName}
-            className="h-full rounded-md ring-1 ring-line"
+            className="rounded-md ring-1 ring-line"
             style={{
-              aspectRatio: `${mark.w} / ${mark.h}`,
+              // Explicit pixels rather than a percentage height: a percentage
+              // would have to resolve against a flex parent, and this box has
+              // no content of its own to fall back on.
+              height: `${SWATCH_H}px`,
+              width: `${Math.round(SWATCH_H * (mark.w / mark.h))}px`,
               backgroundImage: `url("${design.src}")`,
-              // Scale the artwork so the marked region alone fills this box.
+              // Blow the artwork up so the marked region alone fills the box.
               backgroundSize: `${100 / mark.w}% ${100 / mark.h}%`,
               backgroundPosition: `${(mark.x / (1 - mark.w)) * 100}% ${
                 (mark.y / (1 - mark.h)) * 100
               }%`,
+              backgroundRepeat: "no-repeat",
             }}
           />
         ) : (

@@ -1,11 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { Move, Maximize2, AlignCenter, Layers } from "lucide-react";
+import { Move, Maximize2, AlignCenter } from "lucide-react";
 
 const TOOLS = [
   { id: "move", Icon: Move },
   { id: "size", Icon: Maximize2 },
   { id: "align", Icon: AlignCenter },
-  { id: "layers", Icon: Layers },
 ];
 
 const EditorToolbar = ({ value, onChange }) => {
@@ -15,7 +14,7 @@ const EditorToolbar = ({ value, onChange }) => {
     <div
       role="tablist"
       aria-label={t("editor.title")}
-      className="grid grid-cols-4 gap-1 rounded-2xl border border-line bg-surface-2 p-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]"
+      className="grid grid-cols-3 gap-1 rounded-2xl border border-line bg-surface-2 p-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]"
     >
       {TOOLS.map(({ id, Icon }) => {
         const active = value === id;
