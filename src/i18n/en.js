@@ -112,6 +112,5 @@ export default {
 
   footer: {
     tagline: "معاً في كل مناسبة",
-    copyright: "© 2026 Reda Hazard Control. All rights reserved.",
   },
 };

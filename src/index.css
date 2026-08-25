@@ -42,6 +42,10 @@
   --color-gold-500: #c9a227;
   --color-gold-300: #e0c063;
 
+  /* Fixed corporate colours from the REDA wordmark. */
+  --color-brand-red: #ee2e3a;
+  --color-brand-navy: #243e87;
+
   --color-sand-100: #faf8f4;
   --color-sand-200: #f2efe9;
   --color-sand-300: #e4e0d8;
@@ -256,9 +260,24 @@
   scrollbar-color: var(--line) transparent;
 }
 
-/* Brand logo variants. `mono` collapses the two-colour REDA wordmark onto
-   currentColor for use on dark or tinted surfaces. */
-[data-variant="mono"] [data-color="1"],
-[data-variant="mono"] [data-color="2"] {
+/* REDA wordmark colouring.
+   The artwork carries two colour hooks: "1" is the red rule, "2" the wordmark.
+   The rule stays brand red in both themes; the wordmark flips to the page ink
+   so it stays legible on a dark surface. */
+.reda-logo [data-color="1"] {
+  fill: var(--color-brand-red);
+}
+
+.reda-logo [data-color="2"] {
+  fill: var(--color-brand-navy);
+}
+
+.dark .reda-logo [data-color="2"] {
+  fill: var(--ink);
+}
+
+/* `mono` collapses both onto currentColor, for tinted surfaces. */
+.reda-logo[data-variant="mono"] [data-color="1"],
+.reda-logo[data-variant="mono"] [data-color="2"] {
   fill: currentColor;
 }

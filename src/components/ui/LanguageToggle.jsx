@@ -1,7 +1,12 @@
 import { Globe } from "lucide-react";
 import { useLanguage } from "../../hooks/useLanguage.js";
 
-/** Globe + "العربية | English", matching the design mockup's header. */
+/**
+ * Globe, then "العربية | English" -- as in the design.
+ *
+ * The pair is pinned to dir="ltr" so the order and the divider stay put when
+ * the page flips to RTL; it reads as one fixed control rather than a sentence.
+ */
 const LanguageToggle = () => {
   const { lang, setLang } = useLanguage();
 
@@ -11,10 +16,8 @@ const LanguageToggle = () => {
       onClick={() => setLang(code)}
       aria-current={lang === code}
       lang={code}
-      className={`rounded px-1 transition-colors ${
-        lang === code
-          ? "font-semibold text-ink"
-          : "text-ink-3 hover:text-ink"
+      className={`rounded px-0.5 transition-colors ${
+        lang === code ? "font-semibold text-ink" : "text-ink-2 hover:text-ink"
       }`}
     >
       {label}
@@ -22,11 +25,13 @@ const LanguageToggle = () => {
   );
 
   return (
-    <div className="flex items-center gap-2 text-sm">
-      <Globe className="h-4 w-4 text-ink-3" aria-hidden="true" />
-      <div className="flex items-center gap-1.5" dir="ltr">
+    <div className="flex items-center gap-2 text-sm sm:gap-2.5">
+      <Globe className="h-4.5 w-4.5 shrink-0 text-ink-2" aria-hidden="true" />
+      <div className="flex items-center gap-2" dir="ltr">
         {option("ar", "العربية")}
-        <span aria-hidden="true" className="text-line">|</span>
+        <span aria-hidden="true" className="text-line select-none">
+          |
+        </span>
         {option("en", "English")}
       </div>
     </div>

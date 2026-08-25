@@ -1,15 +1,17 @@
-// REDA Hazard Control wordmark.
+// REDA Hazard Control wordmark -- the application logo, and the brand asset in
+// the card editor.
 //
-// Extracted verbatim from the old Header so it can be used as a BRAND asset in
-// the card editor rather than as the application logo. The data-color hooks are
-// kept: "1" is the red rule, "2" the wordmark.
+// The data-color hooks are kept from the original artwork: "1" is the red rule,
+// "2" the wordmark. Colouring lives in index.css under .reda-logo, so the
+// wordmark can flip to ivory on dark surfaces while the red rule stays brand
+// red. `variant="mono"` collapses both onto currentColor.
 
 const RedaHazardControlLogo = ({ className = "", variant = "color", title = "REDA Hazard Control" }) => (
   <svg
     preserveAspectRatio="xMidYMid meet"
     viewBox="159.96 404.44 275.35 43.99"
     xmlns="http://www.w3.org/2000/svg"
-    className={className}
+    className={`reda-logo ${className}`}
     role="img"
     aria-label={title}
     data-variant={variant}

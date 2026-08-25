@@ -135,9 +135,8 @@ To retire a placeholder: add the real files, add a
 
 ## Known gaps
 
-- **The REDA Cards logo** in the header and footer is hand-authored from the
-  design mockup (`components/brand/RedaCardsLogo.jsx`). Replace it with the
-  official vector.
+- **The footer carries no copyright line**, because the design does not show
+  one. Restoring it is a `footer.copyright` string plus one paragraph.
 - **Brand logos** are not available as transparent files, so `logo` is `null`
   throughout `src/data/brands.js` and the compositing path is inert. The Arabic
   company names there are provisional.
