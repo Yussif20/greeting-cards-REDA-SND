@@ -8,10 +8,14 @@
 // Run with: node scripts/verify-render.mjs
 
 // --- Minimal browser shims -------------------------------------------------
+const requestedFaces = [];
 globalThis.document = {
   fonts: {
     ready: Promise.resolve(),
-    load: () => Promise.resolve(),
+    load: (spec) => {
+      requestedFaces.push(spec);
+      return Promise.resolve();
+    },
   },
 };
 
@@ -165,6 +169,31 @@ wrapCtx.font = "700 100px test";
 const long = wrapText(wrapCtx, "one two three four five six seven eight", 500);
 check("long text wraps to multiple lines", long.length > 1, `${long.length} lines`);
 check("short text stays on one line", wrapText(wrapCtx, "short", 5000).length === 1);
+
+console.log("\nfont pairing");
+const { FONTS, LATIN, getFont } = await import("../src/data/fonts.js");
+
+check(
+  "the card font stack names both scripts' families",
+  eText[0].font.includes(LATIN) && eText[0].font.includes("Cairo"),
+  eText[0].font,
+);
+check(
+  "Latin family is listed first, so it wins for Latin glyphs",
+  eText[0].font.indexOf(LATIN) < eText[0].font.indexOf("Cairo"),
+);
+check(
+  "every family in the stack was actually requested",
+  getFont("cairo").loadFamilies.every((f) => requestedFaces.some((r) => r.includes(f))),
+);
+check(
+  "every offered font pairs an Arabic face with the Latin one",
+  FONTS.every((f) => f.loadFamilies.length === 2 && f.loadFamilies[0] === LATIN),
+);
+check(
+  "no font entry can silently fall back to a generic serif",
+  FONTS.every((f) => f.stack.trim().endsWith("sans-serif")),
+);
 
 console.log(failures === 0 ? "\nAll checks passed.\n" : `\n${failures} check(s) failed.\n`);
 process.exit(failures === 0 ? 0 : 1);

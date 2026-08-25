@@ -36,6 +36,25 @@ src/
   pages/     OccasionsPage · DesignsPage · EditorPage · NotFoundPage
 ```
 
+### Typography
+
+**Cairo** sets the Arabic, **Space Grotesk** the Latin, in both the interface
+and the cards.
+
+Space Grotesk has no Arabic coverage, so Arabic falls through to Cairo per
+glyph on its own. That needs no per-script CSS and behaves identically inside
+`<canvas>`, since `ctx.font` accepts the same family list — which is why a name
+in Arabic and a job title in English both render correctly from a single font
+choice.
+
+Every entry in `src/data/fonts.js` is therefore a *pairing*, and its
+`loadFamilies` lists both faces: `document.fonts.load()` takes one family at a
+time, and an unloaded face is silently substituted on the canvas — the usual
+cause of "the downloaded card has the wrong font".
+
+Fonts are self-hosted via `@fontsource`. Note the family registered by the
+variable package is `Space Grotesk Variable`, not `Space Grotesk`.
+
 ### Routing
 
 | Path | Page |
@@ -122,10 +141,11 @@ To retire a placeholder: add the real files, add a
 - **Brand logos** are not available as transparent files, so `logo` is `null`
   throughout `src/data/brands.js` and the compositing path is inert. The Arabic
   company names there are provisional.
-- **The card font** in the design spec is DIN Next Arabic, a licensed Monotype
-  face. IBM Plex Sans Arabic is self-hosted as a close stand-in. If REDA holds a
-  *web* licence, add the `.woff2` to `public/fonts/`, declare an `@font-face`,
-  and set `available: true` in `src/data/fonts.js`.
+- **The design mockup specified DIN Next Arabic**, a licensed Monotype face.
+  Cairo and Space Grotesk were chosen instead (see Typography). If REDA later
+  wants DIN Next Arabic and holds a *web* licence, add the `.woff2` to
+  `public/fonts/`, declare an `@font-face`, and add one entry to
+  `src/data/fonts.js`.
 - **Style tags** on designs were assigned by eye and are provisional — one line
   each in `src/data/designs/<slug>.js`.
 - **Edition numbers** (Saudi National Day "96") are hardcoded and need an annual

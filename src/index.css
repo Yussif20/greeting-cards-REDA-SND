@@ -1,12 +1,15 @@
 @import "tailwindcss";
 
 /* Self-hosted card + UI faces. Vite fingerprints these, and canvas font loading
-   is far more predictable with local faces than with a CDN <link>. */
-@import "@fontsource/ibm-plex-sans-arabic/400.css";
-@import "@fontsource/ibm-plex-sans-arabic/500.css";
-@import "@fontsource/ibm-plex-sans-arabic/600.css";
-@import "@fontsource/ibm-plex-sans-arabic/700.css";
+   is far more predictable with local faces than with a CDN <link>.
+
+   Space Grotesk carries the Latin, Cairo the Arabic. Space Grotesk has no
+   Arabic coverage, so Arabic text falls through to Cairo automatically -- the
+   pairing needs no per-script CSS, and it works the same way inside <canvas>. */
+@import "@fontsource-variable/space-grotesk";
 @import "@fontsource/cairo/400.css";
+@import "@fontsource/cairo/500.css";
+@import "@fontsource/cairo/600.css";
 @import "@fontsource/cairo/700.css";
 @import "@fontsource/tajawal/400.css";
 @import "@fontsource/tajawal/700.css";
@@ -22,8 +25,10 @@
    like bg-teal-700 directly.
    --------------------------------------------------------------------------- */
 @theme {
+  /* Note the "Variable" suffix: that is the family name @fontsource-variable
+     actually registers, not "Space Grotesk". */
   --font-sans:
-    "IBM Plex Sans Arabic", "Inter", system-ui, -apple-system, sans-serif;
+    "Space Grotesk Variable", "Cairo", system-ui, -apple-system, sans-serif;
 
   --color-teal-900: #0b3b31;
   --color-teal-800: #0b4636;

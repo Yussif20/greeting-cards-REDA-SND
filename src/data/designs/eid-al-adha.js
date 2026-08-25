@@ -19,7 +19,7 @@ const layout = (defaultColor = "#FFFFFF") => ({
   logo: { x: 0.5, y: 0.95, width: 0.26 },
   palette: ["#FFFFFF", "#E7C873", "#7FD4F5", "#B8C6E0", "#0B1A33"],
   defaultColor,
-  fontId: "din-next-arabic",
+  fontId: "cairo",
 });
 
 const design = (number, brand, style) => ({

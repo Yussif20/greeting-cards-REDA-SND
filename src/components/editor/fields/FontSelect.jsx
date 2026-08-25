@@ -23,11 +23,8 @@ const FontSelect = ({ value, sampleText, onChange }) => {
   const current = getFont(value);
   const sample = sampleText?.trim() || t("editor.placeholder.name");
 
-  // Show the current face first, then a couple of alternatives.
-  const previews = [
-    current,
-    ...FONTS.filter((f) => f.id !== current.id && f.id !== current.fallbackId),
-  ].slice(0, 3);
+  // Show the current pairing first, then a couple of alternatives.
+  const previews = [current, ...FONTS.filter((f) => f.id !== current.id)].slice(0, 3);
 
   return (
     <div>

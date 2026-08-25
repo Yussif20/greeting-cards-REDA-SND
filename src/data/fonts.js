@@ -1,95 +1,63 @@
 // Fonts offered in the card editor.
 //
-// Each face must cover BOTH Arabic and Latin, so a single choice styles the
-// whole card. That is why the previous arabicFont/englishFont/fontLanguage
-// triple is gone -- three pieces of state to pick one font.
+// Each entry is a SCRIPT PAIRING, not a single face: Space Grotesk sets the
+// Latin, an Arabic face sets the Arabic. Space Grotesk has no Arabic coverage,
+// so the browser falls through per glyph on its own -- in CSS and, importantly,
+// inside <canvas> too, since ctx.font accepts the same family list.
 //
-// DIN Next Arabic is a licensed Monotype face and is not bundled. Its entry
-// stays here with `available: false` so the label matches the design spec while
-// rendering falls through to the stand-in. If REDA supplies a licensed *web*
-// font, drop the .woff2 into public/fonts/, add an @font-face rule to index.css,
-// and flip `available` to true -- nothing else changes.
+// That is why the old arabicFont / englishFont / fontLanguage triple is gone:
+// one choice styles the whole card, and a name in Arabic beside a job title in
+// English both render correctly without the user selecting anything twice.
+//
+// `loadFamilies` must list every family in the stack. document.fonts.load()
+// takes one family at a time, and a face that has not been loaded will be
+// silently substituted on the canvas -- the classic "the downloaded card has
+// the wrong font" bug.
+
+/** Latin half of every pairing. Note the family name @fontsource-variable registers. */
+export const LATIN = "Space Grotesk Variable";
+
+const pair = (arabic) => `"${LATIN}", "${arabic}", sans-serif`;
 
 export const FONTS = [
   {
-    id: "din-next-arabic",
-    label: { en: "DIN Next Arabic", ar: "دين نكست عربي" },
-    stack: '"DIN Next Arabic", "IBM Plex Sans Arabic", sans-serif',
-    // The family canvas must actually load. Falls back while unavailable.
-    loadFamily: "IBM Plex Sans Arabic",
-    weights: [400, 500, 700],
-    licensed: true,
-    available: false,
-    fallbackId: "ibm-plex-sans-arabic",
-  },
-  {
-    id: "ibm-plex-sans-arabic",
-    label: { en: "IBM Plex Sans Arabic", ar: "آي بي إم بلكس" },
-    stack: '"IBM Plex Sans Arabic", sans-serif',
-    loadFamily: "IBM Plex Sans Arabic",
-    weights: [400, 500, 700],
-    licensed: false,
-    available: true,
-    fallbackId: null,
-  },
-  {
     id: "cairo",
-    label: { en: "Cairo", ar: "القاهرة" },
-    stack: '"Cairo", sans-serif',
-    loadFamily: "Cairo",
-    weights: [400, 700],
-    licensed: false,
-    available: true,
-    fallbackId: null,
+    label: { en: "Cairo + Space Grotesk", ar: "القاهرة + سبيس جروتيسك" },
+    stack: pair("Cairo"),
+    loadFamilies: [LATIN, "Cairo"],
+    weights: [400, 500, 600, 700],
   },
   {
     id: "tajawal",
-    label: { en: "Tajawal", ar: "تجوال" },
-    stack: '"Tajawal", sans-serif',
-    loadFamily: "Tajawal",
+    label: { en: "Tajawal + Space Grotesk", ar: "تجوال + سبيس جروتيسك" },
+    stack: pair("Tajawal"),
+    loadFamilies: [LATIN, "Tajawal"],
     weights: [400, 700],
-    licensed: false,
-    available: true,
-    fallbackId: null,
   },
   {
     id: "almarai",
-    label: { en: "Almarai", ar: "المراعي" },
-    stack: '"Almarai", sans-serif',
-    loadFamily: "Almarai",
+    label: { en: "Almarai + Space Grotesk", ar: "المراعي + سبيس جروتيسك" },
+    stack: pair("Almarai"),
+    loadFamilies: [LATIN, "Almarai"],
     weights: [400, 700],
-    licensed: false,
-    available: true,
-    fallbackId: null,
   },
   {
     id: "amiri",
-    label: { en: "Amiri", ar: "أميري" },
-    stack: '"Amiri", serif',
-    loadFamily: "Amiri",
+    label: { en: "Amiri + Space Grotesk", ar: "أميري + سبيس جروتيسك" },
+    stack: pair("Amiri"),
+    loadFamilies: [LATIN, "Amiri"],
     weights: [400, 700],
-    licensed: false,
-    available: true,
-    fallbackId: null,
   },
 ];
 
 export const FONTS_BY_ID = Object.fromEntries(FONTS.map((f) => [f.id, f]));
 
-export const DEFAULT_FONT_ID = "din-next-arabic";
+export const DEFAULT_FONT_ID = "cairo";
 
 export const getFont = (id) => FONTS_BY_ID[id] ?? FONTS_BY_ID[DEFAULT_FONT_ID];
 
-/**
- * The family canvas should actually render with, following the fallback chain
- * when a licensed face has not been supplied.
- */
-export function resolveFontFamily(id) {
-  let font = getFont(id);
-  const seen = new Set();
-  while (font && !font.available && font.fallbackId && !seen.has(font.id)) {
-    seen.add(font.id);
-    font = FONTS_BY_ID[font.fallbackId];
-  }
-  return font?.loadFamily ?? "sans-serif";
-}
+/** The family list canvas should render with, as a ctx.font-ready string. */
+export const resolveFontStack = (id) => getFont(id).stack;
+
+/** Every family that must be loaded before drawing with this pairing. */
+export const resolveFontFamilies = (id) => getFont(id).loadFamilies;
