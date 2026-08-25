@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 /docs
+
+# Original un-optimised art; run `npm run assets` to regenerate public/
+assets-src
