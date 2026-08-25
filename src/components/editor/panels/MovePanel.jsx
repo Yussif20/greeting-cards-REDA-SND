@@ -15,7 +15,9 @@ const MovePanel = ({ layer, dispatch }) => {
 
   return (
     <div className="space-y-2.5">
-      <div className="mx-auto grid w-40 grid-cols-3 gap-1.5">
+      {/* Pinned to ltr for the same reason as the align controls: the arrows
+          point where the text moves on the card, not along the text. */}
+      <div dir="ltr" className="mx-auto grid w-40 grid-cols-3 gap-1.5">
         <span />
         <button type="button" className={btn} onClick={() => nudge(0, -STEP)} aria-label={t("editor.align.top")}>
           <ArrowUp className="h-4 w-4" aria-hidden="true" />

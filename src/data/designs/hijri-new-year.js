@@ -19,6 +19,7 @@ const layout = () => ({
   logo: { x: 0.5, y: 0.95, width: 0.26 },
   palette: ["#FFFFFF", "#E7C873", "#7FD4F5", "#B8C6E0", "#0B1A33"],
   defaultColor: "#FFFFFF",
+  brandMark: { x: 0.02, y: 0.015, w: 0.32, h: 0.105 },
   fontId: "cairo",
 });
 

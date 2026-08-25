@@ -195,5 +195,50 @@ check(
   FONTS.every((f) => f.stack.trim().endsWith("sans-serif")),
 );
 
+console.log("\nalignment") ;
+const { layerBox, alignLayer } = await import("../src/lib/layers.js");
+const { brandMark } = design.layout;
+
+const measure = makeCtx();
+const nameLayer = layers.find((l) => l.id === "name");
+const centred = layerBox(measure, nameLayer, design.width, design.height);
+
+// Aligning must move the text, not just relabel it, and the selection box has
+// to follow -- the anchor is the box centre only while the text is centred.
+const leftLayer = { ...nameLayer, ...alignLayer(nameLayer, design.layout.safeArea, "left") };
+const rightLayer = { ...nameLayer, ...alignLayer(nameLayer, design.layout.safeArea, "right") };
+const leftBox = layerBox(measure, leftLayer, design.width, design.height);
+const rightBox = layerBox(measure, rightLayer, design.width, design.height);
+
+check(
+  "left align puts the box's left edge on the safe area's left edge",
+  Math.abs(leftBox.cx - leftBox.w / 2 - design.layout.safeArea.x) < 0.001,
+  `${(leftBox.cx - leftBox.w / 2).toFixed(4)} vs ${design.layout.safeArea.x}`,
+);
+check(
+  "right align puts the box's right edge on the safe area's right edge",
+  Math.abs(
+    rightBox.cx + rightBox.w / 2 - (design.layout.safeArea.x + design.layout.safeArea.w),
+  ) < 0.001,
+);
+check(
+  "a centred box is still centred on its anchor",
+  Math.abs(centred.cx - nameLayer.x) < 0.0001,
+);
+check("aligning left actually moves the box", Math.abs(leftBox.cx - centred.cx) > 0.001);
+
+const { OCCASIONS } = await import("../src/data/occasions.js");
+const { getDesigns } = await import("../src/data/designs/index.js");
+check(
+  "every design declares the brand-lockup region the editor crops",
+  Boolean(brandMark) &&
+    OCCASIONS.every((o) =>
+      getDesigns(o.slug).every((d) => {
+        const m = d.layout.brandMark;
+        return m && m.w > 0 && m.h > 0 && m.x + m.w <= 1 && m.y + m.h <= 1;
+      }),
+    ),
+);
+
 console.log(failures === 0 ? "\nAll checks passed.\n" : `\n${failures} check(s) failed.\n`);
 process.exit(failures === 0 ? 0 : 1);

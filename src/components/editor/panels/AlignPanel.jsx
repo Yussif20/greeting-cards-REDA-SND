@@ -31,8 +31,10 @@ const AlignPanel = ({ design, layer, layers, dispatch }) => {
       patch: alignLayer(layer, safeArea, edge),
     });
 
+  // Pinned to ltr: these describe where the text sits on the card, not reading
+  // order, so the "left" control has to stay on the left in Arabic too.
   const row = (items) => (
-    <div className="grid grid-cols-3 gap-1.5">
+    <div dir="ltr" className="grid grid-cols-3 gap-1.5">
       {items.map(({ edge, Icon }) => (
         <button
           key={edge}

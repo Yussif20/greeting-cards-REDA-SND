@@ -29,13 +29,19 @@ export function layerBox(ctx, layer, W, H) {
   if (layer.type === "text") {
     if (!String(layer.text ?? "").trim()) return null;
     const { width, height } = measureTextLayer(ctx, layer, W, H);
-    return {
-      cx: layer.x,
-      cy: layer.y,
-      w: width / W,
-      h: height / H,
-      rotation: layer.rotation ?? 0,
-    };
+    const w = width / W;
+
+    // fillText places the run relative to the anchor according to textAlign, so
+    // the anchor is the box centre only when the text is centred. Without this
+    // the selection box and hit area drift half a text-width after aligning.
+    const cx =
+      layer.align === "left"
+        ? layer.x + w / 2
+        : layer.align === "right"
+          ? layer.x - w / 2
+          : layer.x;
+
+    return { cx, cy: layer.y, w, h: height / H, rotation: layer.rotation ?? 0 };
   }
 
   if (layer.type === "image") {

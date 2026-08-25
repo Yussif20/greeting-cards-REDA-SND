@@ -2,7 +2,6 @@ import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import FieldLabel from "../../ui/FieldLabel.jsx";
 import Select from "../../ui/Select.jsx";
-import RedaHazardControlLogo from "../../brand/RedaHazardControlLogo.jsx";
 import { BRANDS, getBrand } from "../../../data/brands.js";
 import { getBrandIds } from "../../../data/designs/index.js";
 import { loc } from "../../../lib/localize.js";
@@ -29,6 +28,8 @@ const BrandSelect = ({ occasionSlug, design, value, onChange }) => {
 
   const available = new Set(getBrandIds(occasionSlug));
   const selected = getBrand(value);
+  const brandName = selected ? loc(selected.name, lang) : "";
+  const mark = design.layout.brandMark;
 
   return (
     <div>
@@ -45,16 +46,29 @@ const BrandSelect = ({ occasionSlug, design, value, onChange }) => {
         })}
       </Select>
 
-      {/* Logo preview chip, matching the mockup. Only the REDA Hazard Control
-          mark exists as a vector today; the rest fall back to their name until
-          transparent brand logos are supplied. */}
-      <div className="mt-2 flex h-14 items-center justify-center rounded-xl border border-line bg-surface-2 px-4">
-        {value === "rhc" ? (
-          <RedaHazardControlLogo className="h-6 w-auto text-ink" />
+      {/* Logo preview, cropped straight out of the chosen design's artwork.
+          There are no transparent brand logo files, and the seven brands do not
+          share one mark -- Verdifor and REDA Guard have their own -- so showing
+          a single wordmark for all of them would be wrong. Cropping the real
+          lockup needs no new assets and always matches what gets downloaded. */}
+      <div className="mt-2 flex h-16 items-center justify-center rounded-xl border border-line bg-surface-3 p-2">
+        {mark ? (
+          <div
+            role="img"
+            aria-label={brandName}
+            className="h-full rounded-md ring-1 ring-line"
+            style={{
+              aspectRatio: `${mark.w} / ${mark.h}`,
+              backgroundImage: `url("${design.src}")`,
+              // Scale the artwork so the marked region alone fills this box.
+              backgroundSize: `${100 / mark.w}% ${100 / mark.h}%`,
+              backgroundPosition: `${(mark.x / (1 - mark.w)) * 100}% ${
+                (mark.y / (1 - mark.h)) * 100
+              }%`,
+            }}
+          />
         ) : (
-          <span className="text-sm font-medium text-ink-2">
-            {selected ? loc(selected.name, lang) : "—"}
-          </span>
+          <span className="text-sm font-medium text-ink-2">{brandName || "—"}</span>
         )}
       </div>
     </div>
