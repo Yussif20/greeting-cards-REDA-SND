@@ -8,8 +8,11 @@ import { useTranslation } from "react-i18next";
  * The secondary span carries its own lang and dir. Without them the browser
  * places the parentheses on the wrong sides -- ")الاسم(" -- which is the
  * classic bidi punctuation bug.
+ *
+ * `id` is for fields whose control is not a native input -- Select points its
+ * aria-labelledby here, since a <label for> alone does not name a button.
  */
-const FieldLabel = ({ labelKey, htmlFor, optional = false, children }) => {
+const FieldLabel = ({ labelKey, htmlFor, id, optional = false, children }) => {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage === "ar" ? "ar" : "en";
   const other = lang === "ar" ? "en" : "ar";
@@ -19,6 +22,7 @@ const FieldLabel = ({ labelKey, htmlFor, optional = false, children }) => {
   return (
     <label
       htmlFor={htmlFor}
+      id={id}
       className="mb-2 flex items-center gap-1.5 text-sm font-medium text-ink"
     >
       <span>{primary}</span>

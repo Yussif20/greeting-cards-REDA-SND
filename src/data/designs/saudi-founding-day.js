@@ -6,7 +6,8 @@
 // pattern band across the middle, and a desaturated Diriyah photograph along
 // the bottom edge. Restrained and editorial -- all six read as elegant.
 
-const DIR = "/cards/saudi-founding-day";
+const SLUG = "saudi-founding-day";
+const DIR = `/cards/${SLUG}`;
 
 // This artwork is densely filled: display type runs 0.20-0.44, the subtitle
 // to 0.52, the Najdi pattern band 0.58-0.72, and the Diriyah photograph from
@@ -23,13 +24,17 @@ const layout = () => ({
   fontId: "cairo",
 });
 
-const design = (number, brand, style) => ({
-  id: `saudi-founding-day-${String(number).padStart(2, "0")}`,
+// Card factory for one season -- see src/data/years.js. The season id is part
+// of the design id because card numbers restart at 01 each year and would
+// otherwise collide across seasons.
+const season = (year, dir) => (number, brand, style) => ({
+  id: `${SLUG}-${year}-${String(number).padStart(2, "0")}`,
   number,
-  occasion: "saudi-founding-day",
+  year,
+  occasion: SLUG,
   style,
-  src: `${DIR}/${String(number).padStart(2, "0")}.jpg`,
-  thumb: `${DIR}/thumbs/${String(number).padStart(2, "0")}.webp`,
+  src: `${dir}/${String(number).padStart(2, "0")}.jpg`,
+  thumb: `${dir}/thumbs/${String(number).padStart(2, "0")}.webp`,
   width: 2000,
   height: 2000,
   brandBakedIn: true,
@@ -38,11 +43,15 @@ const design = (number, brand, style) => ({
   layout: layout(),
 });
 
+// The first season predates the archive, so its artwork sits at the occasion
+// root rather than in a season subdirectory.
+const y2526 = season("2025-2026", DIR);
+
 export default [
-  design(1, "rhc", "elegant"),
-  design(2, "fhc", "elegant"),
-  design(3, "green", "elegant"),
-  design(4, "process", "elegant"),
-  design(5, "safe", "elegant"),
-  design(6, "verdifor", "elegant"),
+  y2526(1, "rhc", "elegant"),
+  y2526(2, "fhc", "elegant"),
+  y2526(3, "green", "elegant"),
+  y2526(4, "process", "elegant"),
+  y2526(5, "safe", "elegant"),
+  y2526(6, "verdifor", "elegant"),
 ];

@@ -22,6 +22,7 @@ export default {
   designs: {
     heading: "اختر التصميم",
     chooseADesign: "اختر التصميم",
+    year: "السنة",
     loadMore: "عرض المزيد من التصاميم",
     selected: "محدد",
     design: "تصميم",

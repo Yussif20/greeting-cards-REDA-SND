@@ -23,6 +23,7 @@ export default {
   designs: {
     heading: "Choose a design",
     chooseADesign: "Choose a design",
+    year: "Year",
     loadMore: "Load More Designs",
     selected: "Selected",
     design: "Design",

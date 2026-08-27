@@ -4,8 +4,6 @@ import FieldLabel from "../../ui/FieldLabel.jsx";
 import Select from "../../ui/Select.jsx";
 import { BRANDS, getBrand } from "../../../data/brands.js";
 import { getBrandIds } from "../../../data/designs/index.js";
-import { loc } from "../../../lib/localize.js";
-import { useLanguage } from "../../../hooks/useLanguage.js";
 
 /**
  * Brand picker, with two behaviours depending on the artwork.
@@ -26,28 +24,38 @@ const SWATCH_H = 44;
 
 const BrandSelect = ({ occasionSlug, design, value, onChange }) => {
   const { t } = useTranslation();
-  const { lang } = useLanguage();
   const id = useId();
+  const labelId = `${id}-label`;
 
-  const available = new Set(getBrandIds(occasionSlug));
+  // Availability is per season: a brand can be in one year's set and not the
+  // next, and switching brand never moves you to a different year's artwork.
+  const available = new Set(getBrandIds(occasionSlug, design.year));
   const selected = getBrand(value);
-  const brandName = selected ? loc(selected.name, lang) : "";
+  // Brand names stay English in both languages -- see the note in brands.js.
+  const brandName = selected?.name ?? "";
   const mark = design.layout.brandMark;
+
+  const options = BRANDS.map((brand) => {
+    const enabled = !design.brandBakedIn || available.has(brand.id);
+    return {
+      value: brand.id,
+      label: brand.name,
+      disabled: !enabled,
+      // Why the row is dead, on its own line rather than appended to the name.
+      hint: enabled ? undefined : t("editor.brandUnavailable"),
+    };
+  });
 
   return (
     <div>
-      <FieldLabel labelKey="editor.field.brand" htmlFor={id} />
-      <Select id={id} value={value ?? ""} onChange={(e) => onChange(e.target.value)}>
-        {BRANDS.map((brand) => {
-          const enabled = !design.brandBakedIn || available.has(brand.id);
-          return (
-            <option key={brand.id} value={brand.id} disabled={!enabled}>
-              {loc(brand.name, lang)}
-              {enabled ? "" : ` — ${t("editor.brandUnavailable")}`}
-            </option>
-          );
-        })}
-      </Select>
+      <FieldLabel labelKey="editor.field.brand" htmlFor={id} id={labelId} />
+      <Select
+        id={id}
+        labelId={labelId}
+        value={value ?? ""}
+        onChange={onChange}
+        options={options}
+      />
 
       {/* Logo preview, cropped straight out of the chosen design's artwork.
           There are no transparent brand logo files, and the seven brands do not

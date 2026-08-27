@@ -8,7 +8,8 @@
 // the "عيد مبارك" lockup across the lower-middle. Style tags are provisional --
 // each is one line to correct.
 
-const DIR = "/cards/eid-al-adha";
+const SLUG = "eid-al-adha";
+const DIR = `/cards/${SLUG}`;
 
 // The "عيد مبارك" lockup runs to y=0.71 and its Latin caption to 0.75,
 // so personalisation sits in the clear field beneath it.
@@ -23,13 +24,17 @@ const layout = (defaultColor = "#FFFFFF") => ({
   fontId: "cairo",
 });
 
-const design = (number, brand, style) => ({
-  id: `eid-al-adha-${String(number).padStart(2, "0")}`,
+// Card factory for one season -- see src/data/years.js. The season id is part
+// of the design id because card numbers restart at 01 each year and would
+// otherwise collide across seasons.
+const season = (year, dir) => (number, brand, style) => ({
+  id: `${SLUG}-${year}-${String(number).padStart(2, "0")}`,
   number,
-  occasion: "eid-al-adha",
+  year,
+  occasion: SLUG,
   style,
-  src: `${DIR}/${String(number).padStart(2, "0")}.jpg`,
-  thumb: `${DIR}/thumbs/${String(number).padStart(2, "0")}.webp`,
+  src: `${dir}/${String(number).padStart(2, "0")}.jpg`,
+  thumb: `${dir}/thumbs/${String(number).padStart(2, "0")}.webp`,
   width: 2000,
   height: 2000,
   brandBakedIn: true,
@@ -38,13 +43,17 @@ const design = (number, brand, style) => ({
   layout: layout(),
 });
 
+// The first season predates the archive, so its artwork sits at the occasion
+// root rather than in a season subdirectory.
+const y2526 = season("2025-2026", DIR);
+
 export default [
-  design(1, "rhc", "modern"),
-  design(2, "fhc", "modern"),
-  design(3, "green", "modern"),
-  design(4, "process", "modern"),
-  design(5, "safe", "modern"),
+  y2526(1, "rhc", "modern"),
+  y2526(2, "fhc", "modern"),
+  y2526(3, "green", "modern"),
+  y2526(4, "process", "modern"),
+  y2526(5, "safe", "modern"),
   // Single sweeping arc on flat green, far less busy than its siblings.
-  design(6, "verdifor", "minimal"),
-  design(7, "guard", "modern"),
+  y2526(6, "verdifor", "minimal"),
+  y2526(7, "guard", "modern"),
 ];

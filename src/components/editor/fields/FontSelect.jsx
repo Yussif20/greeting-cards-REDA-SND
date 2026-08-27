@@ -19,6 +19,7 @@ const FontSelect = ({ value, sampleText, onChange }) => {
   const { t } = useTranslation();
   const { lang } = useLanguage();
   const id = useId();
+  const labelId = `${id}-label`;
 
   const current = getFont(value);
   const sample = sampleText?.trim() || t("editor.placeholder.name");
@@ -28,17 +29,20 @@ const FontSelect = ({ value, sampleText, onChange }) => {
 
   return (
     <div>
-      <FieldLabel labelKey="editor.field.font" htmlFor={id}>
+      <FieldLabel labelKey="editor.field.font" htmlFor={id} id={labelId}>
         <Tooltip text={t("editor.fontHelp")} label={t("editor.field.font")} />
       </FieldLabel>
 
-      <Select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
-        {FONTS.map((font) => (
-          <option key={font.id} value={font.id}>
-            {loc(font.label, lang)}
-          </option>
-        ))}
-      </Select>
+      <Select
+        id={id}
+        labelId={labelId}
+        value={value}
+        onChange={onChange}
+        options={FONTS.map((font) => ({
+          value: font.id,
+          label: loc(font.label, lang),
+        }))}
+      />
 
       <ul className="mt-2.5 space-y-1.5">
         {previews.map((font) => {

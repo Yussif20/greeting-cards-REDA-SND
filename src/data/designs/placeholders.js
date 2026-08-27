@@ -9,14 +9,16 @@
 // in index.js, and set artStatus to "final" in occasions.js.
 
 /**
- * Clone a source occasion's designs for `slug`.
+ * Clone a source occasion's designs for `slug`. The clone keeps the source's
+ * season, so a borrowing occasion gains a year in its dropdown exactly when
+ * the occasion it borrows from does.
  * @param {string} slug borrowing occasion
  * @param {Array} sourceDesigns designs to clone
  */
 export function placeholderDesigns(slug, sourceDesigns) {
   return sourceDesigns.map((d) => ({
     ...d,
-    id: `${slug}-${String(d.number).padStart(2, "0")}`,
+    id: `${slug}-${d.year}-${String(d.number).padStart(2, "0")}`,
     occasion: slug,
     isPlaceholder: true,
     layout: { ...d.layout },

@@ -70,7 +70,7 @@ function makeCtx() {
 }
 
 const { renderCard, detectDir, wrapText } = await import("../src/lib/renderCard.js");
-const { getDesign } = await import("../src/data/designs/index.js");
+const { getDesigns } = await import("../src/data/designs/index.js");
 const { buildLayers } = await import("../src/hooks/useEditorState.js");
 
 let failures = 0;
@@ -83,7 +83,9 @@ const check = (label, cond, detail = "") => {
   }
 };
 
-const design = getDesign("eid-al-adha", "eid-al-adha-01");
+// Taken by position, not by id: design ids carry the season they belong to,
+// so pinning a literal id here would break the day a new season is added.
+const design = getDesigns("eid-al-adha")[0];
 const layers = buildLayers(design, {
   name: "فيصل الغامدي",
   jobTitle: "Marketing & Communication Manager",
@@ -228,7 +230,7 @@ check(
 check("aligning left actually moves the box", Math.abs(leftBox.cx - centred.cx) > 0.001);
 
 const { OCCASIONS } = await import("../src/data/occasions.js");
-const { getDesigns } = await import("../src/data/designs/index.js");
+const { YEARS } = await import("../src/data/years.js");
 check(
   "every design declares the brand-lockup region the editor crops",
   Boolean(brandMark) &&
@@ -238,6 +240,21 @@ check(
         return m && m.w > 0 && m.h > 0 && m.x + m.w <= 1 && m.y + m.h <= 1;
       }),
     ),
+);
+
+// Card numbers restart at 01 every season, so ids must carry the season to
+// stay unique -- a collision would make getDesign() return the wrong artwork.
+const ids = OCCASIONS.flatMap((o) => getDesigns(o.slug).map((d) => d.id));
+check(
+  "design ids are unique across every occasion and season",
+  new Set(ids).size === ids.length,
+  `${ids.length - new Set(ids).size} duplicate(s)`,
+);
+
+const seasons = new Set(YEARS.map((y) => y.id));
+check(
+  "every design belongs to a season registered in src/data/years.js",
+  OCCASIONS.every((o) => getDesigns(o.slug).every((d) => seasons.has(d.year))),
 );
 
 console.log(failures === 0 ? "\nAll checks passed.\n" : `\n${failures} check(s) failed.\n`);

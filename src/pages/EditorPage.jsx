@@ -8,7 +8,7 @@ import { useLanguage } from "../hooks/useLanguage.js";
 import { useEditorState } from "../hooks/useEditorState.js";
 import { useDebouncedValue } from "../hooks/useDebouncedValue.js";
 
-import { findSiblingByBrand } from "../data/designs/index.js";
+import { findSiblingByBrand, defaultYear } from "../data/designs/index.js";
 import { getBrand } from "../data/brands.js";
 import { occasionHeading, occasionShortHeading } from "../lib/localize.js";
 import { loadImage } from "../lib/canvas.js";
@@ -188,6 +188,12 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
     }
   };
 
+  // Going back keeps the season, unless it is the one the grid opens on anyway.
+  // Without this, editing a card from an older year and hitting the breadcrumb
+  // would silently drop you into this year's set.
+  const backToGrid =
+    design.year === defaultYear(slug) ? `/${slug}` : `/${slug}?year=${design.year}`;
+
   const panels = {
     move: <MovePanel layer={selectedLayer} dispatch={dispatch} />,
     size: <SizePanel layer={selectedLayer} dispatch={dispatch} />,
@@ -206,7 +212,7 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
       <Breadcrumbs
         items={[
           { label: t("common.breadcrumb.home"), to: "/" },
-          { label: occasionShortHeading(occasion, lang), to: `/${slug}` },
+          { label: occasionShortHeading(occasion, lang), to: backToGrid },
           { label: `${t("designs.design")} ${String(design.number).padStart(2, "0")}` },
         ]}
       />

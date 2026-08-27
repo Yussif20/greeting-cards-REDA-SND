@@ -8,48 +8,51 @@
 // set `brandBakedIn: false` on those designs. BrandSelect then switches to
 // "Mode B" and composites the logo as a layer. No component changes needed.
 //
-// Arabic names are provisional -- confirm with the client.
+// `name` is a plain string, not a bilingual { ar, en } pair like occasions and
+// fonts carry: these are the registered trade names, and the logos in the
+// artwork are English wordmarks, so the roster reads the same in both
+// languages. Transliterating them would name a company that does not exist.
 
 export const BRANDS = [
   {
     id: "rhc",
-    name: { en: "REDA Hazard Control", ar: "رضا للسيطرة على المخاطر" },
+    name: "REDA Hazard Control",
     logo: null,
     aspect: 4.2,
   },
   {
     id: "fhc",
-    name: { en: "REDA Fire & Hazard Control", ar: "رضا للسيطرة على الحريق والمخاطر" },
+    name: "REDA Fire & Hazard Control",
     logo: null,
     aspect: 4.2,
   },
   {
     id: "green",
-    name: { en: "REDA Green", ar: "رضا جرين" },
+    name: "REDA Green",
     logo: null,
     aspect: 4.2,
   },
   {
     id: "process",
-    name: { en: "REDA Process", ar: "رضا بروسيس" },
+    name: "REDA Process",
     logo: null,
     aspect: 4.2,
   },
   {
     id: "safe",
-    name: { en: "REDA Safe", ar: "رضا سيف" },
+    name: "REDA Safe",
     logo: null,
     aspect: 4.2,
   },
   {
     id: "verdifor",
-    name: { en: "Verdifor", ar: "فيرديفور" },
+    name: "Verdifor",
     logo: null,
     aspect: 4.2,
   },
   {
     id: "guard",
-    name: { en: "REDA Guard", ar: "رضا جارد" },
+    name: "REDA Guard",
     logo: null,
     aspect: 4.2,
   },

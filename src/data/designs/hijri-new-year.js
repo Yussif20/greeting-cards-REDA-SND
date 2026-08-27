@@ -8,7 +8,8 @@
 // When real art lands: drop it in /cards/hijri-new-year, set isPlaceholder to
 // false here, and flip artStatus in occasions.js.
 
-const DIR = "/cards/hijri-new-year";
+const SLUG = "hijri-new-year";
+const DIR = `/cards/${SLUG}`;
 
 // The crescent lockup runs to ~0.65 and its caption to ~0.72; everything
 // below is open night sky.
@@ -23,13 +24,17 @@ const layout = () => ({
   fontId: "cairo",
 });
 
-const design = (number, brand, style) => ({
-  id: `hijri-new-year-${String(number).padStart(2, "0")}`,
+// Card factory for one season -- see src/data/years.js. The season id is part
+// of the design id because card numbers restart at 01 each year and would
+// otherwise collide across seasons.
+const season = (year, dir) => (number, brand, style) => ({
+  id: `${SLUG}-${year}-${String(number).padStart(2, "0")}`,
   number,
-  occasion: "hijri-new-year",
+  year,
+  occasion: SLUG,
   style,
-  src: `${DIR}/${String(number).padStart(2, "0")}.jpg`,
-  thumb: `${DIR}/thumbs/${String(number).padStart(2, "0")}.webp`,
+  src: `${dir}/${String(number).padStart(2, "0")}.jpg`,
+  thumb: `${dir}/thumbs/${String(number).padStart(2, "0")}.webp`,
   width: 2000,
   height: 2000,
   brandBakedIn: true,
@@ -38,11 +43,15 @@ const design = (number, brand, style) => ({
   layout: layout(),
 });
 
+// The first season predates the archive, so its artwork sits at the occasion
+// root rather than in a season subdirectory.
+const y2526 = season("2025-2026", DIR);
+
 export default [
-  design(1, "rhc", "traditional"),
-  design(2, "fhc", "traditional"),
-  design(3, "green", "traditional"),
-  design(4, "process", "traditional"),
-  design(5, "safe", "traditional"),
-  design(6, "verdifor", "traditional"),
+  y2526(1, "rhc", "traditional"),
+  y2526(2, "fhc", "traditional"),
+  y2526(3, "green", "traditional"),
+  y2526(4, "process", "traditional"),
+  y2526(5, "safe", "traditional"),
+  y2526(6, "verdifor", "traditional"),
 ];

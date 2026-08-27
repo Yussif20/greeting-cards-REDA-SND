@@ -80,7 +80,7 @@ cannot resolve `height: 100%` reliably, so the chain is flex all the way down.
 | Path | Page |
 |---|---|
 | `/` | all six occasions |
-| `/:occasion` | design chooser (`?style=` filters) |
+| `/:occasion` | design chooser (`?year=` picks a season, `?style=` filters) |
 | `/:occasion/:designId` | editor |
 
 Everything the editor needs comes from the URL, so links are shareable and a
@@ -98,6 +98,29 @@ i18n keys, because an occasion is a domain entity rather than interface text.
 **All design geometry is stored as a fraction of the native image, never in
 pixels.** That is what keeps the live preview, the exported file and the grid
 thumbnail in agreement, and it lets artwork of different sizes coexist.
+
+### Seasons
+
+Designs accumulate rather than being replaced. Every design carries the `year`
+of the season it was produced for, listed newest-first in `src/data/years.js`,
+and each occasion page opens on its newest season with a dropdown to reach the
+earlier ones. All current artwork is the **2025 / 2026** season.
+
+The season is part of the design id (`eid-al-adha-2025-2026-01`) because card
+numbers restart at `01` each year and would otherwise collide.
+
+Adding next season:
+
+1. Drop the artwork in `public/cards/<slug>/<season-id>/` — `NN.jpg` plus
+   `thumbs/NN.webp`. (The first season predates the archive, so its files sit
+   at the occasion root instead of in a subdirectory.)
+2. Prepend an entry to `YEARS` in `src/data/years.js`.
+3. In `src/data/designs/<slug>.js`, add a second `season(...)` block and append
+   its cards to the exported array.
+
+No component changes. The year dropdown, the style chips and the brand picker
+all read whatever seasons are present for the occasion, and the brand picker
+never moves you to a different year's artwork.
 
 ### Cards and brands
 
@@ -139,8 +162,9 @@ in `assets-src/` (gitignored); `npm run assets` produces:
 - `public/cards/<slug>/NN.jpg` — masters, re-encoded
 - `public/cards/<slug>/thumbs/NN.webp` — grid thumbnails
 
-Card files are numbered `01…07`; the brand each one carries is recorded in
-`src/data/designs/<slug>.js`, not in the filename.
+Card files are numbered `01…07`; the brand each one carries, and the season it
+belongs to, are recorded in `src/data/designs/<slug>.js`, not in the filename.
+Later seasons live one directory deeper — see [Seasons](#seasons).
 
 ### Occasions still using borrowed artwork
 
@@ -158,8 +182,9 @@ To retire a placeholder: add the real files, add a
 - **The footer carries no copyright line**, because the design does not show
   one. Restoring it is a `footer.copyright` string plus one paragraph.
 - **Brand logos** are not available as transparent files, so `logo` is `null`
-  throughout `src/data/brands.js` and the compositing path is inert. The Arabic
-  company names there are provisional.
+  throughout `src/data/brands.js` and the compositing path is inert. Brand names
+  are English in both languages — they are registered trade names, and the
+  wordmarks in the artwork are English.
 - **The design mockup specified DIN Next Arabic**, a licensed Monotype face.
   Cairo and Space Grotesk were chosen instead (see Typography). If REDA later
   wants DIN Next Arabic and holds a *web* licence, add the `.woff2` to
