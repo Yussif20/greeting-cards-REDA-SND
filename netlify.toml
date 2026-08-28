@@ -1,3 +1,9 @@
+# NOT the active host -- this project deploys to Vercel, and vercel.json is
+# what is actually in force. Kept so a move to Netlify only needs the proxy
+# target updating, but note it has no equivalent of the daily cron: that lives
+# in api/daily.mjs and would need porting to netlify/functions/ with a
+# `schedule` config.
+
 # Redirects are evaluated top to bottom, first match wins. The SPA fallback
 # must therefore stay last, or it swallows everything above it.
 

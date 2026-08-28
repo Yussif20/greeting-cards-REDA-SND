@@ -4,6 +4,7 @@
       "source": "/media/(.*)",
       "destination": "https://gqufnurzzarrrxsjgmhq.supabase.co/storage/v1/object/public/media/$1"
     },
-    { "source": "/(.*)", "destination": "/" }
-  ]
+    { "source": "/((?!api/).*)", "destination": "/" }
+  ],
+  "crons": [{ "path": "/api/daily", "schedule": "0 6 * * *" }]
 }

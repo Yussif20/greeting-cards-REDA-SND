@@ -231,9 +231,15 @@ art status to final.
 
 ### The daily function
 
-`netlify/functions/daily.mjs` runs once a day and does two things. It needs
-`SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` set on the site, plus an optional
-`NETLIFY_BUILD_HOOK`.
+`api/daily.mjs` runs once a day as a Vercel Cron Job (see `crons` in
+`vercel.json`). It needs `SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` and
+`CRON_SECRET` set on the project, plus an optional `VERCEL_DEPLOY_HOOK`.
+
+**It refuses unauthenticated calls.** A cron path is an ordinary public URL,
+so without the `CRON_SECRET` check anyone could call it in a loop — and each
+call could trigger a deploy. The function returns 401 when the secret is
+unset rather than running unprotected, because an endpoint that quietly
+works is how it stays unprotected.
 
 **It keeps the project awake.** Free-plan Supabase projects pause after 7 days
 without activity. The public site would not notice — it renders from the
@@ -242,7 +248,7 @@ restores the project by hand. The ping is a *read*: writing a row would mean
 granting `anon` write access somewhere, which is opening a hole in the security
 model to hold a door open.
 
-It lives here rather than in GitHub Actions because scheduled workflows are
+It lives with the deployment rather than in GitHub Actions because scheduled workflows are
 disabled after 60 days without a commit — exactly what a finished project
 looks like — and it would then stop silently.
 
@@ -252,12 +258,12 @@ drifts further behind with every publish. The function compares the published
 revision with the one in the running deploy and triggers a build only when they
 differ, so an idle month costs no builds and a busy day costs one.
 
-`NETLIFY_BUILD_HOOK` is deliberately **not** `VITE_`-prefixed. An earlier
+`VERCEL_DEPLOY_HOOK` is deliberately **not** `VITE_`-prefixed. An earlier
 version read it from the browser, which was wrong in a way worth recording:
 `/assets/AdminRoutes-*.js` is a static file with no authentication in front of
 it — the login gate is inside that JavaScript — so the URL was not a secret at
 risk of leaking, it was published. Anyone could have POSTed to it in a loop,
-and the free tier allows 300 build minutes a month.
+and build minutes are finite on every plan.
 
 ### If something looks wrong
 
