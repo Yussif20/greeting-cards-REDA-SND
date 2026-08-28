@@ -26,3 +26,7 @@ dist-ssr
 
 # Original un-optimised art; run `npm run assets` to regenerate public/
 assets-src
+
+# Local secrets -- never commit. See .env.example
+.env.local
+.env*.local

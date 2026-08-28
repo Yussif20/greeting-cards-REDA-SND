@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { getOccasion } from "../data/occasions.js";
+import { useRegistry } from "../data/useRegistry.js";
 
 /**
  * Resolve the :occasion URL segment against the registry.
@@ -8,6 +9,7 @@ import { getOccasion } from "../data/occasions.js";
  * "refresh bounces you out" bug.
  */
 export function useOccasionParam() {
+  useRegistry();
   const { occasion: slug } = useParams();
   return { slug, occasion: getOccasion(slug) };
 }

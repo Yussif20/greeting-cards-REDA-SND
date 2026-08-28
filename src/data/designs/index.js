@@ -1,38 +1,38 @@
-// Design registry: every card design, keyed by occasion slug.
+// Design lookups, over the registry store.
 //
 // Designs accumulate rather than being replaced: each carries the `year` of the
-// season it was produced for (src/data/years.js), and every lookup below takes
-// an optional season so a page can scope itself to one year's cards.
+// season it was produced for, and every lookup below takes an optional season
+// so a page can scope itself to one year's cards.
+//
+// The per-occasion design modules and placeholders.js are gone. Borrowed
+// artwork is now real rows carrying `isPlaceholder`, which means retiring a
+// placeholder is an upload rather than a new JS file -- and a borrowing
+// occasion's cards can diverge from their source the moment real art lands.
 
-import { YEARS, CURRENT_YEAR } from "../years.js";
-import eidAlFitr from "./eid-al-fitr.js";
-import eidAlAdha from "./eid-al-adha.js";
-import saudiFoundingDay from "./saudi-founding-day.js";
-import hijriNewYear from "./hijri-new-year.js";
-import { placeholderDesigns } from "./placeholders.js";
+import { getRegistry } from "../registryStore.js";
 
 /** Canonical style tags, in the order the filter chips render. */
+// Stays in code: these ids are i18n keys (`designs.style.<id>`), so a
+// data-driven style would render an untranslated key.
 export const STYLES = ["modern", "traditional", "minimal", "elegant"];
 
-const DESIGNS_BY_OCCASION = {
-  "eid-al-fitr": eidAlFitr,
-  "eid-al-adha": eidAlAdha,
-  "saudi-founding-day": saudiFoundingDay,
-  "hijri-new-year": hijriNewYear,
-
-  // Borrowed artwork until dedicated designs are produced.
-  "saudi-national-day": placeholderDesigns("saudi-national-day", saudiFoundingDay),
-  "new-year": placeholderDesigns("new-year", hijriNewYear),
-};
+const EMPTY = [];
 
 /** Designs for an occasion; pass a season id to get just that year's cards. */
 export const getDesigns = (slug, year) => {
-  const all = DESIGNS_BY_OCCASION[slug] ?? [];
+  const all = getRegistry().designsByOccasion[slug] ?? EMPTY;
   return year ? all.filter((d) => d.year === year) : all;
 };
 
-export const getDesign = (slug, id) =>
-  getDesigns(slug).find((d) => d.id === id) ?? null;
+/**
+ * One design by id. Indexed rather than scanned, but the occasion check is
+ * kept so the semantics are provably identical to the old find(): ids embed
+ * their slug, so it can only ever reject a caller passing a mismatched pair.
+ */
+export const getDesign = (slug, id) => {
+  const design = getRegistry().designsById[id];
+  return design && design.occasion === slug ? design : null;
+};
 
 /**
  * Seasons this occasion actually has artwork for, newest first. Returns the
@@ -40,7 +40,7 @@ export const getDesign = (slug, id) =>
  */
 export const getYears = (slug) => {
   const present = new Set(getDesigns(slug).map((d) => d.year));
-  return YEARS.filter((y) => present.has(y.id));
+  return getRegistry().seasons.filter((y) => present.has(y.id));
 };
 
 /**
@@ -48,7 +48,7 @@ export const getYears = (slug) => {
  * current season for an occasion with no designs at all, so callers always get
  * a usable id.
  */
-export const defaultYear = (slug) => getYears(slug)[0]?.id ?? CURRENT_YEAR;
+export const defaultYear = (slug) => getYears(slug)[0]?.id ?? getRegistry().currentYear;
 
 /**
  * Style tags actually present for an occasion, in STYLES order. Chips with no

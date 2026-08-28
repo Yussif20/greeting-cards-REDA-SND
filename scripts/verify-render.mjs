@@ -229,12 +229,12 @@ check(
 );
 check("aligning left actually moves the box", Math.abs(leftBox.cx - centred.cx) > 0.001);
 
-const { OCCASIONS } = await import("../src/data/occasions.js");
-const { YEARS } = await import("../src/data/years.js");
+const { allOccasions } = await import("../src/data/occasions.js");
+const { allSeasons } = await import("../src/data/years.js");
 check(
   "every design declares the brand-lockup region the editor crops",
   Boolean(brandMark) &&
-    OCCASIONS.every((o) =>
+    allOccasions().every((o) =>
       getDesigns(o.slug).every((d) => {
         const m = d.layout.brandMark;
         return m && m.w > 0 && m.h > 0 && m.x + m.w <= 1 && m.y + m.h <= 1;
@@ -244,17 +244,17 @@ check(
 
 // Card numbers restart at 01 every season, so ids must carry the season to
 // stay unique -- a collision would make getDesign() return the wrong artwork.
-const ids = OCCASIONS.flatMap((o) => getDesigns(o.slug).map((d) => d.id));
+const ids = allOccasions().flatMap((o) => getDesigns(o.slug).map((d) => d.id));
 check(
   "design ids are unique across every occasion and season",
   new Set(ids).size === ids.length,
   `${ids.length - new Set(ids).size} duplicate(s)`,
 );
 
-const seasons = new Set(YEARS.map((y) => y.id));
+const seasons = new Set(allSeasons().map((y) => y.id));
 check(
   "every design belongs to a season registered in src/data/years.js",
-  OCCASIONS.every((o) => getDesigns(o.slug).every((d) => seasons.has(d.year))),
+  allOccasions().every((o) => getDesigns(o.slug).every((d) => seasons.has(d.year))),
 );
 
 console.log(failures === 0 ? "\nAll checks passed.\n" : `\n${failures} check(s) failed.\n`);

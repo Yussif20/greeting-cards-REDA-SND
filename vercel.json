@@ -1,3 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    {
+      "source": "/media/(.*)",
+      "destination": "https://gqufnurzzarrrxsjgmhq.supabase.co/storage/v1/object/public/media/$1"
+    },
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }

@@ -1,3 +1,29 @@
+# Redirects are evaluated top to bottom, first match wins. The SPA fallback
+# must therefore stay last, or it swallows everything above it.
+
+# Serve Supabase Storage through this origin.
+#
+# Two things this buys, both load-bearing:
+#
+#   1. Egress. The Supabase free plan allows 5 GB/month; card masters are
+#      ~600KB, so direct serving would exhaust it in a few thousand editor
+#      opens. Netlify's CDN caches these responses and absorbs the repeats.
+#
+#   2. Canvas exports. Uploaded artwork is drawn into a <canvas> and read back
+#      out via toBlob(). A cross-origin image taints the canvas unless every
+#      single fetch of that URL was a CORS request -- and a browser that
+#      cached a non-CORS response will happily serve it to a later CORS
+#      request, tainting the canvas intermittently and per-device. Same-origin
+#      removes the failure mode rather than mitigating it.
+#
+# Replace gqufnurzzarrrxsjgmhq with the Supabase project ref. It is public, not a
+# secret -- row level security is what protects the data.
+[[redirects]]
+  from = "/media/*"
+  to = "https://gqufnurzzarrrxsjgmhq.supabase.co/storage/v1/object/public/media/:splat"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

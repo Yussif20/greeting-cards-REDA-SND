@@ -1,11 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { visibleOccasions } from "../data/occasions.js";
+import { useRegistry } from "../data/useRegistry.js";
 import PageShell from "../components/layout/PageShell.jsx";
 import AnimatedSection from "../components/ui/AnimatedSection.jsx";
 import OccasionCard from "../components/occasions/OccasionCard.jsx";
 
 const OccasionsPage = () => {
   const { t } = useTranslation();
+  useRegistry();
   const occasions = visibleOccasions();
 
   return (
