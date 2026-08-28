@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useReducer } from "react";
+import { layoutFingerprint } from "../lib/draft.js";
 import {
   NAME_LAYER,
   JOB_LAYER,
@@ -74,7 +75,7 @@ export function buildLayers(design, { name = "", jobTitle = "", brand = null } =
   ];
 }
 
-function init({ design, draft }) {
+export function buildInitialState({ design, draft }) {
   const base = {
     layers: buildLayers(design),
     selectedLayerId: NAME_LAYER,
@@ -88,13 +89,32 @@ function init({ design, draft }) {
 
   if (!draft) return base;
 
-  // A draft only restores the fields it owns; geometry defaults still come from
-  // the current design, so artwork updates cannot strand old coordinates.
+  // Whether the draft's coordinates still describe this design.
+  //
+  // A draft records where the customer dragged their name, and restoring that
+  // is the point of saving one. But an admin can change a design's default
+  // layout, and coordinates placed against the old one would then quietly
+  // defeat the fix -- for the very people who had used the card enough to save
+  // a draft in the first place.
+  //
+  // So: unchanged layout, restore everything. Changed layout, keep what the
+  // customer typed and chose, and take the new geometry. Drafts saved before
+  // this field existed have no fingerprint and are treated as stale, which
+  // costs one repositioning once and never again.
+  const geometryIsCurrent =
+    Boolean(draft.layout) && draft.layout === layoutFingerprint(design.layout);
+
+  const CONTENT = ["text", "color", "fontId"];
+  const restore = (saved) =>
+    geometryIsCurrent
+      ? saved
+      : Object.fromEntries(Object.entries(saved).filter(([k]) => CONTENT.includes(k)));
+
   return {
     ...base,
     layers: base.layers.map((layer) => {
       const saved = draft.layers?.[layer.id];
-      return saved ? { ...layer, ...saved } : layer;
+      return saved ? { ...layer, ...restore(saved) } : layer;
     }),
     brandId: draft.brandId ?? base.brandId,
     fontId: draft.fontId ?? base.fontId,
@@ -221,7 +241,7 @@ function reducer(state, action) {
     }
 
     case "reset":
-      return init({ design: action.design, draft: null });
+      return buildInitialState({ design: action.design, draft: null });
 
     default:
       return state;
@@ -229,7 +249,7 @@ function reducer(state, action) {
 }
 
 export function useEditorState(design, draft) {
-  const [state, dispatch] = useReducer(reducer, { design, draft }, init);
+  const [state, dispatch] = useReducer(reducer, { design, draft }, buildInitialState);
 
   const selectedLayer = useMemo(
     () => state.layers.find((l) => l.id === state.selectedLayerId) ?? null,

@@ -287,5 +287,61 @@ check(
   drifted.length ? `${drifted.length} drifted, e.g. ${drifted[0].id}` : "",
 );
 
+// --- saved drafts vs a changed layout --------------------------------------
+//
+// A draft records where a customer dragged their name, and restoring that is
+// the whole point of saving one. But an admin can now change a design's
+// default layout, and a draft holding coordinates from the old one would
+// quietly defeat that fix for precisely the people who use the card most.
+//
+// The rule: unchanged layout, restore everything; changed layout, keep what
+// they typed and chose, take the new geometry.
+
+const { buildInitialState } = await import("../src/hooks/useEditorState.js");
+const { NAME_LAYER } = await import("../src/lib/layers.js");
+const { layoutFingerprint } = await import("../src/lib/draft.js");
+
+const draftDesign = getDesigns("eid-al-fitr")[0];
+const movedName = { ...draftDesign.layout.name, y: draftDesign.layout.name.y + 0.05 };
+
+const savedDraft = (fingerprint) => ({
+  layers: {
+    [NAME_LAYER]: { text: "Ahmed", color: "#FF0000", y: 0.31, size: 0.09 },
+  },
+  color: "#FF0000",
+  layout: fingerprint,
+});
+
+const nameOf = (state) => state.layers.find((l) => l.id === NAME_LAYER);
+
+const draftFresh = nameOf(
+  buildInitialState({
+    design: draftDesign,
+    draft: savedDraft(layoutFingerprint(draftDesign.layout)),
+  }),
+);
+check("an unchanged layout restores the draft's position", draftFresh.y === 0.31 && draftFresh.size === 0.09);
+check("an unchanged layout restores the draft's text", draftFresh.text === "Ahmed");
+
+const draftStale = nameOf(
+  buildInitialState({
+    design: draftDesign,
+    draft: savedDraft(layoutFingerprint({ ...draftDesign.layout, name: movedName })),
+  }),
+);
+check(
+  "a changed layout supersedes the draft's position",
+  draftStale.y === draftDesign.layout.name.y && draftStale.size === draftDesign.layout.name.size,
+  `y=${draftStale.y}`,
+);
+check("a changed layout still keeps what was typed", draftStale.text === "Ahmed");
+check("a changed layout still keeps the chosen colour", draftStale.color === "#FF0000");
+
+const draftLegacy = nameOf(buildInitialState({ design: draftDesign, draft: savedDraft(undefined) }));
+check(
+  "a draft saved before fingerprints existed is treated as stale",
+  draftLegacy.y === draftDesign.layout.name.y && draftLegacy.text === "Ahmed",
+);
+
 console.log(failures === 0 ? "\nAll checks passed.\n" : `\n${failures} check(s) failed.\n`);
 process.exit(failures === 0 ? 0 : 1);

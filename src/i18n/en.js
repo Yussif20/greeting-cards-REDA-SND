@@ -195,6 +195,17 @@ export default {
     },
 
     layout: {
+      palette: "Text colours",
+      paletteHint:
+        "What a customer can choose from. The ringed swatch is the default.",
+      swatch: "Colour {{colour}}",
+      addSwatch: "Add a colour",
+      removeSwatch: "Remove {{colour}}",
+      regions: "Safe area and brand mark",
+      regionsHint:
+        "The safe area is what the align tools work against. The brand mark is the region cropped out to preview a logo.",
+      safeArea: "Safe area",
+      brandMark: "Brand mark",
       title: "Place the text",
       save: "Save layout",
       saveAndPublish: "Save and publish",

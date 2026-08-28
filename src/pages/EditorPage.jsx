@@ -14,7 +14,7 @@ import { occasionHeading, occasionShortHeading } from "../lib/localize.js";
 import { loadImage } from "../lib/canvas.js";
 import { preloadFont } from "../lib/fonts.js";
 import { renderToBlob, downloadBlob, shareBlob, buildFilename } from "../lib/exportCard.js";
-import { saveDraft, loadDraft, clearDraft } from "../lib/draft.js";
+import { saveDraft, loadDraft, clearDraft, layoutFingerprint } from "../lib/draft.js";
 import { NAME_LAYER } from "../lib/layers.js";
 
 import PageShell from "../components/layout/PageShell.jsx";
@@ -129,6 +129,10 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
       brandId: state.brandId,
       fontId: state.fontId,
       color: state.color,
+      // Stamps which layout these coordinates were placed against, so that a
+      // later change to the design's default geometry supersedes them instead
+      // of being silently overridden by this draft.
+      layout: layoutFingerprint(design.layout),
     });
     setToast(
       ok

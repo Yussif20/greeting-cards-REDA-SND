@@ -18,6 +18,8 @@ import { preloadFont } from "../../lib/fonts.js";
 import { layoutFromScene } from "../../lib/layoutFromScene.js";
 import { NAME_LAYER, JOB_LAYER, LOGO_LAYER } from "../../lib/layers.js";
 
+import RegionEditor from "../components/RegionEditor.jsx";
+import PaletteEditor from "../components/PaletteEditor.jsx";
 import { useAsync } from "../hooks/useAsync.js";
 import AsyncSection from "../components/AsyncSection.jsx";
 import { getDesignById } from "../lib/api.js";
@@ -77,6 +79,15 @@ const Workbench = ({ design }) => {
   // Every current design bakes its brand into the artwork, which means
   // buildLayers hides the logo layer and layout.logo can never be adjusted.
   // Revealing a placeholder is the only way to position it at all.
+  // safeArea, brandMark and palette are part of a layout but not of the scene:
+  // no layer represents them, so useEditorState neither holds nor returns them.
+  // They live here and are folded back in as layoutFromScene's `base`.
+  const [regions, setRegions] = useState({
+    safeArea: design.layout.safeArea,
+    brandMark: design.layout.brandMark,
+  });
+  const [palette, setPalette] = useState(design.layout.palette);
+
   const [showLogo, setShowLogo] = useState(false);
   useEffect(() => {
     dispatch({ type: "patchLayer", id: LOGO_LAYER, patch: { visible: showLogo } });
@@ -96,10 +107,17 @@ const Workbench = ({ design }) => {
     preloadFont(state.fontId);
   }, [state.fontId]);
 
-  const nextLayout = useMemo(
-    () => layoutFromScene(state, design.layout),
-    [state, design.layout],
+  const base = useMemo(
+    () => ({ ...design.layout, ...regions, palette }),
+    [design.layout, regions, palette],
   );
+
+  const nextLayout = useMemo(() => layoutFromScene(state, base), [state, base]);
+
+  // The stage reads geometry off the design, so handing it the edited layout
+  // is what makes "align to safe area" respect a safe area the admin just
+  // dragged rather than the one the card was created with.
+  const liveDesign = useMemo(() => ({ ...design, layout: base }), [design, base]);
 
   const dirty = useMemo(
     () => JSON.stringify(nextLayout) !== JSON.stringify(design.layout),
@@ -196,6 +214,38 @@ const Workbench = ({ design }) => {
             onChange={(color) => dispatch({ type: "color", color })}
           />
 
+          <PaletteEditor
+            value={palette}
+            onChange={setPalette}
+            defaultColor={state.color}
+            onDefaultChange={(color) => dispatch({ type: "color", color })}
+          />
+
+          <details className="rounded-xl border border-line">
+            <summary className="cursor-pointer px-3 py-2 text-sm font-medium text-ink">
+              {t("admin.layout.regions")}
+            </summary>
+            <div className="space-y-4 border-t border-line p-3">
+              <p className="text-xs text-ink-3">{t("admin.layout.regionsHint")}</p>
+              <RegionEditor
+                src={design.src}
+                aspect={`${design.width} / ${design.height}`}
+                label={t("admin.layout.safeArea")}
+                value={regions.safeArea}
+                tone="brand"
+                onChange={(safeArea) => setRegions((r) => ({ ...r, safeArea }))}
+              />
+              <RegionEditor
+                src={design.src}
+                aspect={`${design.width} / ${design.height}`}
+                label={t("admin.layout.brandMark")}
+                value={regions.brandMark}
+                tone="gold"
+                onChange={(brandMark) => setRegions((r) => ({ ...r, brandMark }))}
+              />
+            </div>
+          </details>
+
           <label className="flex items-center gap-2 text-sm text-ink-2">
             <input
               type="checkbox"
@@ -209,7 +259,7 @@ const Workbench = ({ design }) => {
 
         <EditorStage
           className="order-1 lg:order-2"
-          design={design}
+          design={liveDesign}
           image={image}
           state={state}
           dispatch={dispatch}
