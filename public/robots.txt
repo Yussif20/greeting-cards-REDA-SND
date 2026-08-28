@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin
+
+# The admin is behind a login and row level security; this only keeps it out
+# of search results, where it has nothing to offer.

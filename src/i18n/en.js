@@ -102,4 +102,60 @@ export default {
   footer: {
     tagline: "معاً في كل مناسبة",
   },
+
+  admin: {
+    title: "REDA Cards Admin",
+    loading: "Loading…",
+    retry: "Try again",
+
+    auth: {
+      subtitle: "Sign in to manage occasions and cards.",
+      email: "Email",
+      password: "Password",
+      signIn: "Sign in",
+      signOut: "Sign out",
+      invalid: "That email and password did not match. Please try again.",
+      notAdminTitle: "This account is not an administrator",
+      notAdminBody:
+        "You are signed in, but this account has not been granted admin access. Ask whoever set up the site to add you.",
+      unconfiguredTitle: "Admin is not configured",
+      unconfiguredBody:
+        "VITE_SUPABASE_URL and the publishable key are missing from this build. See .env.example.",
+    },
+
+    nav: {
+      label: "Admin sections",
+      occasions: "Occasions",
+      designs: "Cards",
+      viewSite: "View site",
+    },
+
+    status: {
+      published: "Live",
+      draft: "Draft",
+      archived: "Archived",
+    },
+
+    occasions: {
+      title: "Occasions",
+      subtitle: "Everything the site can show, including what is not live yet.",
+      empty: "No occasions yet.",
+      hidden: "Hidden from the home page",
+      designCount: "{{count}} cards",
+      draftCount: "{{count}} not live",
+    },
+
+    designs: {
+      title: "Cards",
+      subtitle: "Artwork for every occasion and season.",
+      occasion: "Occasion",
+      allOccasions: "All occasions",
+      empty: "No cards for this occasion yet.",
+      placeholder: "Sample artwork",
+    },
+
+    errors: {
+      loadFailed: "Could not load that from the database.",
+    },
+  },
 };
