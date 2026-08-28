@@ -12,6 +12,10 @@
 // fonts carry: these are the registered trade names, and the logos in the
 // artwork are English wordmarks, so the roster reads the same in both
 // languages. Transliterating them would name a company that does not exist.
+//
+// The roster is deliberately not uniformly prefixed. "Fire & Hazard Control"
+// and "Verdifor" carry no "REDA"; the rest do. These are how the companies are
+// named, not a pattern with exceptions, so do not tidy them into line.
 
 export const BRANDS = [
   {
@@ -22,7 +26,7 @@ export const BRANDS = [
   },
   {
     id: "fhc",
-    name: "REDA Fire & Hazard Control",
+    name: "Fire & Hazard Control",
     logo: null,
     aspect: 4.2,
   },
