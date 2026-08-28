@@ -17,38 +17,6 @@ import { MEDIA_BUCKET } from "./storage.js";
 const REGISTRY_PATH = "registry/registry.json";
 
 /**
- * Optional. A Netlify build hook, so a deploy picks up the newly published
- * content as its bundled fallback.
- *
- * Publishing already makes a change live -- the site fetches the snapshot and
- * swaps it in within seconds. This is about the *other* copy: the one compiled
- * into the bundle, which is what a visitor sees when the fetch fails, when
- * they are offline, or when the project is paused. Without a rebuild that copy
- * drifts further behind every publish, and the fallback quietly becomes a
- * worse and worse answer.
- *
- * The URL is a secret in the sense that anyone holding it can trigger builds,
- * but not in the sense that it exposes data. It is VITE_-prefixed because the
- * admin chunk needs it, so treat it as spendable: rotate it in Netlify if it
- * leaks, and leave it unset if that trade is not worth it. Everything works
- * without it, just with a staler fallback.
- */
-const BUILD_HOOK = import.meta.env.VITE_NETLIFY_BUILD_HOOK ?? null;
-
-/**
- * Fire and forget, deliberately.
- *
- * A rebuild is a nicety on top of a publish that has already succeeded. If the
- * hook is down, or rate limited, or simply not configured, the content is
- * still live and the admin should not be told anything went wrong -- because
- * from their point of view, nothing did.
- */
-function requestRebuild() {
-  if (!BUILD_HOOK) return;
-  fetch(BUILD_HOOK, { method: "POST", body: "{}" }).catch(() => {});
-}
-
-/**
  * Thirty seconds, not a year.
  *
  * Long enough that a burst of traffic is served by the CDN rather than the
@@ -103,10 +71,6 @@ export async function publishSnapshot() {
   // rather than lost between two writes.
   await upload(`registry/history/${revision}.json`, snapshot, { upsert: false });
   await upload(REGISTRY_PATH, snapshot, { upsert: true });
-
-  // After the snapshot is live, never before: a rebuild that raced the upload
-  // would bundle the previous revision.
-  requestRebuild();
 
   return revision;
 }

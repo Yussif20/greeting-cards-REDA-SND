@@ -229,27 +229,35 @@ art status to final.
 
 ## Operating it
 
-### Keeping Supabase awake
+### The daily function
 
-Free-plan Supabase projects pause after 7 days without activity. The public
-site is unaffected — it renders from the snapshot bundled at build time — but
-`/admin` stops working until someone restores the project from the dashboard.
+`netlify/functions/daily.mjs` runs once a day and does two things. It needs
+`SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` set on the site, plus an optional
+`NETLIFY_BUILD_HOOK`.
 
-`netlify/functions/keepalive.mjs` runs daily and reads one row, which resets
-the timer. It needs `SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` set on the
-site. It lives here rather than in GitHub Actions because scheduled workflows
-are disabled after 60 days without a commit — exactly what a finished project
+**It keeps the project awake.** Free-plan Supabase projects pause after 7 days
+without activity. The public site would not notice — it renders from the
+snapshot bundled at build time — but `/admin` stops working until someone
+restores the project by hand. The ping is a *read*: writing a row would mean
+granting `anon` write access somewhere, which is opening a hole in the security
+model to hold a door open.
+
+It lives here rather than in GitHub Actions because scheduled workflows are
+disabled after 60 days without a commit — exactly what a finished project
 looks like — and it would then stop silently.
 
-The ping is a *read*. Writing a row would mean granting `anon` write access
-somewhere, which is opening a hole in the security model to hold a door open.
+**It keeps the bundled fallback fresh.** Publishing makes a change live in
+seconds, but the copy compiled into the bundle only changes on a rebuild, and
+drifts further behind with every publish. The function compares the published
+revision with the one in the running deploy and triggers a build only when they
+differ, so an idle month costs no builds and a busy day costs one.
 
-### Keeping the bundled snapshot fresh
-
-Publishing makes a change live within seconds, but the copy compiled into the
-bundle — the fallback for when the fetch fails — only changes when the site is
-rebuilt. Set `VITE_NETLIFY_BUILD_HOOK` and a publish triggers a deploy so the
-two stay close. Everything works without it; the fallback just drifts.
+`NETLIFY_BUILD_HOOK` is deliberately **not** `VITE_`-prefixed. An earlier
+version read it from the browser, which was wrong in a way worth recording:
+`/assets/AdminRoutes-*.js` is a static file with no authentication in front of
+it — the login gate is inside that JavaScript — so the URL was not a secret at
+risk of leaking, it was published. Anyone could have POSTed to it in a loop,
+and the free tier allows 300 build minutes a month.
 
 ### If something looks wrong
 
