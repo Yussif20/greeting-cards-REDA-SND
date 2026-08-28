@@ -142,10 +142,12 @@ const DesignListPage = () => {
                     <span>{String(design.number).padStart(2, "0")}</span>
                     <span className="text-xs font-normal text-ink-3">{design.year}</span>
                   </p>
+                  {/* Same reason as the occasion slug: "rhc" is Latin, the
+                      style name is translated, and an unisolated mix reorders. */}
                   <p className="mt-1 truncate text-xs text-ink-3">
-                    {[design.brand, t(`designs.style.${design.style}`)]
-                      .filter(Boolean)
-                      .join(" · ")}
+                    {design.brand && <bdi dir="ltr">{design.brand}</bdi>}
+                    {design.brand && " · "}
+                    {t(`designs.style.${design.style}`)}
                   </p>
 
                   <div className="mt-3 flex flex-wrap items-center gap-1.5">

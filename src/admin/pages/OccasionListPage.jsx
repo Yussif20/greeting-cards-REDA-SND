@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Plus, Pencil, ChevronUp, ChevronDown, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Plus, Pencil, ChevronUp, ChevronDown, Eye, EyeOff, Trash2, Loader2 } from "lucide-react";
 
 import PageShell from "../../components/layout/PageShell.jsx";
 import Button from "../../components/ui/Button.jsx";
@@ -13,7 +13,7 @@ import { loc } from "../../lib/localize.js";
 import { useLanguage } from "../../hooks/useLanguage.js";
 
 import { listOccasions, designCounts } from "../lib/api.js";
-import { setOccasionStatus, reorderOccasions } from "../lib/mutations.js";
+import { setOccasionStatus, reorderOccasions, deleteOccasion } from "../lib/mutations.js";
 import { useAsync } from "../hooks/useAsync.js";
 import AsyncSection from "../components/AsyncSection.jsx";
 
@@ -82,6 +82,32 @@ const OccasionListPage = () => {
     }
   };
 
+  const remove = async (occasion) => {
+    const message = occasion.publishedAt
+      ? t("admin.occasions.confirmDeletePublished")
+      : t("admin.occasions.confirmDelete");
+    if (!window.confirm(message)) return;
+
+    setPending(occasion.slug);
+    try {
+      await deleteOccasion(occasion.slug);
+      setToast({ tone: "info", message: t("admin.occasions.deleted") });
+      reload();
+    } catch (err) {
+      // The foreign key refusal is the expected outcome, not a fault: it is
+      // what stops an occasion taking a season of artwork down with it.
+      setToast({
+        tone: "error",
+        message:
+          err.code === "occasionHasDesigns"
+            ? t("admin.occasions.hasDesigns", { count: err.count ?? 0 })
+            : err.message,
+      });
+    } finally {
+      setPending(null);
+    }
+  };
+
   return (
     <PageShell>
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
@@ -107,6 +133,9 @@ const OccasionListPage = () => {
           {rows.map((occasion, index) => {
             const busy = pending === occasion.slug || pending === "order";
             const live = occasion.status === "published";
+            // Same rule as cards: gone from the site before it can be gone
+            // for good.
+            const removable = occasion.status !== "published";
 
             return (
               <li
@@ -132,8 +161,13 @@ const OccasionListPage = () => {
                       </span>
                     )}
                   </span>
+                  {/* <bdi> around the slug, because it is Latin text inside an
+                      Arabic sentence. Without isolation the bidi algorithm
+                      reorders the run and the separator drifts to the wrong
+                      side -- the same class of bug FieldLabel guards against
+                      with its bracketed secondary label. */}
                   <span className="mt-0.5 block truncate text-sm text-ink-3">
-                    {occasion.slug} ·{" "}
+                    <bdi dir="ltr">{occasion.slug}</bdi> ·{" "}
                     {t("admin.occasions.designCount", { count: occasion.counts.total })}
                     {occasion.counts.draft > 0 &&
                       ` · ${t("admin.occasions.draftCount", { count: occasion.counts.draft })}`}
@@ -178,6 +212,18 @@ const OccasionListPage = () => {
                       {t(live ? "admin.designs.archive" : "admin.designs.publish")}
                     </span>
                   </Button>
+
+                  {removable && (
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      disabled={busy}
+                      onClick={() => remove(occasion)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span className="sr-only">{t("admin.occasions.delete")}</span>
+                    </Button>
+                  )}
                 </div>
               </li>
             );

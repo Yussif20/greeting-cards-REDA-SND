@@ -11,6 +11,7 @@ import ThemeSwitcher from "../../components/ui/ThemeSwitcher.jsx";
 const TABS = [
   { to: "/admin/occasions", key: "admin.nav.occasions" },
   { to: "/admin/designs", key: "admin.nav.designs" },
+  { to: "/admin/seasons", key: "admin.nav.seasons" },
 ];
 
 /**

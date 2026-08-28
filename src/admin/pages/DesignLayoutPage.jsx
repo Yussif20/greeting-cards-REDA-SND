@@ -157,7 +157,9 @@ const Workbench = ({ design }) => {
             {t("admin.layout.title")}
             <StatusPill status={design.status} />
           </h1>
-          <p className="mt-1 text-sm text-ink-2">
+          {/* Entirely Latin -- slug, season and card number -- so the whole
+              line is marked LTR rather than isolating three runs separately. */}
+          <p dir="ltr" className="mt-1 text-sm text-ink-2 rtl:text-end">
             {design.occasion} · {design.year} ·{" "}
             {String(design.number).padStart(2, "0")}
           </p>

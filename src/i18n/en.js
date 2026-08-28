@@ -127,6 +127,7 @@ export default {
       label: "Admin sections",
       occasions: "Occasions",
       designs: "Cards",
+      seasons: "Seasons",
       viewSite: "View site",
     },
 
@@ -137,6 +138,13 @@ export default {
     },
 
     occasions: {
+      delete: "Delete",
+      deleted: "Occasion deleted.",
+      confirmDelete: "Delete this occasion permanently? It was never published, so no link can break.",
+      confirmDeletePublished:
+        "This occasion has been public. Deleting it permanently means any link shared to it will stop working. Delete anyway?",
+      hasDesigns:
+        "This occasion still has {{count}} cards. Delete or move them first — removing it now would take their artwork with it.",
       add: "Add occasion",
       edit: "Edit",
       moveUp: "Move up",
@@ -262,6 +270,25 @@ export default {
       reordered: "Order saved.",
       published: "That occasion is live.",
       archived: "That occasion is no longer public.",
+    },
+    seasons: {
+      title: "Seasons",
+      subtitle: "Each year of artwork, kept rather than replaced.",
+      add: "Add season",
+      create: "Create",
+      id: "Season",
+      idHint: "Two years, like 2026-2027. It cannot be changed later.",
+      labelEn: "Label (English)",
+      labelAr: "Label (Arabic)",
+      empty: "No seasons yet.",
+      cardCount: "{{count}} cards",
+      created: "Season created as a draft.",
+      published: "That season is live.",
+      archived: "That season is no longer public.",
+      deleted: "Season deleted.",
+      confirmDelete: "Delete this season permanently?",
+      hasDesigns:
+        "This season still has {{count}} cards. Delete or move them first — removing it now would take their artwork with it.",
     },
   },
 };

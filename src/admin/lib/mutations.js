@@ -208,8 +208,126 @@ export async function reorderOccasions(slugsInOrder) {
   await publishSnapshot();
 }
 
-/** Only ever reachable for a draft that was never published. */
-export async function deleteOccasionDraft(slug) {
-  await mutate(supabase.from("occasions").delete().eq("slug", slug), "deleteOccasionDraft");
+/**
+ * Permanently remove an occasion that is not currently public.
+ *
+ * designs.occasion_slug references occasions.slug with no ON DELETE action, so
+ * an occasion that still has cards cannot be removed -- Postgres raises a
+ * foreign key violation. That refusal is correct: silently orphaning or
+ * cascading away a season's artwork would be far worse than a failed click.
+ *
+ * But "23503" is not an explanation. The count is read first so the interface
+ * can say what is actually in the way and how much of it, and the constraint is
+ * still caught underneath as the thing that genuinely enforces it -- a card
+ * created between the count and the delete must not slip through.
+ */
+export async function deleteOccasion(slug) {
+  const cards = await run(
+    supabase.from("designs").select("id").eq("occasion_slug", slug),
+    "deleteOccasion/count",
+  );
+
+  if (cards.length > 0) {
+    const error = new Error("occasionHasDesigns");
+    error.code = "occasionHasDesigns";
+    error.count = cards.length;
+    throw error;
+  }
+
+  const { data, error } = await supabase
+    .from("occasions")
+    .delete()
+    .eq("slug", slug)
+    .select("slug");
+
+  if (error) {
+    if (error.code === "23503") {
+      const conflict = new Error("occasionHasDesigns");
+      conflict.code = "occasionHasDesigns";
+      throw conflict;
+    }
+    throw new Error(`deleteOccasion: ${error.message}`);
+  }
+  if (!data?.length) {
+    throw new Error("deleteOccasion: the database refused this. Nothing was changed.");
+  }
+
+  await publishSnapshot();
+}
+
+/* -------------------------------------------------------------------------- */
+/* seasons                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Create a season.
+ *
+ * Without this the whole dashboard stops short of its purpose: cards belong to
+ * a season, the upload form only offers seasons that exist, and every card
+ * produced next year needs one that does not. The annual task is exactly the
+ * task an admin could not do.
+ *
+ * The id is the season, not a surrogate: it is stored on every design as
+ * `season_id` and surfaces in the public URL as ?year=, so it is fixed at
+ * creation like an occasion's slug. The database checks the shape too.
+ *
+ * sort_order counts down from the top, because the year dropdown reads
+ * newest-first and the newest season is the one being added.
+ */
+export async function createSeason({ id, label }) {
+  if (!/^[0-9]{4}-[0-9]{4}$/.test(id)) {
+    throw new Error(`createSeason: "${id}" must look like 2026-2027`);
+  }
+
+  const existing = await run(
+    supabase.from("seasons").select("sort_order").order("sort_order", { ascending: false }).limit(1),
+    "createSeason/order",
+  );
+
+  const { data, error } = await supabase
+    .from("seasons")
+    .insert({
+      id,
+      label_en: label.en,
+      label_ar: label.ar,
+      sort_order: (existing[0]?.sort_order ?? 0) + 1,
+      status: "draft",
+    })
+    .select()
+    .single();
+
+  if (error) {
+    if (error.code === "23505") throw new Error(`createSeason: ${id} already exists`);
+    throw new Error(`createSeason: ${error.message}`);
+  }
+  await publishSnapshot();
+  return data;
+}
+
+export async function setSeasonStatus(id, status) {
+  await mutate(supabase.from("seasons").update({ status }).eq("id", id), "setSeasonStatus");
+  await publishSnapshot();
+}
+
+/**
+ * Remove a season that is not public and holds no cards.
+ *
+ * designs.season_id references it, so the same foreign key that protects an
+ * occasion's artwork protects a season's, and the same courtesy applies: count
+ * first so the refusal can say what is in the way.
+ */
+export async function deleteSeason(id) {
+  const cards = await run(
+    supabase.from("designs").select("id").eq("season_id", id),
+    "deleteSeason/count",
+  );
+  if (cards.length > 0) {
+    const error = new Error("seasonHasDesigns");
+    error.code = "seasonHasDesigns";
+    error.count = cards.length;
+    throw error;
+  }
+
+  await mutate(supabase.from("seasons").delete().eq("id", id), "deleteSeason");
   await publishSnapshot();
 }

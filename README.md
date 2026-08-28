@@ -227,6 +227,43 @@ Retiring a placeholder no longer needs a developer: upload the real artwork to
 those designs in `/admin`, clear their placeholder flag, and set the occasion's
 art status to final.
 
+## Operating it
+
+### Keeping Supabase awake
+
+Free-plan Supabase projects pause after 7 days without activity. The public
+site is unaffected — it renders from the snapshot bundled at build time — but
+`/admin` stops working until someone restores the project from the dashboard.
+
+`netlify/functions/keepalive.mjs` runs daily and reads one row, which resets
+the timer. It needs `SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` set on the
+site. It lives here rather than in GitHub Actions because scheduled workflows
+are disabled after 60 days without a commit — exactly what a finished project
+looks like — and it would then stop silently.
+
+The ping is a *read*. Writing a row would mean granting `anon` write access
+somewhere, which is opening a hole in the security model to hold a door open.
+
+### Keeping the bundled snapshot fresh
+
+Publishing makes a change live within seconds, but the copy compiled into the
+bundle — the fallback for when the fetch fails — only changes when the site is
+rebuilt. Set `VITE_NETLIFY_BUILD_HOOK` and a publish triggers a deploy so the
+two stay close. Everything works without it; the fallback just drifts.
+
+### If something looks wrong
+
+```bash
+npm run verify:rls        # attack the database with the public key
+npm test                  # the render contract and the layout round trip
+npm run snapshot:pull     # re-sync the bundled snapshot with what is published
+npm run snapshot:publish  # rebuild registry.json from the database
+```
+
+`npm run verify:rls` is the one worth running after any schema change. It uses
+the key that ships in the bundle, because the only meaningful question is not
+whether the interface hides its buttons but whether the database refuses.
+
 ## Known gaps
 
 - **The footer carries no copyright line**, because the design does not show
