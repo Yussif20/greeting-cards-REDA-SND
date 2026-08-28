@@ -742,6 +742,62 @@ export default {
         "thumb": "/cards/eid-al-fitr/thumbs/06.webp",
         "width": 2000,
         "year": "2025-2026"
+      },
+      {
+        "brand": "rhc",
+        "brandBakedIn": true,
+        "height": 600,
+        "id": "eid-al-fitr-2025-2026-07",
+        "isPlaceholder": false,
+        "layout": {
+          "brandMark": {
+            "h": 0.105,
+            "w": 0.32,
+            "x": 0.02,
+            "y": 0.015
+          },
+          "defaultColor": "#FFFFFF",
+          "fontId": "cairo",
+          "jobTitle": {
+            "align": "center",
+            "maxWidth": 0.84,
+            "size": 0.023,
+            "x": 0.5,
+            "y": 0.855
+          },
+          "logo": {
+            "width": 0.26,
+            "x": 0.5,
+            "y": 0.92
+          },
+          "name": {
+            "align": "center",
+            "maxWidth": 0.84,
+            "size": 0.05,
+            "x": 0.5,
+            "y": 0.78
+          },
+          "palette": [
+            "#FFFFFF",
+            "#E7C873",
+            "#8FB8E8",
+            "#EE2E3A",
+            "#0B1A33"
+          ],
+          "safeArea": {
+            "h": 0.2,
+            "w": 0.84,
+            "x": 0.08,
+            "y": 0.72
+          }
+        },
+        "number": 7,
+        "occasion": "eid-al-fitr",
+        "src": "/media/cards/eid-al-fitr/2025-2026/45333537-5cff-45fe-9915-4e56ab04f4e7/master.jpg",
+        "style": "traditional",
+        "thumb": "/media/cards/eid-al-fitr/2025-2026/45333537-5cff-45fe-9915-4e56ab04f4e7/thumb.webp",
+        "width": 900,
+        "year": "2025-2026"
       }
     ],
     "hijri-new-year": [
@@ -2097,7 +2153,7 @@ export default {
       }
     ]
   },
-  "generatedAt": "2026-08-28T02:12:44.504Z",
+  "generatedAt": "2026-08-28T03:51:06.164Z",
   "occasions": [
     {
       "artStatus": "final",
@@ -2445,7 +2501,7 @@ export default {
       }
     }
   ],
-  "revision": 1787883164504,
+  "revision": 1787889066164,
   "seasons": [
     {
       "id": "2025-2026",

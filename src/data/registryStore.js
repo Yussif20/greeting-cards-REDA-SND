@@ -16,9 +16,21 @@
 import fallback from "./registry.snapshot.js";
 import { isUsableSnapshot } from "../lib/registry/serialize.js";
 
-// import.meta.env is undefined under bare Node (verify-render.mjs), so the
-// optional chain is not decoration.
-const REGISTRY_URL = import.meta.env?.VITE_REGISTRY_URL ?? null;
+/**
+ * Where the published registry lives.
+ *
+ * Defaults to the proxied path rather than to null, because "not configured"
+ * used to mean "never fetch" -- and nothing said so. A deployment missing this
+ * variable served the snapshot compiled into its bundle forever: the admin
+ * would publish, see the change in /admin, and find the public site unmoved,
+ * with no error anywhere to explain it. The default is the value that works,
+ * so the variable is now an override rather than a requirement.
+ *
+ * import.meta.env is undefined under bare Node (verify-render.mjs), so the
+ * optional chain is not decoration.
+ */
+const REGISTRY_URL =
+  import.meta.env?.VITE_REGISTRY_URL ?? "/media/registry/registry.json";
 
 if (!isUsableSnapshot(fallback)) {
   // Fail the build, not the browser. A fresh clone whose snapshot never got
@@ -84,8 +96,16 @@ export async function revalidate() {
     current = normalise(next);
     listeners.forEach((fn) => fn());
     return true;
-  } catch {
-    // Offline, blocked, or the project is paused. The bundled snapshot stands.
+  } catch (error) {
+    // Offline, blocked, or the project is paused. The bundled snapshot stands,
+    // and a visitor has a working site -- so this is silent in production.
+    //
+    // In development it is worth saying out loud: the usual cause is the
+    // /media proxy not resolving, and a silent failure there looks exactly
+    // like "publishing does not work".
+    if (import.meta.env?.DEV) {
+      console.warn(`registry: could not refresh from ${REGISTRY_URL} -- ${error.message}`);
+    }
     return false;
   }
 }
