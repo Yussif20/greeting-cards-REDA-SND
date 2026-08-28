@@ -1,14 +1,19 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ChevronRight } from "lucide-react";
+import { Plus, Pencil, ChevronUp, ChevronDown, Eye, EyeOff, Loader2 } from "lucide-react";
 
 import PageShell from "../../components/layout/PageShell.jsx";
+import Button from "../../components/ui/Button.jsx";
+import IconButton from "../../components/ui/IconButton.jsx";
 import StatusPill from "../../components/ui/StatusPill.jsx";
+import Toast from "../../components/ui/Toast.jsx";
 import OccasionIcon from "../../components/occasions/OccasionIcon.jsx";
 import { loc } from "../../lib/localize.js";
 import { useLanguage } from "../../hooks/useLanguage.js";
 
 import { listOccasions, designCounts } from "../lib/api.js";
+import { setOccasionStatus, reorderOccasions } from "../lib/mutations.js";
 import { useAsync } from "../hooks/useAsync.js";
 import AsyncSection from "../components/AsyncSection.jsx";
 
@@ -20,22 +25,76 @@ const load = async () => {
 /**
  * Every occasion, in display order, including the ones the public cannot see.
  *
- * That is the whole point of this screen existing separately from the home
- * page: it reads Postgres rather than the published snapshot, so drafts and
- * archives appear here and nowhere else.
+ * Reordering is up and down buttons rather than drag and drop. HTML5 drag
+ * events do not fire on touch at all, and a pointer-based reimplementation is a
+ * lot of machinery for a list of six that changes about once a year. Buttons
+ * also happen to be the keyboard-accessible version for free.
  */
 const OccasionListPage = () => {
   const { t } = useTranslation();
   const { lang } = useLanguage();
   const { state, data, error, reload } = useAsync(load);
 
+  // Local copy so the arrows reorder instantly; the write follows behind.
+  const [order, setOrder] = useState(null);
+  const [pending, setPending] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    if (data) setOrder(data);
+  }, [data]);
+
+  const rows = order ?? [];
+
+  const move = async (index, delta) => {
+    const next = [...rows];
+    const target = index + delta;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    setOrder(next);
+
+    setPending("order");
+    try {
+      await reorderOccasions(next.map((o) => o.slug));
+      setToast({ tone: "info", message: t("admin.occasion.reordered") });
+    } catch (err) {
+      setOrder(rows); // put it back rather than lie about what was saved
+      setToast({ tone: "error", message: err.message });
+    } finally {
+      setPending(null);
+    }
+  };
+
+  const toggle = async (occasion) => {
+    const live = occasion.status === "published";
+    setPending(occasion.slug);
+    try {
+      await setOccasionStatus(occasion.slug, live ? "archived" : "published");
+      setToast({
+        tone: "info",
+        message: t(live ? "admin.occasion.archived" : "admin.occasion.published"),
+      });
+      reload();
+    } catch (err) {
+      setToast({ tone: "error", message: err.message });
+    } finally {
+      setPending(null);
+    }
+  };
+
   return (
     <PageShell>
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-ink">
-          {t("admin.occasions.title")}
-        </h1>
-        <p className="mt-1 text-sm text-ink-2">{t("admin.occasions.subtitle")}</p>
+      <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">
+            {t("admin.occasions.title")}
+          </h1>
+          <p className="mt-1 text-sm text-ink-2">{t("admin.occasions.subtitle")}</p>
+        </div>
+        <Button as={Link} to="/admin/occasions/new" variant="primary">
+          <Plus className="h-4 w-4" aria-hidden="true" />
+          {t("admin.occasions.add")}
+        </Button>
       </header>
 
       <AsyncSection
@@ -45,17 +104,23 @@ const OccasionListPage = () => {
         empty={t("admin.occasions.empty")}
       >
         <ul className="flex flex-col gap-2">
-          {data?.map((occasion) => (
-            <li key={occasion.slug}>
-              <Link
-                to={`/admin/designs?occasion=${occasion.slug}`}
-                className="panel flex items-center gap-4 rounded-2xl p-4 transition-colors hover:bg-surface-3"
+          {rows.map((occasion, index) => {
+            const busy = pending === occasion.slug || pending === "order";
+            const live = occasion.status === "published";
+
+            return (
+              <li
+                key={occasion.slug}
+                className="panel flex flex-wrap items-center gap-4 rounded-2xl p-4"
               >
                 <span className="shrink-0 text-brand">
                   <OccasionIcon name={occasion.icon} className="h-8 w-8" />
                 </span>
 
-                <span className="min-w-0 flex-1">
+                <Link
+                  to={`/admin/designs?occasion=${occasion.slug}`}
+                  className="min-w-0 flex-1 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
                   <span className="flex flex-wrap items-center gap-2">
                     <span className="truncate font-medium text-ink">
                       {loc(occasion.title, lang)}
@@ -68,30 +133,64 @@ const OccasionListPage = () => {
                     )}
                   </span>
                   <span className="mt-0.5 block truncate text-sm text-ink-3">
-                    {occasion.slug}
-                  </span>
-                </span>
-
-                <span className="shrink-0 text-end text-sm text-ink-2">
-                  <span className="block">
+                    {occasion.slug} ·{" "}
                     {t("admin.occasions.designCount", { count: occasion.counts.total })}
+                    {occasion.counts.draft > 0 &&
+                      ` · ${t("admin.occasions.draftCount", { count: occasion.counts.draft })}`}
                   </span>
-                  {occasion.counts.draft > 0 && (
-                    <span className="block text-xs text-ink-3">
-                      {t("admin.occasions.draftCount", { count: occasion.counts.draft })}
-                    </span>
-                  )}
-                </span>
+                </Link>
 
-                <ChevronRight
-                  className="h-4 w-4 shrink-0 text-ink-3 rtl:rotate-180"
-                  aria-hidden="true"
-                />
-              </Link>
-            </li>
-          ))}
+                <div className="flex shrink-0 items-center gap-1">
+                  <IconButton
+                    label={t("admin.occasions.moveUp")}
+                    disabled={index === 0 || busy}
+                    onClick={() => move(index, -1)}
+                  >
+                    <ChevronUp className="h-4 w-4" aria-hidden="true" />
+                  </IconButton>
+                  <IconButton
+                    label={t("admin.occasions.moveDown")}
+                    disabled={index === rows.length - 1 || busy}
+                    onClick={() => move(index, 1)}
+                  >
+                    <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                  </IconButton>
+
+                  <Button
+                    as={Link}
+                    to={`/admin/occasions/${occasion.slug}`}
+                    size="sm"
+                    variant="secondary"
+                  >
+                    <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                    {t("admin.occasions.edit")}
+                  </Button>
+
+                  <Button size="sm" variant="ghost" disabled={busy} onClick={() => toggle(occasion)}>
+                    {busy ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                    ) : live ? (
+                      <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
+                    ) : (
+                      <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+                    )}
+                    <span className="sr-only sm:not-sr-only">
+                      {t(live ? "admin.designs.archive" : "admin.designs.publish")}
+                    </span>
+                  </Button>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </AsyncSection>
+
+      <Toast
+        message={toast?.message}
+        tone={toast?.tone}
+        onDismiss={() => setToast(null)}
+        dismissLabel={t("common.dismiss")}
+      />
     </PageShell>
   );
 };

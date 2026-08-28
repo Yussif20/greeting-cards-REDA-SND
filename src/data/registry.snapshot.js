@@ -12,8 +12,8 @@
 
 export default {
   "version": 1,
-  "revision": 1787878133620,
-  "generatedAt": "2026-08-28T00:48:53.620Z",
+  "revision": 1787881294936,
+  "generatedAt": "2026-08-28T01:41:34.936Z",
   "seasons": [
     {
       "id": "2025-2026",

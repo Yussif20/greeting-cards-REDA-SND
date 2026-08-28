@@ -1,5 +1,5 @@
 import { supabase } from "./supabase.js";
-import { designToRow } from "../../lib/registry/serialize.js";
+import { designToRow, occasionToRow } from "../../lib/registry/serialize.js";
 import { publishSnapshot } from "./publish.js";
 
 /**
@@ -112,5 +112,74 @@ export async function setStatus(id, status) {
  */
 export async function deleteDraft(id) {
   await run(supabase.from("designs").delete().eq("id", id), "deleteDraft");
+  await publishSnapshot();
+}
+
+/* -------------------------------------------------------------------------- */
+/* occasions                                                                  */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Create an occasion as a draft.
+ *
+ * The slug is the primary key and it is embedded in every one of that
+ * occasion's design ids, in its public URL, and in the localStorage draft keys
+ * of everyone who has customised one of its cards. It is therefore fixed at
+ * creation: the form only lets it be edited while nothing has been published.
+ */
+export async function createOccasion(input) {
+  const { data, error } = await supabase
+    .from("occasions")
+    .insert({ ...occasionToRow(input), status: "draft", published_at: null })
+    .select()
+    .single();
+
+  if (error) {
+    if (error.code === "23505") throw new Error(`createOccasion: the slug "${input.slug}" is taken`);
+    throw new Error(`createOccasion: ${error.message}`);
+  }
+  await publishSnapshot();
+  return data;
+}
+
+export async function updateOccasion(slug, input) {
+  const row = occasionToRow(input);
+  // Never rewrite the primary key from a form submission: designs reference it
+  // and their ids embed it, so a slug change would orphan the artwork.
+  delete row.slug;
+  delete row.status;
+
+  await run(supabase.from("occasions").update(row).eq("slug", slug), "updateOccasion");
+  await publishSnapshot();
+}
+
+export async function setOccasionStatus(slug, status) {
+  await run(
+    supabase.from("occasions").update({ status }).eq("slug", slug),
+    "setOccasionStatus",
+  );
+  await publishSnapshot();
+}
+
+/**
+ * Persist a new display order.
+ *
+ * Written one row at a time rather than as a bulk upsert: an upsert of partial
+ * rows would need every not-null column restated, and getting that wrong is a
+ * good way to blank a tagline while reordering tiles.
+ */
+export async function reorderOccasions(slugsInOrder) {
+  for (const [index, slug] of slugsInOrder.entries()) {
+    await run(
+      supabase.from("occasions").update({ sort_order: index + 1 }).eq("slug", slug),
+      "reorderOccasions",
+    );
+  }
+  await publishSnapshot();
+}
+
+/** Only ever reachable for a draft that was never published. */
+export async function deleteOccasionDraft(slug) {
+  await run(supabase.from("occasions").delete().eq("slug", slug), "deleteOccasionDraft");
   await publishSnapshot();
 }

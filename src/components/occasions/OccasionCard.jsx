@@ -14,12 +14,23 @@ import OccasionIcon from "./OccasionIcon.jsx";
  *
  * `eager` marks the above-the-fold tiles so the LCP image is not lazy.
  */
+const SIZES = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw";
+
 const OccasionCard = ({ occasion, eager = false }) => {
   const { t } = useTranslation();
   const { lang } = useLanguage();
 
   const title = occasionHeading(occasion, lang);
   const { hero, theme } = occasion;
+
+  // Older rows predate these fields; the defaults are what the sharp pipeline
+  // has always produced, so an un-migrated occasion behaves exactly as before.
+  const formats = hero.formats ?? ["avif", "webp", "jpg"];
+  const widths = hero.widths ?? [760, 1520];
+  const srcSet = (ext) =>
+    widths
+      .map((w, i) => `${hero.base}${i === 0 ? "" : "@2x"}.${ext} ${w}w`)
+      .join(", ");
 
   return (
     <Link
@@ -29,27 +40,35 @@ const OccasionCard = ({ occasion, eager = false }) => {
       style={{ outlineColor: theme.light.accent }}
     >
       <div className="relative aspect-16/9 w-full overflow-hidden bg-surface-3 desktop:aspect-auto desktop:h-full">
+        {/* Sources are built from hero.formats and hero.widths rather than
+            hardcoded, because the two pipelines produce different sets. sharp
+            writes avif/webp/jpg for the original six; a browser cannot encode
+            AVIF at all, so an uploaded hero has webp/jpg only. Emitting a
+            <source> for a file that was never written costs a failed request
+            and a flash of nothing, and hardcoding the browser's shorter list
+            would strip AVIF from the six that do have it. */}
         <picture>
-          <source
-            type="image/avif"
-            srcSet={`${hero.base}.avif 760w, ${hero.base}@2x.avif 1520w`}
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          />
-          <source
-            type="image/webp"
-            srcSet={`${hero.base}.webp 760w, ${hero.base}@2x.webp 1520w`}
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          />
+          {formats
+            .filter((format) => format !== "jpg")
+            .map((format) => (
+              <source
+                key={format}
+                type={`image/${format}`}
+                srcSet={srcSet(format)}
+                sizes={SIZES}
+              />
+            ))}
           <img
             src={`${hero.base}.jpg`}
-            srcSet={`${hero.base}.jpg 760w, ${hero.base}@2x.jpg 1520w`}
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            srcSet={srcSet("jpg")}
+            sizes={SIZES}
             width={hero.width}
             height={hero.height}
             alt={loc(hero.alt, lang)}
             loading={eager ? "eager" : "lazy"}
             fetchPriority={eager ? "high" : undefined}
             decoding="async"
+            crossOrigin="anonymous"
             style={{ objectPosition: hero.focal }}
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
           />

@@ -137,6 +137,10 @@ export default {
     },
 
     occasions: {
+      add: "Add occasion",
+      edit: "Edit",
+      moveUp: "Move up",
+      moveDown: "Move down",
       title: "Occasions",
       subtitle: "Everything the site can show, including what is not live yet.",
       empty: "No occasions yet.",
@@ -216,6 +220,46 @@ export default {
       sampleHint:
         "Sample text only — it is never saved. Use a long name to check it fits.",
       showLogo: "Show the logo placeholder",
+    },
+
+    occasion: {
+      newTitle: "New occasion",
+      editTitle: "Edit occasion",
+      subtitle: "How the tile looks, and what it is called.",
+      create: "Create",
+      save: "Save",
+      slug: "Address",
+      slugHint: "The card pages will live at /{{slug}}. It cannot be changed later.",
+      slugLocked:
+        "Fixed once created: every card id contains it, and shared links depend on it.",
+      title: "Name",
+      shortTitle: "Short name",
+      tagline: "Tagline",
+      hero: "Tile photograph",
+      heroAlt: "Photograph description",
+      focalX: "Horizontal focus",
+      focalY: "Vertical focus",
+      focalHint: "Which part of the photograph stays visible when the tile is cropped.",
+      icon: "Mark",
+      iconSearch: "Search marks",
+      iconNone: "No marks match that.",
+      iconHandDrawn: "This occasion uses its own hand-drawn mark ({{name}}).",
+      iconGroup: {
+        celebration: "Celebration",
+        sky: "Sky",
+        heritage: "Heritage",
+        nature: "Nature",
+        journey: "Journey",
+        other: "Other",
+      },
+      accent: { light: "Accent (light)", dark: "Accent (dark)" },
+      accentHint:
+        "The rest of the palette is worked out from these two, including the fade behind the title.",
+      preview: "Preview",
+      previewEmpty: "Add a photograph to see the tile.",
+      reordered: "Order saved.",
+      published: "That occasion is live.",
+      archived: "That occasion is no longer public.",
     },
   },
 };

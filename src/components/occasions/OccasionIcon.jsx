@@ -3,6 +3,13 @@
 // Stroke-only, currentColor, 48x48 viewBox, drawn at a consistent weight so the
 // six read as one set. Keys match `icon` in src/data/occasions.js.
 
+import {
+  LUCIDE_ICONS,
+  LUCIDE_STROKE_WIDTH,
+  isLucideIcon,
+  lucideName,
+} from "./lucideIcons.js";
+
 const props = {
   fill: "none",
   stroke: "currentColor",
@@ -83,13 +90,31 @@ const ICONS = {
 
 const OccasionIcon = ({ name, className = "" }) => {
   const paths = ICONS[name];
-  if (!paths) return null;
+  if (paths) {
+    return (
+      <svg viewBox="0 0 48 48" className={className} aria-hidden="true" {...props}>
+        {paths}
+      </svg>
+    );
+  }
 
-  return (
-    <svg viewBox="0 0 48 48" className={className} aria-hidden="true" {...props}>
-      {paths}
-    </svg>
-  );
+  // Occasions created in /admin choose from a curated lucide shortlist rather
+  // than getting a hand-drawn mark. The stroke width is overridden because
+  // lucide draws at 2 in a 24 box where these are 1.5 in a 48 box -- left
+  // alone, a picked icon reads 2.67x heavier than the six beside it.
+  if (isLucideIcon(name)) {
+    const Icon = LUCIDE_ICONS[lucideName(name)];
+    if (!Icon) return null;
+    return (
+      <Icon
+        className={className}
+        aria-hidden="true"
+        strokeWidth={LUCIDE_STROKE_WIDTH}
+      />
+    );
+  }
+
+  return null;
 };
 
 export default OccasionIcon;

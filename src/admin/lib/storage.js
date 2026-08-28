@@ -74,3 +74,31 @@ export async function uploadCard({ occasionSlug, seasonId, master, thumb, origin
     originalPath,
   };
 }
+
+/**
+ * Store a hero's variants and return the extension-less base the registry
+ * keeps, matching the `${hero.base}.webp` / `${hero.base}@2x.jpg` convention
+ * OccasionCard has always used.
+ */
+export async function uploadHero({ occasionSlug, variants, original }) {
+  const dir = `heroes/${occasionSlug}/${uid()}`;
+
+  for (const { suffix, ext, blob } of variants) {
+    await put(
+      MEDIA_BUCKET,
+      `${dir}/hero${suffix}.${ext}`,
+      blob,
+      ext === "webp" ? "image/webp" : "image/jpeg",
+    );
+  }
+
+  // As with cards: losing the original must not lose the hero.
+  try {
+    const ext = (original.name?.split(".").pop() ?? "bin").toLowerCase().slice(0, 5);
+    await put(ORIGINALS_BUCKET, `${dir}/original.${ext}`, original, original.type);
+  } catch {
+    // The derivatives are already stored; the occasion is usable without it.
+  }
+
+  return { base: mediaUrl(`${dir}/hero`) };
+}

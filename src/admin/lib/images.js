@@ -10,6 +10,9 @@ export const CARD_MASTER = 2000;
 /** Long edge of the grid thumbnail. Matches CARD_THUMB. */
 export const CARD_THUMB = 600;
 
+/** Hero widths, matching HERO_WIDTHS in the sharp pipeline. */
+export const HERO_WIDTHS = [760, 1520];
+
 export const MASTER_TYPE = "image/jpeg";
 export const MASTER_QUALITY = 0.82;
 export const THUMB_TYPE = "image/webp";
@@ -236,4 +239,79 @@ function loadViaElement(file) {
     };
     img.src = url;
   });
+}
+
+/* -------------------------------------------------------------------------- */
+/* heroes                                                                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * One uploaded hero photo, at both widths in both formats a browser can write.
+ *
+ * The sharp pipeline also emits AVIF, and no browser can encode it: canvas
+ * toBlob supports JPEG, PNG and WebP and nothing else. Rather than pretend
+ * otherwise, an uploaded hero records which formats it actually has, and
+ * OccasionCard builds its <picture> from that list. The six original occasions
+ * keep their AVIF because their rows say so -- the data-driven source list
+ * exists to avoid *removing* a format from them, not to add one here.
+ *
+ * WebP covers effectively every browser in use and JPEG covers the rest, so
+ * the practical cost of the missing AVIF is a few kilobytes.
+ *
+ * `width` and `height` in the returned hero are the INTRINSIC dimensions, not
+ * 760 or 1520: they are what gives the <img> its aspect ratio, and the
+ * existing rows store 1672x941 while their files are 760 and 1520 wide.
+ */
+export async function processHero(file) {
+  validate(file);
+
+  const intrinsic = await probeDimensions(file);
+  if (intrinsic.width * intrinsic.height > MAX_PIXELS) {
+    throw new ImageError("tooManyPixels", `${intrinsic.width}x${intrinsic.height}`);
+  }
+
+  // Heroes are sized by WIDTH, not by long edge -- they are wide crops, and
+  // the srcset descriptors the markup emits are widths. This is the one place
+  // the card pipeline's fit() would be the wrong rule.
+  const byWidth = (width) => ({
+    width,
+    height: Math.max(1, Math.round((intrinsic.height * width) / intrinsic.width)),
+  });
+
+  // Never upscale. An upload narrower than 760 gets a single variant at its own
+  // width, and hero.widths records that, so no srcset entry can point at a file
+  // that was never written.
+  const usable = HERO_WIDTHS.filter((w) => w <= intrinsic.width);
+  const widths = usable.length ? usable : [intrinsic.width];
+
+  const variants = [];
+  for (const [index, width] of widths.entries()) {
+    const size = byWidth(width);
+    const suffix = index === 0 ? "" : "@2x";
+
+    const bitmap = await decodeTo(file, size);
+    const source = bitmap ?? (await loadViaElement(file));
+    const canvas = paint(source, size);
+
+    try {
+      assertNotBlank(canvas);
+      // One canvas, encoded sequentially. Holding several at once is what
+      // pushes iOS past its backing-store cap.
+      variants.push({ width, suffix, ext: "webp", blob: await encode(canvas, "image/webp", 0.78) });
+      variants.push({ width, suffix, ext: "jpg", blob: await encode(canvas, "image/jpeg", 0.8) });
+    } finally {
+      release(canvas);
+      bitmap?.close();
+      if (source instanceof HTMLImageElement) URL.revokeObjectURL(source.src);
+    }
+  }
+
+  return {
+    variants,
+    original: file,
+    formats: ["webp", "jpg"],
+    widths,
+    width: intrinsic.width,
+    height: intrinsic.height,
+  };
 }

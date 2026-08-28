@@ -6,6 +6,7 @@ import { useAdminAuth } from "./hooks/useAdminAuth.js";
 import AdminShell from "./components/AdminShell.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import OccasionListPage from "./pages/OccasionListPage.jsx";
+import OccasionFormPage from "./pages/OccasionFormPage.jsx";
 import DesignListPage from "./pages/DesignListPage.jsx";
 import DesignUploadPage from "./pages/DesignUploadPage.jsx";
 import DesignLayoutPage from "./pages/DesignLayoutPage.jsx";
@@ -45,6 +46,8 @@ const AdminRoutes = () => {
       <Route element={<AdminShell email={email} onSignOut={signOut} />}>
         <Route index element={<Navigate to="/admin/occasions" replace />} />
         <Route path="occasions" element={<OccasionListPage />} />
+        <Route path="occasions/new" element={<OccasionFormPage />} />
+        <Route path="occasions/:slug" element={<OccasionFormPage />} />
         <Route path="designs" element={<DesignListPage />} />
         <Route path="designs/new" element={<DesignUploadPage />} />
         <Route path="designs/:designId/layout" element={<DesignLayoutPage />} />
