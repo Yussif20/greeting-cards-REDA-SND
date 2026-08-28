@@ -39,7 +39,7 @@ const keep = (why) => {
   console.log(`snapshot:pull  ${why} -- keeping the committed snapshot`);
 };
 
-const template = (snapshot) => `// GENERATED -- do not edit by hand.
+const template = (snapshot, stableStringify) => `// GENERATED -- do not edit by hand.
 //
 // The stale fallback for src/data/registryStore.js: a valid registry that
 // exists synchronously at module-eval time, so getOccasion()/getDesign() never
@@ -51,13 +51,13 @@ const template = (snapshot) => `// GENERATED -- do not edit by hand.
 //
 // Regenerate with: npm run snapshot:pull
 
-export default ${JSON.stringify(snapshot, null, 2)};
+export default ${stableStringify(snapshot, 2)};
 `;
 
 async function main() {
   if (!url) return keep("no VITE_REGISTRY_URL or SUPABASE_URL");
 
-  const { isUsableSnapshot } = await import(
+  const { isUsableSnapshot, stableStringify } = await import(
     pathToFileURL(path.join(ROOT, "src/lib/registry/serialize.js")).href
   );
 
@@ -99,7 +99,7 @@ async function main() {
     return console.log(`snapshot:pull  already at revision ${next.revision}`);
   }
 
-  await writeFile(OUT, template(next), "utf8");
+  await writeFile(OUT, template(next, stableStringify), "utf8");
 
   const designs = Object.values(next.designs).flat().length;
   console.log(

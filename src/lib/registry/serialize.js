@@ -173,3 +173,27 @@ export function isUsableSnapshot(s) {
       !Array.isArray(s.designs),
   );
 }
+
+/**
+ * JSON with object keys in a stable order.
+ *
+ * Postgres jsonb does not preserve key order, so the same layout read back
+ * from the database can be spelled differently from the one that was written.
+ * Anything that compares two layouts, or writes one into a file people diff,
+ * has to be insensitive to that -- otherwise "has this changed?" answers yes
+ * for a layout nobody touched, and a snapshot with identical content produces
+ * a fourteen-hundred-line diff.
+ */
+export function stableStringify(value, space) {
+  const order = (v) =>
+    Array.isArray(v)
+      ? v.map(order)
+      : v && typeof v === "object"
+        ? Object.fromEntries(
+            Object.keys(v)
+              .sort()
+              .map((key) => [key, order(v[key])]),
+          )
+        : v;
+  return JSON.stringify(order(value), null, space);
+}

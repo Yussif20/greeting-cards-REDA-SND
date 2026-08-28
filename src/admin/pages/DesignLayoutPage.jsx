@@ -16,6 +16,7 @@ import { useEditorState } from "../../hooks/useEditorState.js";
 import { loadImage } from "../../lib/canvas.js";
 import { preloadFont } from "../../lib/fonts.js";
 import { layoutFromScene } from "../../lib/layoutFromScene.js";
+import { stableStringify } from "../../lib/registry/serialize.js";
 import { NAME_LAYER, JOB_LAYER, LOGO_LAYER } from "../../lib/layers.js";
 
 import RegionEditor from "../components/RegionEditor.jsx";
@@ -119,8 +120,12 @@ const Workbench = ({ design }) => {
   // dragged rather than the one the card was created with.
   const liveDesign = useMemo(() => ({ ...design, layout: base }), [design, base]);
 
+  // Compared without regard to key order: design.layout arrives from Postgres
+  // jsonb, which does not preserve it, while layoutFromScene rebuilds its
+  // objects fresh. A plain JSON.stringify comparison reports every untouched
+  // layout as modified, which makes "Save" meaningless.
   const dirty = useMemo(
-    () => JSON.stringify(nextLayout) !== JSON.stringify(design.layout),
+    () => stableStringify(nextLayout) !== stableStringify(design.layout),
     [nextLayout, design.layout],
   );
 

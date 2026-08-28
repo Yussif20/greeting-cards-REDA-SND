@@ -267,6 +267,7 @@ check(
 // fail here rather than in production.
 
 const { layoutFromScene } = await import("../src/lib/layoutFromScene.js");
+const { stableStringify } = await import("../src/lib/registry/serialize.js");
 
 const sceneOf = (d) => ({
   layers: buildLayers(d, { name: "Sample", jobTitle: "Sample" }),
@@ -278,7 +279,7 @@ const drifted = allOccasions()
   .flatMap((o) => getDesigns(o.slug))
   .filter(
     (d) =>
-      JSON.stringify(layoutFromScene(sceneOf(d), d.layout)) !== JSON.stringify(d.layout),
+      stableStringify(layoutFromScene(sceneOf(d), d.layout)) !== stableStringify(d.layout),
   );
 
 check(
