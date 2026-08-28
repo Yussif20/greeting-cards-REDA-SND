@@ -8,8 +8,8 @@ import { publishSnapshot } from "./publish.js";
  * Every one of these can be refused by the database regardless of what the
  * interface allowed: `is_admin()` gates all of them, and the delete policy
  * additionally requires `status = 'draft' and published_at is null`. So
- * deleteDraft below cannot destroy something a customer may have linked to
- * even if a bug called it on a published row.
+ * deleteDesign below cannot destroy a card customers can currently see, even
+ * if a bug called it on a published row.
  *
  * Each mutation republishes the snapshot, because a change nobody can see is
  * not a change. That is one extra round trip per save, which is the right
@@ -19,6 +19,34 @@ import { publishSnapshot } from "./publish.js";
 const run = async (builder, label) => {
   const { data, error } = await builder;
   if (error) throw new Error(`${label}: ${error.message}`);
+  return data;
+};
+
+/**
+ * A write that must actually have written something.
+ *
+ * This is the trap PostgREST sets for every RLS-protected table. A DELETE or
+ * UPDATE the policy refuses does not fail -- it matches no rows and returns
+ * success, because "you may not touch this row" and "there was no such row"
+ * are the same answer once the row is invisible to you. Without asking for the
+ * affected rows back, a denied delete is indistinguishable from a completed
+ * one, and the interface cheerfully reports that it worked.
+ *
+ * That is exactly what happened: a card was reported deleted, stayed in the
+ * list, and nothing anywhere had gone wrong as far as the code could tell.
+ *
+ * `.select()` makes the write return what it changed, so an empty result is a
+ * refusal and can be said out loud.
+ */
+const mutate = async (builder, label) => {
+  const { data, error } = await builder.select("id");
+  if (error) throw new Error(`${label}: ${error.message}`);
+  if (!data || data.length === 0) {
+    throw new Error(
+      `${label}: the database refused this, or the row no longer exists. ` +
+        `Nothing was changed.`,
+    );
+  }
   return data;
 };
 
@@ -80,12 +108,12 @@ export async function createDesign(input, attempt = 0) {
 
 /** Save a design's layout, the output of the visual editor. */
 export async function saveLayout(id, layout) {
-  await run(supabase.from("designs").update({ layout }).eq("id", id), "saveLayout");
+  await mutate(supabase.from("designs").update({ layout }).eq("id", id), "saveLayout");
   await publishSnapshot();
 }
 
 export async function updateDesign(id, patch) {
-  await run(supabase.from("designs").update(patch).eq("id", id), "updateDesign");
+  await mutate(supabase.from("designs").update(patch).eq("id", id), "updateDesign");
   await publishSnapshot();
 }
 
@@ -98,20 +126,22 @@ export async function updateDesign(id, patch) {
  * delete policy.
  */
 export async function setStatus(id, status) {
-  await run(supabase.from("designs").update({ status }).eq("id", id), "setStatus");
+  await mutate(supabase.from("designs").update({ status }).eq("id", id), "setStatus");
   await publishSnapshot();
 }
 
 /**
- * Permanently remove a draft that was never published.
+ * Permanently remove a card that is not currently public.
  *
- * The interface only offers this on such rows, and the database enforces the
- * same rule independently. Storage files are deliberately left behind: there
- * is no delete policy on storage.objects at all, so an upload is never
- * destroyed by a mis-click, only orphaned.
+ * A draft, or something already unpublished. Never a live one: the interface
+ * hides the action and the delete policy refuses it, so destroying a card
+ * customers can see right now takes two deliberate steps rather than one
+ * click. Storage files are left behind either way -- there is no delete policy
+ * on storage.objects at all, so an upload is never destroyed by a mis-click,
+ * only orphaned.
  */
-export async function deleteDraft(id) {
-  await run(supabase.from("designs").delete().eq("id", id), "deleteDraft");
+export async function deleteDesign(id) {
+  await mutate(supabase.from("designs").delete().eq("id", id), "deleteDesign");
   await publishSnapshot();
 }
 
@@ -149,12 +179,12 @@ export async function updateOccasion(slug, input) {
   delete row.slug;
   delete row.status;
 
-  await run(supabase.from("occasions").update(row).eq("slug", slug), "updateOccasion");
+  await mutate(supabase.from("occasions").update(row).eq("slug", slug), "updateOccasion");
   await publishSnapshot();
 }
 
 export async function setOccasionStatus(slug, status) {
-  await run(
+  await mutate(
     supabase.from("occasions").update({ status }).eq("slug", slug),
     "setOccasionStatus",
   );
@@ -170,7 +200,7 @@ export async function setOccasionStatus(slug, status) {
  */
 export async function reorderOccasions(slugsInOrder) {
   for (const [index, slug] of slugsInOrder.entries()) {
-    await run(
+    await mutate(
       supabase.from("occasions").update({ sort_order: index + 1 }).eq("slug", slug),
       "reorderOccasions",
     );
@@ -180,6 +210,6 @@ export async function reorderOccasions(slugsInOrder) {
 
 /** Only ever reachable for a draft that was never published. */
 export async function deleteOccasionDraft(slug) {
-  await run(supabase.from("occasions").delete().eq("slug", slug), "deleteOccasionDraft");
+  await mutate(supabase.from("occasions").delete().eq("slug", slug), "deleteOccasionDraft");
   await publishSnapshot();
 }

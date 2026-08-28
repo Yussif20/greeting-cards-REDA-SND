@@ -106,6 +106,31 @@ await expectDenied("anon cannot grant itself admin", "admins", {
   }),
 });
 
+/* ------------------------------- a refused write must leave the data intact */
+//
+// The denial above is only half the story. PostgREST answers a DELETE that
+// matched no rows exactly as it answers one that deleted something, because
+// once row level security hides a row, "you may not delete this" and "there is
+// no such row" are the same reply. A client that does not ask for the affected
+// rows back cannot tell the difference -- which is how a card was once
+// reported deleted and stayed in the list.
+//
+// So: attempt the delete, then look.
+
+{
+  const before = await (await call(ANON, "designs?select=id&limit=1")).json();
+  const victim = before[0]?.id;
+
+  await call(ANON, `designs?id=eq.${victim}`, { method: "DELETE" });
+
+  const after = await (await call(ANON, `designs?select=id&id=eq.${victim}`)).json();
+  record(
+    Array.isArray(after) && after.length === 1,
+    "a refused delete leaves the row in place",
+    victim,
+  );
+}
+
 /* ----------------------------------------- drafts must be invisible to anon */
 
 const PROBE = "rls-probe-season";

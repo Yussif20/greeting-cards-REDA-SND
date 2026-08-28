@@ -158,6 +158,8 @@ export default {
       publishedToast: "That card is live.",
       archived: "That card is no longer public.",
       deleted: "Draft deleted.",
+      confirmDeletePublished:
+        "This card has been public. Deleting it permanently means any link shared to it will stop working. Delete anyway?",
       confirmDelete: "Delete this draft permanently? It was never published, so no link can break.",
       title: "Cards",
       subtitle: "Artwork for every occasion and season.",

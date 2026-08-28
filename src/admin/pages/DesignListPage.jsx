@@ -12,7 +12,7 @@ import { loc } from "../../lib/localize.js";
 import { useLanguage } from "../../hooks/useLanguage.js";
 
 import { listOccasions, listDesigns } from "../lib/api.js";
-import { setStatus, deleteDraft } from "../lib/mutations.js";
+import { setStatus, deleteDesign } from "../lib/mutations.js";
 import { useAsync } from "../hooks/useAsync.js";
 import AsyncSection from "../components/AsyncSection.jsx";
 
@@ -23,11 +23,11 @@ const ALL = "__all__";
  * public can see.
  *
  * Publishing and archiving are offered on every row; permanent deletion only
- * on a draft that has never been published. That asymmetry is the point: an
- * archived card keeps its id, so a link someone shared still resolves, while a
- * draft nobody could have linked to is safe to remove outright. The database
- * enforces the same rule in its delete policy, so a bug here cannot destroy a
- * card a customer bookmarked.
+ * once a card is not public. Removing something that has been live is
+ * therefore two deliberate steps -- unpublish, then delete -- and the second
+ * one says in words that a link somebody shared will stop working. The
+ * database enforces the same rule in its delete policy, so a bug here cannot
+ * destroy a card customers can currently see.
  */
 const DesignListPage = () => {
   const { t } = useTranslation();
@@ -114,7 +114,12 @@ const DesignListPage = () => {
           {designs.data?.map((design) => {
             const busy = pending === design.id;
             const live = design.status === "published";
-            const removable = design.status === "draft" && !design.publishedAt;
+            // Deletable once it is not public. Removing something that HAS
+            // been live stays two deliberate steps -- unpublish, then delete --
+            // and the confirmation says what that costs, because a link
+            // somebody shared will stop working.
+            const removable = design.status !== "published";
+            const wasLive = Boolean(design.publishedAt);
 
             return (
               <li key={design.id} className="panel flex flex-col overflow-hidden rounded-2xl">
@@ -182,8 +187,11 @@ const DesignListPage = () => {
                         variant="danger"
                         disabled={busy}
                         onClick={() => {
-                          if (!window.confirm(t("admin.designs.confirmDelete"))) return;
-                          act(design, () => deleteDraft(design.id), t("admin.designs.deleted"));
+                          const message = wasLive
+                            ? t("admin.designs.confirmDeletePublished")
+                            : t("admin.designs.confirmDelete");
+                          if (!window.confirm(message)) return;
+                          act(design, () => deleteDesign(design.id), t("admin.designs.deleted"));
                         }}
                       >
                         <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />

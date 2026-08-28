@@ -2097,7 +2097,7 @@ export default {
       }
     ]
   },
-  "generatedAt": "2026-08-28T02:02:35.717Z",
+  "generatedAt": "2026-08-28T02:08:51.448Z",
   "occasions": [
     {
       "artStatus": "final",
@@ -2445,7 +2445,7 @@ export default {
       }
     }
   ],
-  "revision": 1787882555717,
+  "revision": 1787882931448,
   "seasons": [
     {
       "id": "2025-2026",
