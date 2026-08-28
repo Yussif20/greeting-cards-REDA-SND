@@ -146,6 +146,15 @@ export default {
     },
 
     designs: {
+      add: "Add card",
+      layout: "Layout",
+      publish: "Publish",
+      archive: "Unpublish",
+      delete: "Delete",
+      publishedToast: "That card is live.",
+      archived: "That card is no longer public.",
+      deleted: "Draft deleted.",
+      confirmDelete: "Delete this draft permanently? It was never published, so no link can break.",
       title: "Cards",
       subtitle: "Artwork for every occasion and season.",
       occasion: "Occasion",
@@ -156,6 +165,46 @@ export default {
 
     errors: {
       loadFailed: "Could not load that from the database.",
+    },
+
+    upload: {
+      title: "Add a card",
+      subtitle: "Upload the artwork, then place the name on it.",
+      occasion: "Occasion",
+      season: "Season",
+      brand: "Brand",
+      style: "Style",
+      choose: "Choose an image, or drop one here",
+      hint: "JPEG, PNG or WebP",
+      cancel: "Cancel",
+      note: "The card is saved as a draft. Nobody sees it until you publish it.",
+      busy: {
+        processing: "Resizing the artwork…",
+        uploading: "Uploading…",
+        saving: "Saving…",
+      },
+      errors: {
+        badType: "That file is not a JPEG, PNG or WebP.",
+        tooLarge: "That file is too large. Keep it under 40 MB.",
+        tooManyPixels: "That image has too many pixels to process in the browser.",
+        decodeFailed: "That image could not be read.",
+        encodeFailed: "The browser could not encode the resized image.",
+        unsupportedFormat: "This browser cannot write WebP thumbnails.",
+        blankCanvas: "The browser ran out of memory and produced a blank image. Try a smaller file.",
+      },
+    },
+
+    layout: {
+      title: "Place the text",
+      save: "Save layout",
+      saveAndPublish: "Save and publish",
+      saved: "Layout saved.",
+      published: "Saved and published.",
+      sampleName: "Sample name",
+      sampleTitle: "Sample job title",
+      sampleHint:
+        "Sample text only — it is never saved. Use a long name to check it fits.",
+      showLogo: "Show the logo placeholder",
     },
   },
 };

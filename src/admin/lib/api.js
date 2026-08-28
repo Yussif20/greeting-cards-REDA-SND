@@ -57,6 +57,16 @@ export const listDesigns = async (occasionSlug) => {
   ).map(toDesign);
 };
 
+/** One design by id, drafts included -- the layout editor's entry point. */
+export const getDesignById = async (id) => {
+  const rows = await query(
+    supabase.from("designs").select("*").eq("id", id).limit(1),
+    "getDesignById",
+  );
+  if (!rows.length) throw new Error(`getDesignById: no design "${id}"`);
+  return toDesign(rows[0]);
+};
+
 /** How many designs each occasion has, and how many are not yet live. */
 export const designCounts = async () => {
   const rows = await query(

@@ -181,6 +181,30 @@ was left alone.
 image same-origin, and a cross-origin image would taint the `<canvas>` and
 break the download.
 
+### Why uploads are proxied rather than served from Supabase
+
+Uploaded artwork is drawn into a `<canvas>` and read back out with `toBlob()`,
+which browsers refuse on a *tainted* canvas. Serving Supabase Storage through
+this origin at `/media/*` makes every image same-origin, so tainting cannot
+occur. Measured, rather than assumed:
+
+| image loaded | `toBlob()` |
+|---|---|
+| `/media/...` proxied, `crossOrigin` set | works |
+| `/media/...` proxied, no `crossOrigin` | works |
+| `supabase.co` direct, `crossOrigin` set | works |
+| `supabase.co` direct, no `crossOrigin` | **SecurityError** |
+
+Only the last row fails, and it is the one that would have shipped: `DesignCard`
+and `OccasionCard` render plain `<img>` with no `crossorigin`, so a visitor who
+browsed the grid first would cache a non-CORS response, and the editor's
+Download would then throw for them and nobody else. The proxy removes the
+failure mode instead of mitigating it — and `vite.config.js` mirrors the
+rewrite so dev behaves like production.
+
+It also moves egress onto the host's CDN, which matters: the Supabase free plan
+allows 5 GB/month, and card masters are ~600KB each.
+
 Optimised images under `public/` are generated, not hand-edited. Originals go
 in `assets-src/` (gitignored); `npm run assets` produces:
 

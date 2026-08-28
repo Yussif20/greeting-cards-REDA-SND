@@ -23,11 +23,7 @@ import Button from "../components/ui/Button.jsx";
 import IconButton from "../components/ui/IconButton.jsx";
 import Toast from "../components/ui/Toast.jsx";
 import EditorForm from "../components/editor/EditorForm.jsx";
-import EditorToolbar from "../components/editor/EditorToolbar.jsx";
-import CardPreview from "../components/editor/preview/CardPreview.jsx";
-import MovePanel from "../components/editor/panels/MovePanel.jsx";
-import SizePanel from "../components/editor/panels/SizePanel.jsx";
-import AlignPanel from "../components/editor/panels/AlignPanel.jsx";
+import EditorStage from "../components/editor/EditorStage.jsx";
 import NotFoundPage from "./NotFoundPage.jsx";
 
 const EditorPage = () => {
@@ -194,19 +190,6 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
   const backToGrid =
     design.year === defaultYear(slug) ? `/${slug}` : `/${slug}?year=${design.year}`;
 
-  const panels = {
-    move: <MovePanel layer={selectedLayer} dispatch={dispatch} />,
-    size: <SizePanel layer={selectedLayer} dispatch={dispatch} />,
-    align: (
-      <AlignPanel
-        design={design}
-        layer={selectedLayer}
-        layers={state.layers}
-        dispatch={dispatch}
-      />
-    ),
-  };
-
   return (
     <PageShell accent={occasion.theme.light}>
       <Breadcrumbs
@@ -260,30 +243,14 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
           />
         </section>
 
-        <section className="order-1 space-y-4 lg:order-2">
-          <CardPreview
-            design={design}
-            image={image}
-            state={state}
-            dispatch={dispatch}
-            selectedLayer={selectedLayer}
-          />
-
-          <EditorToolbar
-            value={state.activeTool}
-            onChange={(tool) => dispatch({ type: "tool", tool })}
-          />
-
-          <div className="rounded-2xl border border-line bg-surface-2 p-4">
-            {!selectedLayer ? (
-              <p className="py-2 text-center text-sm text-ink-3">
-                {t("editor.selectLayerHint")}
-              </p>
-            ) : (
-              panels[state.activeTool]
-            )}
-          </div>
-        </section>
+        <EditorStage
+          className="order-1 lg:order-2"
+          design={design}
+          image={image}
+          state={state}
+          dispatch={dispatch}
+          selectedLayer={selectedLayer}
+        />
       </div>
 
       <Toast

@@ -342,6 +342,20 @@ commit;
 --    sign up". Defence in depth: even with signup on, a new account is not in
 --    public.admins and every write policy denies it.
 -- 2. Authentication -> Users -> Add user, with a real email and password.
--- 3. insert into public.admins (user_id, email)
---      values ('<the uuid from step 2>', '<their email>');
--- 4. node --env-file=.env.local scripts/migrate-to-supabase.mjs
+-- 3. Grant that account admin. Look the id up by email rather than pasting a
+--    uuid: a mistyped uuid inserts happily and produces a working login that
+--    is silently not an admin, which is a confusing thing to debug.
+--
+--      insert into public.admins (user_id, email)
+--      select id, email from auth.users
+--       where email = '<the email from step 2>'
+--      on conflict (user_id) do nothing;
+--
+--    Then confirm it took -- is_admin must be true:
+--
+--      select u.email, (a.user_id is not null) as is_admin
+--        from auth.users u
+--        left join public.admins a on a.user_id = u.id;
+--
+-- 4. npm run db:seed
+-- 5. npm run verify:rls

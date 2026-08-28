@@ -7,6 +7,8 @@ import AdminShell from "./components/AdminShell.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import OccasionListPage from "./pages/OccasionListPage.jsx";
 import DesignListPage from "./pages/DesignListPage.jsx";
+import DesignUploadPage from "./pages/DesignUploadPage.jsx";
+import DesignLayoutPage from "./pages/DesignLayoutPage.jsx";
 
 /**
  * Entry point for the lazily-loaded admin chunk.
@@ -44,6 +46,8 @@ const AdminRoutes = () => {
         <Route index element={<Navigate to="/admin/occasions" replace />} />
         <Route path="occasions" element={<OccasionListPage />} />
         <Route path="designs" element={<DesignListPage />} />
+        <Route path="designs/new" element={<DesignUploadPage />} />
+        <Route path="designs/:designId/layout" element={<DesignLayoutPage />} />
         <Route path="*" element={<Navigate to="/admin/occasions" replace />} />
       </Route>
     </Routes>

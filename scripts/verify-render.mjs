@@ -257,5 +257,35 @@ check(
   allOccasions().every((o) => getDesigns(o.slug).every((d) => seasons.has(d.year))),
 );
 
+// --- layout round trip -----------------------------------------------------
+//
+// buildLayers() turns a layout into an editor scene; layoutFromScene() turns a
+// scene back into a layout. /admin saves a card's default geometry through the
+// second, so the two have to be exact inverses -- if one grows a field and the
+// other does not, an admin's edit silently drops it and nothing complains.
+// Asserting the round trip over every real design is what makes that drift
+// fail here rather than in production.
+
+const { layoutFromScene } = await import("../src/lib/layoutFromScene.js");
+
+const sceneOf = (d) => ({
+  layers: buildLayers(d, { name: "Sample", jobTitle: "Sample" }),
+  color: d.layout.defaultColor,
+  fontId: d.layout.fontId,
+});
+
+const drifted = allOccasions()
+  .flatMap((o) => getDesigns(o.slug))
+  .filter(
+    (d) =>
+      JSON.stringify(layoutFromScene(sceneOf(d), d.layout)) !== JSON.stringify(d.layout),
+  );
+
+check(
+  "every layout survives buildLayers -> layoutFromScene unchanged",
+  drifted.length === 0,
+  drifted.length ? `${drifted.length} drifted, e.g. ${drifted[0].id}` : "",
+);
+
 console.log(failures === 0 ? "\nAll checks passed.\n" : `\n${failures} check(s) failed.\n`);
 process.exit(failures === 0 ? 0 : 1);
