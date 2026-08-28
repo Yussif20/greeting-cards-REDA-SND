@@ -60,23 +60,3 @@ export const getStyles = (slug, year) => {
   const present = new Set(getDesigns(slug, year).map((d) => d.style));
   return STYLES.filter((s) => present.has(s));
 };
-
-/**
- * The sibling design carrying `brandId` for the same occasion and the same
- * season, preferring one that also matches `style`. Used by BrandSelect when
- * the brand logo is baked into the artwork, so switching brand means switching
- * design -- but never silently switching year.
- */
-export const findSiblingByBrand = (slug, design, brandId) => {
-  const siblings = getDesigns(slug, design?.year).filter((d) => d.brand === brandId);
-  if (siblings.length === 0) return null;
-  return siblings.find((d) => d.style === design?.style) ?? siblings[0];
-};
-
-/**
- * Brand ids that have artwork for this occasion, in design order. Scoped to
- * `year` when given: a brand can be in one season's set and not the next.
- */
-export const getBrandIds = (slug, year) => [
-  ...new Set(getDesigns(slug, year).map((d) => d.brand).filter(Boolean)),
-];

@@ -8,7 +8,7 @@ import { useLanguage } from "../hooks/useLanguage.js";
 import { useEditorState } from "../hooks/useEditorState.js";
 import { useDebouncedValue } from "../hooks/useDebouncedValue.js";
 
-import { findSiblingByBrand, defaultYear } from "../data/designs/index.js";
+import { getDesign, defaultYear } from "../data/designs/index.js";
 import { getBrand } from "../data/brands.js";
 import { occasionHeading, occasionShortHeading } from "../lib/localize.js";
 import { loadImage } from "../lib/canvas.js";
@@ -92,32 +92,44 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
     if (draft) setToast({ tone: "info", message: t("editor.draftRestored") });
   }, [draft, t]);
 
+  /**
+   * The brand row that was chosen.
+   *
+   * What the value means depends on the artwork, which is why the branch is
+   * here rather than in the control. With the logo baked into the pixels the
+   * row identifies a *card* -- a brand may have several for one occasion, and
+   * the picker lists each of them -- so this navigates. With a composited logo
+   * it identifies a brand, and nothing moves.
+   */
   const handleBrandChange = useCallback(
-    (brandId) => {
-      dispatch({ type: "brand", brandId });
-
+    (chosen) => {
       if (design.brandBakedIn) {
-        // Mode A: the logo is in the pixels, so a brand change is a design
-        // change. Draft state is keyed per design, so carry the typed text over.
-        const sibling = findSiblingByBrand(slug, design, brandId);
-        if (sibling && sibling.id !== design.id) {
-          saveDraft(slug, sibling.id, {
-            layers: Object.fromEntries(
-              state.layers
-                .filter((l) => l.type === "text")
-                .map((l) => [l.id, { text: l.text, color: l.color, fontId: l.fontId }]),
-            ),
-            brandId,
-            fontId: state.fontId,
-            color: state.color,
-          });
-          navigate(`/${slug}/${sibling.id}`, { replace: true });
-        }
+        const next = getDesign(slug, chosen);
+        if (!next || next.id === design.id) return;
+
+        dispatch({ type: "brand", brandId: next.brand });
+
+        // Draft state is keyed per design, so carry the typed text across to
+        // the card being navigated to. Only the fields the customer owns --
+        // geometry belongs to the design they are arriving at.
+        saveDraft(slug, next.id, {
+          layers: Object.fromEntries(
+            state.layers
+              .filter((l) => l.type === "text")
+              .map((l) => [l.id, { text: l.text, color: l.color, fontId: l.fontId }]),
+          ),
+          brandId: next.brand,
+          fontId: state.fontId,
+          color: state.color,
+          layout: layoutFingerprint(next.layout),
+        });
+        navigate(`/${slug}/${next.id}`, { replace: true });
         return;
       }
 
       // Mode B: the brand is a compositing layer.
-      const brand = getBrand(brandId);
+      dispatch({ type: "brand", brandId: chosen });
+      const brand = getBrand(chosen);
       dispatch({ type: "logoSrc", src: brand?.logo?.light ?? null, aspect: brand?.aspect });
     },
     [design, slug, state.layers, state.fontId, state.color, dispatch, navigate],

@@ -344,5 +344,80 @@ check(
   draftLegacy.y === draftDesign.layout.name.y && draftLegacy.text === "Ahmed",
 );
 
+// --- the brand picker's rows ------------------------------------------------
+//
+// The picker lists cards, not brands, because a company can have several
+// designs for one occasion. Numbering only appears where it disambiguates,
+// which is the part that is invisible until a season ships two cards for one
+// company -- exactly when nobody is looking closely.
+
+const { brandRows } = await import("../src/lib/brandRows.js");
+const { BRANDS } = await import("../src/data/brands.js");
+
+const rowsFor = (cards) => brandRows(cards, BRANDS);
+const labels = (cards) => rowsFor(cards).filter((r) => !r.disabled).map((r) => r.label);
+
+const single = labels([
+  { id: "a", brand: "rhc", number: 1 },
+  { id: "b", brand: "fhc", number: 2 },
+]);
+check(
+  "one card per brand is not numbered",
+  single.join("|") === "REDA Hazard Control|Fire & Hazard Control",
+  single.join(", "),
+);
+
+const many = labels([
+  { id: "x-09", brand: "rhc", number: 9 },
+  { id: "x-02", brand: "fhc", number: 2 },
+  { id: "x-01", brand: "rhc", number: 1 },
+]);
+check(
+  "a brand with several cards is numbered from 1, in card order",
+  many.join("|") === "REDA Hazard Control 1|REDA Hazard Control 2|Fire & Hazard Control",
+  many.join(", "),
+);
+
+const ordered = rowsFor([
+  { id: "x-09", brand: "rhc", number: 9 },
+  { id: "x-01", brand: "rhc", number: 1 },
+]);
+check(
+  "numbering follows the card number, not the input order",
+  ordered[0].designId === "x-01" && ordered[1].designId === "x-09",
+);
+
+check(
+  "a brand with no card stays in the roster, disabled",
+  rowsFor([{ id: "a", brand: "rhc", number: 1 }]).some(
+    (r) => r.brandId === "guard" && r.disabled && r.designId === null,
+  ),
+);
+
+// Every enabled row must address a real card, or choosing it navigates nowhere.
+const realCards = getDesigns("eid-al-fitr");
+check(
+  "every enabled row carries the id of a card that exists",
+  rowsFor(realCards)
+    .filter((r) => !r.disabled)
+    .every((r) => realCards.some((d) => d.id === r.designId)),
+);
+
+// Deliberately a property of the code, not of the content. An earlier version
+// asserted that today's artwork has one card per brand -- true when written,
+// false the moment an admin uploaded a second card for one, and the suite then
+// failed for a change that was entirely correct. A check that breaks when the
+// client adds content is a check that will be deleted rather than believed.
+const perBrand = new Map();
+for (const d of realCards) perBrand.set(d.brand, (perBrand.get(d.brand) ?? 0) + 1);
+
+check(
+  "a row is numbered exactly when its brand has more than one card",
+  rowsFor(realCards)
+    .filter((r) => !r.disabled)
+    .every((r) => / \d+$/.test(r.label) === perBrand.get(r.brandId) > 1),
+  [...perBrand].map(([b, n]) => `${b}:${n}`).join(" "),
+);
+
 console.log(failures === 0 ? "\nAll checks passed.\n" : `\n${failures} check(s) failed.\n`);
 process.exit(failures === 0 ? 0 : 1);

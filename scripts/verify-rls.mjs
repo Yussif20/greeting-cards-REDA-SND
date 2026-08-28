@@ -54,16 +54,33 @@ async function expectDenied(name, path, init) {
 
 /* ------------------------------------------------------------------ reads */
 
-{
-  const res = await call(ANON, "occasions?select=slug");
-  const rows = await res.json();
-  record(res.ok && rows.length === 6, "anon can read published occasions", `${rows.length} rows`);
-}
+// Compared against what the service role reports as published, never against a
+// fixed count. An earlier version asserted "37 designs", which was true when
+// written and wrong the moment the client added a card -- and a security suite
+// that fails because someone did their job is a suite that gets ignored. The
+// invariant worth testing is that anon sees the published rows and only those.
+for (const table of ["occasions", "designs"]) {
+  const key = table === "occasions" ? "slug" : "id";
 
-{
-  const res = await call(ANON, "designs?select=id");
-  const rows = await res.json();
-  record(res.ok && rows.length === 37, "anon can read published designs", `${rows.length} rows`);
+  const published = (
+    await (await call(SERVICE, `${table}?select=${key}&status=eq.published`)).json()
+  ).map((r) => r[key]);
+
+  const res = await call(ANON, `${table}?select=${key}`);
+  const seen = (await res.json()).map((r) => r[key]);
+
+  const missing = published.filter((v) => !seen.includes(v));
+  const extra = seen.filter((v) => !published.includes(v));
+
+  record(
+    res.ok && missing.length === 0 && extra.length === 0 && published.length > 0,
+    `anon sees exactly the published ${table}`,
+    extra.length
+      ? `LEAKED: ${extra.join(", ")}`
+      : missing.length
+        ? `hidden: ${missing.join(", ")}`
+        : `${seen.length} rows`,
+  );
 }
 
 {

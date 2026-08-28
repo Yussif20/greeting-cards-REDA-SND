@@ -45,7 +45,7 @@ export const rowToOccasion = (r) => ({
 });
 
 // `season_id` becomes `year` on the way out. That single rename is what keeps
-// getDesigns(slug, year), findSiblingByBrand and DesignsPage's ?year= param
+// getDesigns(slug, year), the brand picker and DesignsPage's ?year= param
 // from ever learning a new word.
 export const rowToDesign = (r) => ({
   id: r.id,
