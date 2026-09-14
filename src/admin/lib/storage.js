@@ -1,4 +1,5 @@
 import { supabase } from "./supabase.js";
+import { validateFontFile } from "../../lib/fontFile.js";
 
 export const MEDIA_BUCKET = "media";
 export const ORIGINALS_BUCKET = "originals";
@@ -80,6 +81,25 @@ export async function uploadCard({ occasionSlug, seasonId, master, thumb, origin
  * keeps, matching the `${hero.base}.webp` / `${hero.base}@2x.jpg` convention
  * OccasionCard has always used.
  */
+/**
+ * Store one font file and return the path the registry keeps.
+ *
+ * The content type is derived from the extension rather than read off the File.
+ * Browsers report the same .ttf as "font/ttf", as "application/x-font-ttf" and
+ * as "" depending on the platform, and the bucket checks exactly this value
+ * against its allowed_mime_types -- so trusting file.type would make an upload
+ * succeed or fail according to which machine the admin happened to be on.
+ *
+ * Nothing is re-encoded. A browser cannot convert a TTF to WOFF2, and shipping
+ * the file the foundry supplied is the only way a licensed face can be used at
+ * all.
+ */
+export async function uploadFont({ fontId, weight, file }) {
+  const { ext, type } = validateFontFile(file);
+  const path = `fonts/${fontId}/${uid()}/${weight}.${ext}`;
+  return mediaUrl(await put(MEDIA_BUCKET, path, file, type));
+}
+
 export async function uploadHero({ occasionSlug, variants, original }) {
   const dir = `heroes/${occasionSlug}/${uid()}`;
 

@@ -8,8 +8,15 @@
 // Nothing adapts at read time -- a snapshot is what `src/data/*.js` used to
 // export, serialised.
 
-/** Snapshot format. Bump when the *shape* changes, not when content does. */
-export const SNAPSHOT_VERSION = 1;
+/**
+ * Snapshot format. Bump when the *shape* changes, not when content does.
+ *
+ * 2 added `categories` and `design.category`; 3 added `fonts`. Nothing reads
+ * this number to decide how to parse -- every reader tolerates both keys being
+ * absent, which is what lets a deploy built before a migration keep serving
+ * while the published snapshot has already moved on.
+ */
+export const SNAPSHOT_VERSION = 3;
 
 /** Hero derivatives the sharp pipeline produces for the original six. */
 export const LEGACY_HERO_FORMATS = ["avif", "webp", "jpg"];
@@ -26,6 +33,26 @@ const emptyToNull = (v) => (v === "" ? null : v);
 export const rowToSeason = (r) => ({
   id: r.id,
   label: { en: r.label_en, ar: r.label_ar },
+});
+
+// Categories carry `order` where seasons do not: a season list has an obvious
+// newest, and a category list has only the order the admin arranged.
+export const rowToCategory = (r) => ({
+  id: r.id,
+  label: { en: r.label_en, ar: r.label_ar },
+  order: r.sort_order,
+});
+
+// Only the two file paths and the labels. The CSS family, the format hint and
+// the weight range are all derived at runtime from the id and the extensions --
+// see src/lib/fontFile.js -- so none of them can drift out of step with what
+// was actually stored.
+export const rowToFont = (r) => ({
+  id: r.id,
+  label: { en: r.label_en, ar: r.label_ar },
+  order: r.sort_order,
+  regular: r.regular_src,
+  bold: r.bold_src ?? null,
 });
 
 export const rowToOccasion = (r) => ({
@@ -59,6 +86,9 @@ export const rowToDesign = (r) => ({
   height: r.height,
   brandBakedIn: r.brand_baked_in,
   brand: r.brand,
+  // Null for every card made before categories existed, and for any occasion
+  // that never needs the distinction. Readers must treat it as optional.
+  category: r.category_id ?? null,
   isPlaceholder: r.is_placeholder,
   layout: r.layout,
 });
@@ -74,6 +104,24 @@ export const seasonToRow = (s, i, total) => ({
   // YEARS is newest-first, so the newest season needs the highest sort_order
   // for `order by sort_order desc` to reproduce it.
   sort_order: total - i,
+  status: "published",
+});
+
+export const categoryToRow = (c, i = 0) => ({
+  id: c.id,
+  label_en: c.label.en,
+  label_ar: c.label.ar,
+  sort_order: c.order ?? i + 1,
+  status: "published",
+});
+
+export const fontToRow = (f, i = 0) => ({
+  id: f.id,
+  label_en: f.label.en,
+  label_ar: f.label.ar,
+  sort_order: f.order ?? i + 1,
+  regular_src: f.regular,
+  bold_src: f.bold ?? null,
   status: "published",
 });
 
@@ -109,6 +157,7 @@ export const designToRow = (d) => ({
   height: d.height,
   brand: d.brand,
   brand_baked_in: d.brandBakedIn,
+  category_id: d.category ?? null,
   is_placeholder: d.isPlaceholder,
   layout: d.layout,
   layout_version: 1,
@@ -126,10 +175,18 @@ export const designToRow = (d) => ({
  * `designs` is keyed by occasion slug because that mirrors the old
  * DESIGNS_BY_OCCASION and saves a grouping pass at boot.
  *
- * @param {{seasons: Array, occasions: Array, designs: Array}} data
+ * `categories` and `fonts` default to empty rather than being required, so a
+ * caller that predates them -- an old test, a hand-assembled payload -- still
+ * produces a snapshot the store accepts.
+ *
+ * @param {{seasons: Array, occasions: Array, designs: Array,
+ *          categories?: Array, fonts?: Array}} data
  * @param {{revision: number, generatedAt?: string}} meta
  */
-export function buildSnapshot({ seasons, occasions, designs }, { revision, generatedAt }) {
+export function buildSnapshot(
+  { seasons, occasions, designs, categories = [], fonts = [] },
+  { revision, generatedAt },
+) {
   const byOccasion = {};
   for (const o of occasions) byOccasion[o.slug] = [];
   for (const d of designs) (byOccasion[d.occasion] ??= []).push(d);
@@ -140,16 +197,23 @@ export function buildSnapshot({ seasons, occasions, designs }, { revision, gener
     revision,
     generatedAt: generatedAt ?? null,
     seasons: [...seasons],
+    // Lowest sort_order first -- see rowToCategory.
+    categories: [...categories].sort((a, b) => a.order - b.order),
+    fonts: [...fonts].sort((a, b) => a.order - b.order),
     occasions: [...occasions].sort((a, b) => a.order - b.order),
     designs: byOccasion,
   };
 }
 
 /** Build a snapshot straight from Supabase rows. */
-export const snapshotFromRows = ({ seasons, occasions, designs }, meta) =>
+export const snapshotFromRows = ({ seasons, occasions, designs, categories, fonts }, meta) =>
   buildSnapshot(
     {
       seasons: seasons.map(rowToSeason),
+      // Tolerates undefined so a caller that has not been taught to read the
+      // table yet degrades to "none of those" rather than throwing.
+      categories: (categories ?? []).map(rowToCategory),
+      fonts: (fonts ?? []).map(rowToFont),
       occasions: occasions.map(rowToOccasion),
       designs: designs.map(rowToDesign),
     },
@@ -159,6 +223,13 @@ export const snapshotFromRows = ({ seasons, occasions, designs }, meta) =>
 /**
  * Cheap structural guard. A malformed snapshot must never replace a working
  * one, so this runs before every swap -- including the very first load.
+ *
+ * `categories` and `fonts` are checked for *shape* but not for presence, and
+ * the two are different things. A snapshot published before their migrations
+ * ran has no such key at all, and refusing it would strand a site on its bundled
+ * fallback for the sake of a list that is allowed to be empty. A key that is
+ * present and not an array is a different matter -- that is a malformed payload,
+ * and it fails here rather than at the first `.filter` in a component.
  */
 export function isUsableSnapshot(s) {
   return Boolean(
@@ -168,6 +239,8 @@ export function isUsableSnapshot(s) {
       s.occasions.length > 0 &&
       Array.isArray(s.seasons) &&
       s.seasons.length > 0 &&
+      (s.categories === undefined || Array.isArray(s.categories)) &&
+      (s.fonts === undefined || Array.isArray(s.fonts)) &&
       s.designs &&
       typeof s.designs === "object" &&
       !Array.isArray(s.designs),

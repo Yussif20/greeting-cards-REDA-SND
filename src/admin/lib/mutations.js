@@ -331,3 +331,198 @@ export async function deleteSeason(id) {
   await mutate(supabase.from("seasons").delete().eq("id", id), "deleteSeason");
   await publishSnapshot();
 }
+
+/* -------------------------------------------------------------------------- */
+/* categories                                                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Create a category as a draft.
+ *
+ * The id is a slug rather than a surrogate key, and it is fixed at creation for
+ * the same reason an occasion's is: it travels in the public URL as
+ * ?category=, so a shared link depends on it. The database checks the shape
+ * too, so a typed id that the form let through is still refused.
+ *
+ * New categories land at the end of the list. The admin can move them, and
+ * appending is the only ordering that does not silently reshuffle the chips
+ * every time one is added.
+ */
+export async function createCategory({ id, label }) {
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id)) {
+    throw new Error(`createCategory: "${id}" must be lower-case letters, digits and dashes`);
+  }
+
+  const existing = await run(
+    supabase
+      .from("categories")
+      .select("sort_order")
+      .order("sort_order", { ascending: false })
+      .limit(1),
+    "createCategory/order",
+  );
+
+  const { data, error } = await supabase
+    .from("categories")
+    .insert({
+      id,
+      label_en: label.en,
+      label_ar: label.ar,
+      sort_order: (existing[0]?.sort_order ?? 0) + 1,
+      status: "draft",
+    })
+    .select()
+    .single();
+
+  if (error) {
+    if (error.code === "23505") throw new Error(`createCategory: "${id}" already exists`);
+    throw new Error(`createCategory: ${error.message}`);
+  }
+  await publishSnapshot();
+  return data;
+}
+
+/**
+ * Rename a category. Labels only -- never the id, for the reason above.
+ *
+ * Renaming is worth having where a season does not have it: a season's label is
+ * mechanically derived from its id, while a category's is free text somebody
+ * typed, and a typo in a chip every visitor sees should not need a developer.
+ */
+export async function updateCategory(id, label) {
+  await mutate(
+    supabase.from("categories").update({ label_en: label.en, label_ar: label.ar }).eq("id", id),
+    "updateCategory",
+  );
+  await publishSnapshot();
+}
+
+export async function setCategoryStatus(id, status) {
+  await mutate(
+    supabase.from("categories").update({ status }).eq("id", id),
+    "setCategoryStatus",
+  );
+  await publishSnapshot();
+}
+
+/** Persist a new chip order. One row at a time, as with occasions. */
+export async function reorderCategories(idsInOrder) {
+  for (const [index, id] of idsInOrder.entries()) {
+    await mutate(
+      supabase.from("categories").update({ sort_order: index + 1 }).eq("id", id),
+      "reorderCategories",
+    );
+  }
+  await publishSnapshot();
+}
+
+/**
+ * Remove a category that is not currently public.
+ *
+ * Unlike deleteSeason and deleteOccasion this does NOT refuse when cards are
+ * filed under it. designs.category_id is nullable with ON DELETE SET NULL, so
+ * removing a category un-files its cards and leaves the artwork untouched --
+ * there is nothing to orphan, because a design without a category is a valid
+ * design that simply shows under "All".
+ *
+ * The count is still read first, so the confirmation can say how many cards are
+ * about to lose their category. "Safe" and "expected" are different things, and
+ * the number is the difference.
+ */
+export async function deleteCategory(id) {
+  await mutate(supabase.from("categories").delete().eq("id", id), "deleteCategory");
+  await publishSnapshot();
+}
+
+/* -------------------------------------------------------------------------- */
+/* fonts                                                                      */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Create a font from files already uploaded to storage.
+ *
+ * The id is fixed at creation, and it is fixed twice over: it is written into
+ * every design's layout as `fontId`, and the CSS family the face registers
+ * under is derived from it (see uploadedFamily in src/lib/fontFile.js). A
+ * rename would therefore both orphan the cards using it and change the family
+ * the browser has already cached.
+ *
+ * Draft, like everything else. A font with no bold file is perfectly usable --
+ * the single face is declared across the whole weight range -- so nothing here
+ * insists on one.
+ */
+export async function createFont({ id, label, regular, bold }) {
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id)) {
+    throw new Error(`createFont: "${id}" must be lower-case letters, digits and dashes`);
+  }
+  if (!regular) throw new Error("createFont: the regular file is required");
+
+  const existing = await run(
+    supabase.from("fonts").select("sort_order").order("sort_order", { ascending: false }).limit(1),
+    "createFont/order",
+  );
+
+  const { data, error } = await supabase
+    .from("fonts")
+    .insert({
+      id,
+      label_en: label.en,
+      label_ar: label.ar,
+      regular_src: regular,
+      bold_src: bold ?? null,
+      sort_order: (existing[0]?.sort_order ?? 0) + 1,
+      status: "draft",
+    })
+    .select()
+    .single();
+
+  if (error) {
+    if (error.code === "23505") throw new Error(`createFont: "${id}" already exists`);
+    throw new Error(`createFont: ${error.message}`);
+  }
+  await publishSnapshot();
+  return data;
+}
+
+/**
+ * Rename, or attach a file that was not there before.
+ *
+ * `patch` carries only the columns being changed, so adding a bold file later
+ * does not require restating the labels. Never the id -- see createFont.
+ */
+export async function updateFont(id, patch) {
+  await mutate(supabase.from("fonts").update(patch).eq("id", id), "updateFont");
+  await publishSnapshot();
+}
+
+export async function setFontStatus(id, status) {
+  await mutate(supabase.from("fonts").update({ status }).eq("id", id), "setFontStatus");
+  await publishSnapshot();
+}
+
+/** Persist a new picker order. One row at a time, as with occasions. */
+export async function reorderFonts(idsInOrder) {
+  for (const [index, id] of idsInOrder.entries()) {
+    await mutate(
+      supabase.from("fonts").update({ sort_order: index + 1 }).eq("id", id),
+      "reorderFonts",
+    );
+  }
+  await publishSnapshot();
+}
+
+/**
+ * Remove a font that is not currently public.
+ *
+ * No count of affected cards, and no refusal, because there is nothing to
+ * count: `layout.fontId` is a string inside jsonb with no foreign key, and
+ * getFont() falls back to the default for an id it does not recognise. A card
+ * whose font is gone renders in Cairo -- it does not break, and the admin can
+ * see it and re-pick. The uploaded file itself is left in storage; there is no
+ * delete policy on storage.objects at all, by design.
+ */
+export async function deleteFont(id) {
+  await mutate(supabase.from("fonts").delete().eq("id", id), "deleteFont");
+  await publishSnapshot();
+}
+

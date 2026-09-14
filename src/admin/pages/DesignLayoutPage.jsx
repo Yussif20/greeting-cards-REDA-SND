@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Loader2, Save, Eye } from "lucide-react";
+import { Loader2, Save, Eye, Copy } from "lucide-react";
 
 import PageShell from "../../components/layout/PageShell.jsx";
 import Button from "../../components/ui/Button.jsx";
@@ -21,6 +21,7 @@ import { NAME_LAYER, JOB_LAYER, LOGO_LAYER } from "../../lib/layers.js";
 
 import RegionEditor from "../components/RegionEditor.jsx";
 import PaletteEditor from "../components/PaletteEditor.jsx";
+import DuplicatePanel from "../components/DuplicatePanel.jsx";
 import { useAsync } from "../hooks/useAsync.js";
 import AsyncSection from "../components/AsyncSection.jsx";
 import { getDesignById } from "../lib/api.js";
@@ -60,6 +61,17 @@ const Workbench = ({ design }) => {
   const [image, setImage] = useState(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState(null);
+  const [duplicating, setDuplicating] = useState(false);
+
+  // What the ROW holds, as far as this page knows.
+  //
+  // Not `design.layout`, which is the value fetched when the page opened and is
+  // never refreshed: save() does not reload, so comparing against it reports a
+  // just-saved layout as still modified and the Save button never re-disables.
+  // That was cosmetic until Duplicate arrived, which has to know whether the
+  // source needs saving before it is copied -- and would otherwise re-save on
+  // every open.
+  const [savedLayout, setSavedLayout] = useState(design.layout);
 
   // Sample text is not a nicety. layerBox() returns null for empty text, so an
   // empty layer is invisible, unselectable and impossible to drag -- the admin
@@ -120,34 +132,56 @@ const Workbench = ({ design }) => {
   // dragged rather than the one the card was created with.
   const liveDesign = useMemo(() => ({ ...design, layout: base }), [design, base]);
 
-  // Compared without regard to key order: design.layout arrives from Postgres
+  // Compared without regard to key order: the saved layout arrives from Postgres
   // jsonb, which does not preserve it, while layoutFromScene rebuilds its
   // objects fresh. A plain JSON.stringify comparison reports every untouched
   // layout as modified, which makes "Save" meaningless.
   const dirty = useMemo(
-    () => stableStringify(nextLayout) !== stableStringify(design.layout),
-    [nextLayout, design.layout],
+    () => stableStringify(nextLayout) !== stableStringify(savedLayout),
+    [nextLayout, savedLayout],
   );
 
+  /** Returns whether the write landed, which openDuplicate below depends on. */
   const save = useCallback(
     async (thenPublish) => {
       setBusy(true);
       try {
         await saveLayout(design.id, nextLayout);
+        setSavedLayout(nextLayout);
         if (thenPublish) await setStatus(design.id, "published");
         setToast({
           tone: "info",
           message: thenPublish ? t("admin.layout.published") : t("admin.layout.saved"),
         });
         if (thenPublish) navigate("/admin/designs");
+        return true;
       } catch (err) {
         setToast({ tone: "error", message: err.message });
+        return false;
       } finally {
         setBusy(false);
       }
     },
     [design.id, nextLayout, navigate, t],
   );
+
+  /**
+   * Commit any pending arrangement before copying it.
+   *
+   * The copy takes `nextLayout` -- what is on screen -- because that is what the
+   * admin means by "duplicate this". Without this step the copy would carry the
+   * new geometry while the card it was copied FROM still held the old, and the
+   * two would differ from the moment they were created, which is the one thing
+   * a duplicate must not do.
+   */
+  const openDuplicate = useCallback(async () => {
+    // save() reports its own failure as a toast; opening the panel anyway would
+    // copy a layout the database refused. Its return value is what says so --
+    // `savedLayout` cannot be read back here, because a state update is not
+    // visible to the closure that triggered it.
+    if (dirty && !(await save(false))) return;
+    setDuplicating(true);
+  }, [dirty, save]);
 
   return (
     <PageShell>
@@ -174,6 +208,14 @@ const Workbench = ({ design }) => {
             )}
             {t("admin.layout.save")}
           </Button>
+          <Button
+            variant="secondary"
+            onClick={openDuplicate}
+            disabled={busy || duplicating}
+          >
+            <Copy className="h-4 w-4" aria-hidden="true" />
+            {t("admin.duplicate.action")}
+          </Button>
           {design.status !== "published" && (
             <Button variant="primary" onClick={() => save(true)} disabled={busy}>
               <Eye className="h-4 w-4" aria-hidden="true" />
@@ -182,6 +224,24 @@ const Workbench = ({ design }) => {
           )}
         </div>
       </header>
+
+      {duplicating && (
+        <DuplicatePanel
+          design={design}
+          // What is on screen, not what the row holds -- openDuplicate has
+          // already written this to the database if it differed.
+          layout={nextLayout}
+          onCreated={(created, { aspectWarning }) =>
+            setToast({
+              tone: "info",
+              message:
+                t("admin.duplicate.created", { id: created.id }) +
+                (aspectWarning ? ` ${t("admin.duplicate.aspectWarning")}` : ""),
+            })
+          }
+          onClose={() => setDuplicating(false)}
+        />
+      )}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
         <section className="order-2 space-y-4 rounded-2xl border border-line bg-surface-2 p-5 lg:order-1">

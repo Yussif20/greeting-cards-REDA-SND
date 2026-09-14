@@ -4,6 +4,7 @@ import Header from "./components/layout/Header.jsx";
 import Footer from "./components/layout/Footer.jsx";
 import ScrollToTop from "./components/layout/ScrollToTop.jsx";
 import OccasionsPage from "./pages/OccasionsPage.jsx";
+import BrandsPage from "./pages/BrandsPage.jsx";
 import DesignsPage from "./pages/DesignsPage.jsx";
 import EditorPage from "./pages/EditorPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
@@ -48,7 +49,14 @@ const App = () => (
 
       <Route element={<PublicLayout />}>
         <Route path="/" element={<OccasionsPage />} />
-        <Route path="/:occasion" element={<DesignsPage />} />
+        <Route path="/:occasion" element={<BrandsPage />} />
+
+        {/* Three segments, so it cannot collide with the editor's two. That is
+            what let the brand step be inserted without moving the editor: every
+            bookmarked /:occasion/:designId still resolves, and so does every
+            localStorage draft keyed on the same pair. */}
+        <Route path="/:occasion/brands/:brandId" element={<DesignsPage />} />
+
         <Route path="/:occasion/:designId" element={<EditorPage />} />
 
         {/* Legacy routes. They go to the index rather than guessing an

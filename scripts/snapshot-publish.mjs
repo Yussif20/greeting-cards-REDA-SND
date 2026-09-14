@@ -58,15 +58,29 @@ async function upload(objectPath, json, { upsert }) {
 
 const { snapshotFromRows, isUsableSnapshot } = await load("src/lib/registry/serialize.js");
 
-const [seasons, occasions, designs] = await Promise.all([
+// Tolerated rather than required for the last two: this script is how a
+// database is bootstrapped or repaired, and it must still run against one where
+// 0005_categories.sql or 0006_fonts.sql has not been applied. PostgREST answers
+// a missing table with 404, which readPublished turns into a throw -- so the
+// miss is caught here and reported once, rather than failing a publish that is
+// otherwise entirely correct.
+const optional = (table) =>
+  readPublished(table).catch(() => {
+    console.warn(`  ${table} table not found -- publishing without it`);
+    return [];
+  });
+
+const [seasons, occasions, designs, categories, fonts] = await Promise.all([
   readPublished("seasons"),
   readPublished("occasions"),
   readPublished("designs"),
+  optional("categories"),
+  optional("fonts"),
 ]);
 
 const revision = Date.now();
 const snapshot = snapshotFromRows(
-  { seasons, occasions, designs },
+  { seasons, occasions, designs, categories, fonts },
   { revision, generatedAt: new Date(revision).toISOString() },
 );
 
@@ -84,7 +98,9 @@ await upload(`registry/history/${revision}.json`, snapshot, { upsert: false });
 await upload("registry/registry.json", snapshot, { upsert: true });
 
 console.log(`\npublished revision ${revision}`);
-console.log(`  seasons   ${snapshot.seasons.length}`);
-console.log(`  occasions ${snapshot.occasions.length}`);
-console.log(`  designs   ${Object.values(snapshot.designs).flat().length}`);
+console.log(`  seasons    ${snapshot.seasons.length}`);
+console.log(`  categories ${snapshot.categories.length}`);
+console.log(`  fonts      ${snapshot.fonts.length}`);
+console.log(`  occasions  ${snapshot.occasions.length}`);
+console.log(`  designs    ${Object.values(snapshot.designs).flat().length}`);
 console.log(`\n  ${URL_BASE}/storage/v1/object/public/media/registry/registry.json\n`);

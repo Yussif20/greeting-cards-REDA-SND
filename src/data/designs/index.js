@@ -13,7 +13,8 @@ import { getRegistry } from "../registryStore.js";
 
 /** Canonical style tags, in the order the filter chips render. */
 // Stays in code: these ids are i18n keys (`designs.style.<id>`), so a
-// data-driven style would render an untranslated key.
+// data-driven style would render an untranslated key. What a card is *for* --
+// its category -- is the admin-managed axis instead; see ../categories.js.
 export const STYLES = ["modern", "traditional", "minimal", "elegant"];
 
 const EMPTY = [];
@@ -35,13 +36,26 @@ export const getDesign = (slug, id) => {
 };
 
 /**
+ * Seasons present in a set of designs, newest first.
+ *
+ * The brand is a browsing step now, not a filter on a flat grid: a visitor
+ * picks the occasion, then the company, then the card. So the designs page
+ * holds one company's cards, and every control above the grid -- this dropdown,
+ * the category chips, the style chips -- has to be derived from that set rather
+ * than from the occasion. A brand can be in one year's set and not the next,
+ * and a season dropdown built from the occasion would offer a year this company
+ * has nothing in, from a control that looked like it would work.
+ */
+export const seasonsIn = (designs) => {
+  const present = new Set(designs.map((d) => d.year));
+  return getRegistry().seasons.filter((y) => present.has(y.id));
+};
+
+/**
  * Seasons this occasion actually has artwork for, newest first. Returns the
  * full year objects, labels included, since the dropdown renders them.
  */
-export const getYears = (slug) => {
-  const present = new Set(getDesigns(slug).map((d) => d.year));
-  return getRegistry().seasons.filter((y) => present.has(y.id));
-};
+export const getYears = (slug) => seasonsIn(getDesigns(slug));
 
 /**
  * The season an occasion page opens on: its newest one. Falls back to the
@@ -51,12 +65,15 @@ export const getYears = (slug) => {
 export const defaultYear = (slug) => getYears(slug)[0]?.id ?? getRegistry().currentYear;
 
 /**
- * Style tags actually present for an occasion, in STYLES order. Chips with no
+ * Style tags actually present in a set of designs, in STYLES order.
+ *
+ * Takes the designs rather than a slug, for the reason given on seasonsIn:
+ * the chips have to describe the grid the visitor is looking
+ * at, which is now narrowed by brand as well as by season. Chips with no
  * matching designs are never rendered -- with the current artwork most
  * occasions carry a single style, and an always-on chip row would look broken.
- * Scoped to `year` when given, so the chips describe the visible grid.
  */
-export const getStyles = (slug, year) => {
-  const present = new Set(getDesigns(slug, year).map((d) => d.style));
+export const stylesIn = (designs) => {
+  const present = new Set(designs.map((d) => d.style));
   return STYLES.filter((s) => present.has(s));
 };

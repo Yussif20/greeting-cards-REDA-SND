@@ -14,16 +14,37 @@ import { useLanguage } from "../../hooks/useLanguage.js";
 import Dropzone from "../components/Dropzone.jsx";
 import AsyncSection from "../components/AsyncSection.jsx";
 import { useAsync } from "../hooks/useAsync.js";
-import { listOccasions, listSeasons, listDesigns } from "../lib/api.js";
+import { listOccasions, listSeasons, listDesigns, listCategories } from "../lib/api.js";
 import { processCard, ImageError } from "../lib/images.js";
 import { uploadCard } from "../lib/storage.js";
 import { createDesign } from "../lib/mutations.js";
 import { defaultLayout } from "../lib/layoutDefaults.js";
 
 const load = async () => {
-  const [occasions, seasons] = await Promise.all([listOccasions(), listSeasons()]);
-  return { occasions, seasons };
+  const [occasions, seasons, categories] = await Promise.all([
+    listOccasions(),
+    listSeasons(),
+    // Tolerated, unlike the other two. A card needs an occasion and a season;
+    // it does not need a category. Against a database where
+    // 0005_categories.sql has not been applied yet, PostgREST answers 404 here,
+    // and letting that fail the whole screen would block uploading artwork over
+    // a field that is optional anyway. /admin -> Categories reports the same
+    // failure loudly, which is where it belongs.
+    listCategories().catch(() => []),
+  ]);
+  return { occasions, seasons, categories };
 };
+
+/**
+ * The "no category" option, and why it is a sentinel rather than "".
+ *
+ * Select compares option values by identity to decide which row is selected,
+ * and an empty string is also what "nothing chosen yet" looks like, so the two
+ * states would render identically. The value is mapped back to null on the way
+ * into the database, where absent is a real and permanent state -- see the note
+ * on designs.category_id in 0005_categories.sql.
+ */
+const NO_CATEGORY = "__none__";
 
 /**
  * Add a card: choose where it belongs, drop the artwork, land in the editor.
@@ -45,12 +66,14 @@ const DesignUploadPage = () => {
   const [occasion, setOccasion] = useState(params.get("occasion") ?? "");
   const [season, setSeason] = useState("");
   const [brand, setBrand] = useState(BRANDS[0].id);
+  const [category, setCategory] = useState(NO_CATEGORY);
   const [style, setStyle] = useState(STYLES[1]);
   const [busy, setBusy] = useState(null);
   const [failure, setFailure] = useState(null);
 
   const occasions = data?.occasions ?? [];
   const seasons = data?.seasons ?? [];
+  const categories = data?.categories ?? [];
 
   const chosenSeason = season || seasons[0]?.id || "";
   const chosenOccasion = occasion || occasions[0]?.slug || "";
@@ -77,6 +100,7 @@ const DesignUploadPage = () => {
         year: chosenSeason,
         style,
         brand,
+        category: category === NO_CATEGORY ? null : category,
         brandBakedIn: true,
         isPlaceholder: false,
         src: stored.src,
@@ -145,6 +169,22 @@ const DesignUploadPage = () => {
               brand,
               BRANDS.map((b) => ({ value: b.id, label: b.name })),
               setBrand,
+            )}
+            {/* Drafts are offered too: the natural order is to set up the
+                categories, then upload against them, and a category that is
+                not live yet simply produces no chip until it is. */}
+            {field(
+              "category",
+              category,
+              [
+                { value: NO_CATEGORY, label: t("admin.upload.noCategory") },
+                ...categories.map((c) => ({
+                  value: c.id,
+                  label: loc(c.label, lang),
+                  hint: c.status === "published" ? undefined : t("admin.status.draft"),
+                })),
+              ],
+              setCategory,
             )}
             {field(
               "style",

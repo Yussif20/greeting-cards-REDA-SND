@@ -11,6 +11,7 @@
 // Regenerate with: npm run snapshot:pull
 
 export default {
+  "categories": [],
   "designs": {
     "eid-al-adha": [
       {
@@ -741,62 +742,6 @@ export default {
         "style": "traditional",
         "thumb": "/cards/eid-al-fitr/thumbs/06.webp",
         "width": 2000,
-        "year": "2025-2026"
-      },
-      {
-        "brand": "rhc",
-        "brandBakedIn": true,
-        "height": 600,
-        "id": "eid-al-fitr-2025-2026-07",
-        "isPlaceholder": false,
-        "layout": {
-          "brandMark": {
-            "h": 0.105,
-            "w": 0.32,
-            "x": 0.02,
-            "y": 0.015
-          },
-          "defaultColor": "#FFFFFF",
-          "fontId": "cairo",
-          "jobTitle": {
-            "align": "center",
-            "maxWidth": 0.84,
-            "size": 0.023,
-            "x": 0.5,
-            "y": 0.855
-          },
-          "logo": {
-            "width": 0.26,
-            "x": 0.5,
-            "y": 0.92
-          },
-          "name": {
-            "align": "center",
-            "maxWidth": 0.84,
-            "size": 0.05,
-            "x": 0.5,
-            "y": 0.78
-          },
-          "palette": [
-            "#FFFFFF",
-            "#E7C873",
-            "#8FB8E8",
-            "#EE2E3A",
-            "#0B1A33"
-          ],
-          "safeArea": {
-            "h": 0.2,
-            "w": 0.84,
-            "x": 0.08,
-            "y": 0.72
-          }
-        },
-        "number": 7,
-        "occasion": "eid-al-fitr",
-        "src": "/media/cards/eid-al-fitr/2025-2026/45333537-5cff-45fe-9915-4e56ab04f4e7/master.jpg",
-        "style": "traditional",
-        "thumb": "/media/cards/eid-al-fitr/2025-2026/45333537-5cff-45fe-9915-4e56ab04f4e7/thumb.webp",
-        "width": 900,
         "year": "2025-2026"
       }
     ],
@@ -2150,10 +2095,64 @@ export default {
         "thumb": "/cards/saudi-founding-day/thumbs/06.webp",
         "width": 2000,
         "year": "2025-2026"
+      },
+      {
+        "brand": "rhc",
+        "brandBakedIn": true,
+        "height": 2000,
+        "id": "saudi-national-day-2025-2026-08",
+        "isPlaceholder": false,
+        "layout": {
+          "brandMark": {
+            "h": 0.125,
+            "w": 0.32,
+            "x": 0.02,
+            "y": 0.02
+          },
+          "defaultColor": "#FFFFFF",
+          "fontId": "cairo",
+          "jobTitle": {
+            "align": "center",
+            "maxWidth": 0.8,
+            "size": 0.018,
+            "x": 0.5,
+            "y": 0.727
+          },
+          "logo": {
+            "width": 0.2,
+            "x": 0.5,
+            "y": 0.66
+          },
+          "name": {
+            "align": "center",
+            "maxWidth": 0.8,
+            "size": 0.033,
+            "x": 0.5,
+            "y": 0.678
+          },
+          "palette": [
+            "#FFFFFF",
+            "#00B25F"
+          ],
+          "safeArea": {
+            "h": 0.075,
+            "w": 0.8,
+            "x": 0.1,
+            "y": 0.71
+          }
+        },
+        "number": 8,
+        "occasion": "saudi-national-day",
+        "src": "/media/cards/saudi-national-day/2025-2026/8757cc6d-4c80-41ec-9b29-ad4f6edebcf9/master.jpg",
+        "style": "traditional",
+        "thumb": "/media/cards/saudi-national-day/2025-2026/8757cc6d-4c80-41ec-9b29-ad4f6edebcf9/thumb.webp",
+        "width": 2000,
+        "year": "2025-2026"
       }
     ]
   },
-  "generatedAt": "2026-08-28T03:51:06.164Z",
+  "fonts": [],
+  "generatedAt": "2026-09-14T09:06:38.753Z",
   "occasions": [
     {
       "artStatus": "final",
@@ -2501,7 +2500,7 @@ export default {
       }
     }
   ],
-  "revision": 1787889066164,
+  "revision": 1789376798753,
   "seasons": [
     {
       "id": "2025-2026",
@@ -2511,5 +2510,5 @@ export default {
       }
     }
   ],
-  "version": 1
+  "version": 3
 };

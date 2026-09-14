@@ -173,7 +173,9 @@ check("long text wraps to multiple lines", long.length > 1, `${long.length} line
 check("short text stays on one line", wrapText(wrapCtx, "short", 5000).length === 1);
 
 console.log("\nfont pairing");
-const { FONTS, LATIN, getFont } = await import("../src/data/fonts.js");
+const { BUILT_IN, allFonts, LATIN, FALLBACK_FAMILY, getFont, DEFAULT_FONT_ID } = await import(
+  "../src/data/fonts.js"
+);
 
 check(
   "the card font stack names both scripts' families",
@@ -189,12 +191,88 @@ check(
   getFont("cairo").loadFamilies.every((f) => requestedFaces.some((r) => r.includes(f))),
 );
 check(
-  "every offered font pairs an Arabic face with the Latin one",
-  FONTS.every((f) => f.loadFamilies.length === 2 && f.loadFamilies[0] === LATIN),
+  "every bundled font pairs an Arabic face with the Latin one",
+  BUILT_IN.every((f) => f.loadFamilies.length === 2 && f.loadFamilies[0] === LATIN),
 );
+
+// The invariant that has to hold for EVERY font, bundled or uploaded: the stack
+// ends in a generic, and every family named in it is one ensureFont will load.
+// A family in the stack but not in loadFamilies is the classic silent
+// substitution -- the preview is right and the download is not.
 check(
   "no font entry can silently fall back to a generic serif",
-  FONTS.every((f) => f.stack.trim().endsWith("sans-serif")),
+  allFonts().every((f) => f.stack.trim().endsWith("sans-serif")),
+);
+check(
+  "every family in a stack is one that gets loaded",
+  allFonts().every((f) => f.loadFamilies.every((fam) => f.stack.includes(`"${fam}"`))),
+);
+
+// --- uploaded fonts --------------------------------------------------------
+//
+// Asserted against a hand-built row rather than against whatever the registry
+// happens to hold, so these hold on a project with no uploads -- which is every
+// project until an admin makes one.
+
+const { uploadedFamily, formatForPath, validateFontFile, FontError, fontExtension } =
+  await import("../src/lib/fontFile.js");
+
+check(
+  "an uploaded family is derived from the id, so it cannot shadow a bundled one",
+  uploadedFamily("cairo") !== "Cairo" && uploadedFamily("cairo").includes("cairo"),
+  uploadedFamily("cairo"),
+);
+
+// The format() hint is not cosmetic: a browser may skip a source whose declared
+// format it does not recognise, and it does so silently -- the family stays
+// unloaded and the card renders in the fallback with nothing logged.
+check(
+  "the format hint follows the stored extension",
+  formatForPath("/media/fonts/x/regular.ttf") === "truetype" &&
+    formatForPath("/media/fonts/x/bold.woff2") === "woff2" &&
+    formatForPath("/media/fonts/x/r.otf") === "opentype",
+);
+check(
+  "a path with no usable extension falls back to the format every browser reads",
+  formatForPath("/media/fonts/x/regular") === "woff2",
+);
+
+check(
+  "fonts are judged by extension, never by the browser's idea of the type",
+  fontExtension("IBMPlexSansArabic-Medium.TTF") === "ttf",
+);
+
+// file.type is "" for a .ttf on plenty of platforms, so validation that trusted
+// it would refuse the most common upload there is.
+{
+  const accepted = validateFontFile({ name: "IBMPlexSansArabic-Medium.ttf", size: 200_000, type: "" });
+  check(
+    "a .ttf with no reported MIME type is accepted, and declares its own",
+    accepted.format === "truetype" && accepted.type === "font/ttf",
+  );
+
+  let refused = null;
+  try {
+    validateFontFile({ name: "artwork.png", size: 1000, type: "image/png" });
+  } catch (err) {
+    refused = err;
+  }
+  check(
+    "something that is not a font is refused with a code the interface can translate",
+    refused instanceof FontError && refused.code === "badFontType",
+  );
+}
+
+// A design's layout stores fontId as plain text inside jsonb with no foreign
+// key, so unpublishing a font has to degrade its cards rather than break them.
+check(
+  "an unknown font id falls back to the default rather than throwing",
+  getFont("deleted-font-id").id === DEFAULT_FONT_ID,
+);
+check(
+  "the fallback family covers both scripts, so either half can be missing",
+  BUILT_IN.some((f) => f.id === FALLBACK_FAMILY.toLowerCase()),
+  FALLBACK_FAMILY,
 );
 
 console.log("\nalignment") ;
@@ -418,6 +496,237 @@ check(
     .every((r) => / \d+$/.test(r.label) === perBrand.get(r.brandId) > 1),
   [...perBrand].map(([b, n]) => `${b}:${n}`).join(" "),
 );
+
+// --- the brand chooser, and reachability -----------------------------------
+//
+// The visitor now reaches a card through its brand: occasion, then company,
+// then the card. That makes "which tile leads here" a property every card has
+// to have, where before it had none -- a card the chooser does not list is one
+// that only a direct link finds, and nothing in the interface would say so.
+//
+// These are properties of brandGroups, not of today's artwork. An earlier
+// version of the brandRows suite asserted one card per brand, which was true
+// when written and false the moment an admin uploaded a second; a check that
+// breaks when the client does their job gets deleted rather than believed.
+
+const { brandGroups, designsForBrand, OTHER_BRAND } = await import(
+  "../src/lib/brandGroups.js"
+);
+
+const groupsFor = (cards) => brandGroups(cards, BRANDS);
+const oneCard = [{ id: "a", brand: "rhc", number: 1 }];
+
+check(
+  "every brand in the roster gets a tile, with or without artwork",
+  groupsFor(oneCard).filter((g) => g.id !== OTHER_BRAND).length === BRANDS.length,
+);
+
+check(
+  "a brand with no card for this occasion is disabled rather than dropped",
+  groupsFor(oneCard).some((g) => g.id === "guard" && g.disabled && g.cards.length === 0),
+);
+
+check(
+  "there is no catch-all tile when every card matches a brand",
+  groupsFor(oneCard).every((g) => g.id !== OTHER_BRAND),
+);
+
+// The reachability property itself. A null brand and a brand the roster no
+// longer contains are the two ways a card can fall out of the chooser, and both
+// have to land somewhere a page links to.
+{
+  const strays = [
+    { id: "none", brand: null, number: 1 },
+    { id: "stale", brand: "retired-co", number: 2 },
+    { id: "real", brand: "rhc", number: 3 },
+  ];
+  const other = groupsFor(strays).find((g) => g.id === OTHER_BRAND);
+  check(
+    "cards with no brand, or a brand no longer in the roster, are still reachable",
+    Boolean(other) && other.cards.map((d) => d.id).join(",") === "none,stale",
+    other ? other.cards.map((d) => d.id).join(",") : "no catch-all group",
+  );
+
+  // What the tile promises and what the page opens have to be the same set, or
+  // a tile reading "2 cards" leads to one.
+  check(
+    "the designs page resolves the same cards the tile counted",
+    groupsFor(strays).every(
+      (g) =>
+        designsForBrand(strays, BRANDS, g.id)
+          .map((d) => d.id)
+          .join(",") === g.cards.map((d) => d.id).join(","),
+    ),
+  );
+}
+
+// Every real card appears under exactly one tile. Two would double-list it in
+// the chooser; zero is the unreachable case above.
+{
+  const everyCard = allOccasions().flatMap((o) => getDesigns(o.slug));
+  const listed = groupsFor(everyCard).flatMap((g) => g.cards.map((d) => d.id));
+  check(
+    "every published card is listed under exactly one brand tile",
+    listed.length === everyCard.length && new Set(listed).size === everyCard.length,
+    `${listed.length} listed of ${everyCard.length}`,
+  );
+}
+
+// --- categories ------------------------------------------------------------
+//
+// A card's category is optional and stays optional, so its absence is never a
+// failure here. What would be a failure is a card stamped with a category the
+// registry does not carry: the chip row is built by intersecting the two, so
+// such a card offers no chip that reaches it.
+
+const { allCategories, categoriesIn } = await import("../src/data/categories.js");
+
+{
+  const known = new Set(allCategories().map((c) => c.id));
+  const filed = allOccasions()
+    .flatMap((o) => getDesigns(o.slug))
+    .filter((d) => d.category);
+  const dangling = filed.filter((d) => !known.has(d.category));
+
+  check(
+    "every category stamped on a card is one the registry carries",
+    dangling.length === 0,
+    dangling.length
+      ? `${dangling.length}, e.g. ${dangling[0].id} -> ${dangling[0].category}`
+      : `${known.size} categories, ${filed.length} cards filed`,
+  );
+}
+
+check(
+  "a chip is offered only for a category present in the grid below it",
+  categoriesIn([{ category: null }, { category: "nothing-uses-this" }]).length === 0,
+);
+
+// --- duplicating a card ----------------------------------------------------
+//
+// A season is one template rendered once per company, so a duplicate has to be
+// identical in every field that identifies the card and different only in the
+// two that distinguish siblings. Asserted against the pure function rather than
+// through the panel, which needs Supabase and a canvas -- the same reason
+// brandGroups is its own module.
+
+const { duplicateInput, nextFreeBrand, aspectDiffers } = await import(
+  "../src/admin/lib/duplicateInput.js"
+);
+
+{
+  const source = {
+    id: "x-2025-2026-01",
+    number: 1,
+    occasion: "eid-al-fitr",
+    year: "2025-2026",
+    style: "traditional",
+    brand: "rhc",
+    category: "employees",
+    brandBakedIn: true,
+    isPlaceholder: false,
+    src: "/media/a/master.jpg",
+    thumb: "/media/a/thumb.webp",
+    width: 2000,
+    height: 2000,
+    layout: { safeArea: { x: 0.08, y: 0.72, w: 0.84, h: 0.2 }, palette: ["#FFF"] },
+  };
+
+  const copy = duplicateInput(source, { brand: "fhc", category: "clients" });
+
+  check(
+    "a duplicate carries over every field that identifies the card",
+    ["occasion", "year", "style", "brandBakedIn", "isPlaceholder"].every(
+      (k) => copy[k] === source[k],
+    ),
+  );
+
+  check(
+    "a duplicate takes the brand and category it was given",
+    copy.brand === "fhc" && copy.category === "clients",
+  );
+
+  // createDesign allocates the number per (occasion, season), builds the id from
+  // it, and retries on the unique-constraint collision. Setting either here
+  // would defeat all three.
+  check(
+    "a duplicate names neither an id nor a number",
+    copy.id === undefined && copy.number === undefined,
+  );
+
+  // A shared nested object would let dragging the copy's safe area move the
+  // original's -- a corruption that survives to the next publish with nothing
+  // to show where it came from.
+  copy.layout.safeArea.x = 0.5;
+  check(
+    "the copied layout is deep, so editing the copy cannot move the original",
+    source.layout.safeArea.x === 0.08,
+  );
+
+  check(
+    "with no new artwork the copy points at the source's image",
+    copy.src === source.src &&
+      copy.thumb === source.thumb &&
+      copy.width === source.width &&
+      copy.height === source.height,
+  );
+
+  const withArt = duplicateInput(source, {
+    brand: "fhc",
+    image: { src: "/media/b/m.jpg", thumb: "/media/b/t.webp", width: 1600, height: 2000 },
+  });
+  check(
+    "with new artwork all four image fields come from the upload",
+    withArt.src === "/media/b/m.jpg" &&
+      withArt.thumb === "/media/b/t.webp" &&
+      withArt.width === 1600 &&
+      withArt.height === 2000,
+  );
+
+  // The layout editor copies what is on screen, not what the row holds.
+  const overridden = duplicateInput(source, { brand: "fhc", layout: { palette: ["#000"] } });
+  check(
+    "an explicit layout overrides the source's",
+    overridden.layout.palette[0] === "#000" && overridden.layout.safeArea === undefined,
+  );
+
+  // The default brand is the next gap, because filling out the set is the whole
+  // point -- and the source's own brand is the one value guaranteed to be taken.
+  const oneCard = [{ brand: "rhc", year: "2025-2026" }];
+  check(
+    "the default brand is the first company with no card this season",
+    nextFreeBrand(oneCard, BRANDS, source) === "fhc",
+  );
+
+  check(
+    "a brand busy in another season is still offered as the default",
+    nextFreeBrand([{ brand: "fhc", year: "2024-2025" }], BRANDS, source) === "rhc",
+  );
+
+  check(
+    "once every company has a card the default falls back to the source's brand",
+    nextFreeBrand(
+      BRANDS.map((b) => ({ brand: b.id, year: "2025-2026" })),
+      BRANDS,
+      source,
+    ) === "rhc",
+  );
+
+  // Fractions survive a change of pixel size but not of proportion: `size` is a
+  // fraction of height while `maxWidth` is a fraction of width.
+  check(
+    "a resize of the same shape is not reported as a mismatch",
+    !aspectDiffers({ width: 1000, height: 1000 }, { width: 2000, height: 2000 }),
+  );
+  check(
+    "a change of proportion is reported",
+    aspectDiffers({ width: 1600, height: 2000 }, { width: 2000, height: 2000 }),
+  );
+  check(
+    "reusing the source's image is never reported as a mismatch",
+    !aspectDiffers(undefined, { width: 2000, height: 2000 }),
+  );
+}
 
 console.log(failures === 0 ? "\nAll checks passed.\n" : `\n${failures} check(s) failed.\n`);
 process.exit(failures === 0 ? 0 : 1);

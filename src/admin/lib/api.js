@@ -12,7 +12,13 @@
 // the one thing the public shape has no room for.
 
 import { supabase } from "./supabase.js";
-import { rowToOccasion, rowToDesign, rowToSeason } from "../../lib/registry/serialize.js";
+import {
+  rowToOccasion,
+  rowToDesign,
+  rowToSeason,
+  rowToCategory,
+  rowToFont,
+} from "../../lib/registry/serialize.js";
 
 const withStatus = (map) => (row) => ({
   ...map(row),
@@ -45,6 +51,43 @@ export const listSeasons = async () =>
       "listSeasons",
     )
   ).map((row) => ({ ...rowToSeason(row), status: row.status }));
+
+/**
+ * Every category, drafts included, in the order the chips will render.
+ *
+ * Ascending, unlike listSeasons: a season list has a newest and reads
+ * newest-first; a category list has only the order the admin arranged, and
+ * sort_order is that order.
+ */
+export const listCategories = async () =>
+  (
+    await query(
+      supabase.from("categories").select("*").order("sort_order", { ascending: true }),
+      "listCategories",
+    )
+  ).map((row) => ({ ...rowToCategory(row), status: row.status }));
+
+/** Every uploaded font, drafts included, in picker order. */
+export const listFonts = async () =>
+  (
+    await query(
+      supabase.from("fonts").select("*").order("sort_order", { ascending: true }),
+      "listFonts",
+    )
+  ).map((row) => ({ ...rowToFont(row), status: row.status }));
+
+/** How many cards are filed under each category, drafts included. */
+export const categoryCounts = async () => {
+  const rows = await query(
+    supabase.from("designs").select("category_id"),
+    "categoryCounts",
+  );
+  const counts = {};
+  for (const { category_id: id } of rows) {
+    if (id) counts[id] = (counts[id] ?? 0) + 1;
+  }
+  return counts;
+};
 
 export const listDesigns = async (occasionSlug) => {
   const base = supabase.from("designs").select("*");

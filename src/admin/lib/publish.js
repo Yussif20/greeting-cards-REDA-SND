@@ -46,15 +46,17 @@ async function upload(path, snapshot, { upsert }) {
 }
 
 export async function publishSnapshot() {
-  const [seasons, occasions, designs] = await Promise.all([
+  const [seasons, occasions, designs, categories, fonts] = await Promise.all([
     publishedRows("seasons"),
     publishedRows("occasions"),
     publishedRows("designs"),
+    publishedRows("categories"),
+    publishedRows("fonts"),
   ]);
 
   const revision = Date.now();
   const snapshot = snapshotFromRows(
-    { seasons, occasions, designs },
+    { seasons, occasions, designs, categories, fonts },
     { revision, generatedAt: new Date(revision).toISOString() },
   );
 

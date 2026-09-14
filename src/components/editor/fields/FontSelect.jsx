@@ -1,12 +1,14 @@
-import { useId } from "react";
+import { useEffect, useId } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronRight } from "lucide-react";
 import FieldLabel from "../../ui/FieldLabel.jsx";
 import Select from "../../ui/Select.jsx";
 import Tooltip from "../../ui/Tooltip.jsx";
-import { FONTS, getFont } from "../../../data/fonts.js";
+import { allFonts, getFont } from "../../../data/fonts.js";
+import { registerUploadedFonts } from "../../../lib/fonts.js";
 import { loc } from "../../../lib/localize.js";
 import { useLanguage } from "../../../hooks/useLanguage.js";
+import { useRegistry } from "../../../data/useRegistry.js";
 
 /**
  * Font picker plus live previews of the actual name.
@@ -14,6 +16,9 @@ import { useLanguage } from "../../../hooks/useLanguage.js";
  * One choice styles the whole card. The old editor kept arabicFont, englishFont
  * and fontLanguage as three pieces of state to select one font; every face here
  * covers both scripts instead.
+ *
+ * The list is whatever the registry currently holds, so a font the admin
+ * publishes appears here on the next revalidate without a rebuild.
  */
 const FontSelect = ({ value, sampleText, onChange }) => {
   const { t } = useTranslation();
@@ -21,11 +26,23 @@ const FontSelect = ({ value, sampleText, onChange }) => {
   const id = useId();
   const labelId = `${id}-label`;
 
+  // Re-render when a newer snapshot is swapped in, so a newly published font
+  // reaches this list rather than waiting for the next full page load.
+  const revision = useRegistry();
+
+  // An uploaded family has no stylesheet behind it, so the previews below would
+  // render in the fallback until something declared it. Keyed on the revision
+  // rather than on the font array, which is rebuilt on every render.
+  useEffect(() => {
+    registerUploadedFonts();
+  }, [revision]);
+
+  const fonts = allFonts();
   const current = getFont(value);
   const sample = sampleText?.trim() || t("editor.placeholder.name");
 
   // Show the current pairing first, then a couple of alternatives.
-  const previews = [current, ...FONTS.filter((f) => f.id !== current.id)].slice(0, 3);
+  const previews = [current, ...fonts.filter((f) => f.id !== current.id)].slice(0, 3);
 
   return (
     <div>
@@ -38,7 +55,7 @@ const FontSelect = ({ value, sampleText, onChange }) => {
         labelId={labelId}
         value={value}
         onChange={onChange}
-        options={FONTS.map((font) => ({
+        options={fonts.map((font) => ({
           value: font.id,
           label: loc(font.label, lang),
         }))}

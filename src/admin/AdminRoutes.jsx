@@ -10,6 +10,8 @@ import OccasionFormPage from "./pages/OccasionFormPage.jsx";
 import DesignListPage from "./pages/DesignListPage.jsx";
 import DesignUploadPage from "./pages/DesignUploadPage.jsx";
 import DesignLayoutPage from "./pages/DesignLayoutPage.jsx";
+import CategoryListPage from "./pages/CategoryListPage.jsx";
+import FontListPage from "./pages/FontListPage.jsx";
 import SeasonListPage from "./pages/SeasonListPage.jsx";
 
 /**
@@ -52,6 +54,8 @@ const AdminRoutes = () => {
         <Route path="designs" element={<DesignListPage />} />
         <Route path="designs/new" element={<DesignUploadPage />} />
         <Route path="designs/:designId/layout" element={<DesignLayoutPage />} />
+        <Route path="categories" element={<CategoryListPage />} />
+        <Route path="fonts" element={<FontListPage />} />
         <Route path="seasons" element={<SeasonListPage />} />
         <Route path="*" element={<Navigate to="/admin/occasions" replace />} />
       </Route>

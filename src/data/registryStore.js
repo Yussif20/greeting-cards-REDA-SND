@@ -50,6 +50,12 @@ function normalise(raw) {
   const designsByOccasion = raw.designs ?? {};
   const allDesigns = Object.values(designsByOccasion).flat();
 
+  // Absent in every snapshot published before 0005_categories.sql and
+  // 0006_fonts.sql, so these default rather than indexing straight in. The
+  // readers below then never have to ask whether the key was there.
+  const categories = [...(raw.categories ?? [])].sort((a, b) => a.order - b.order);
+  const fonts = [...(raw.fonts ?? [])].sort((a, b) => a.order - b.order);
+
   return {
     revision: raw.revision,
     occasions,
@@ -57,6 +63,9 @@ function normalise(raw) {
     visibleOccasions: occasions.filter((o) => o.enabled),
     designsByOccasion,
     designsById: Object.fromEntries(allDesigns.map((d) => [d.id, d])),
+    categories,
+    categoriesById: Object.fromEntries(categories.map((c) => [c.id, c])),
+    fonts,
     seasons: raw.seasons,
     currentYear: raw.seasons[0]?.id ?? null,
   };

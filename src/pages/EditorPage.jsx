@@ -9,7 +9,8 @@ import { useEditorState } from "../hooks/useEditorState.js";
 import { useDebouncedValue } from "../hooks/useDebouncedValue.js";
 
 import { getDesign, defaultYear } from "../data/designs/index.js";
-import { getBrand } from "../data/brands.js";
+import { BRANDS, getBrand } from "../data/brands.js";
+import { OTHER_BRAND } from "../lib/brandGroups.js";
 import { occasionHeading, occasionShortHeading } from "../lib/localize.js";
 import { loadImage } from "../lib/canvas.js";
 import { preloadFont } from "../lib/fonts.js";
@@ -203,15 +204,27 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
   // Going back keeps the season, unless it is the one the grid opens on anyway.
   // Without this, editing a card from an older year and hitting the breadcrumb
   // would silently drop you into this year's set.
-  const backToGrid =
-    design.year === defaultYear(slug) ? `/${slug}` : `/${slug}?year=${design.year}`;
+  const yearQuery = design.year === defaultYear(slug) ? "" : `?year=${design.year}`;
+  const backToBrands = `/${slug}${yearQuery}`;
+
+  // The grid this card came from is its brand's, not the occasion's. A card
+  // whose brand is missing or no longer in the roster lives under the
+  // catch-all tile rather than nowhere -- the same inversion brandGroups
+  // makes, for the same reason: a card no page links to is a card nobody
+  // finds again.
+  const brandSegment =
+    design.brand && BRANDS.some((b) => b.id === design.brand) ? design.brand : OTHER_BRAND;
+  const backToGrid = `/${slug}/brands/${brandSegment}${yearQuery}`;
+  const brandLabel =
+    brandSegment === OTHER_BRAND ? t("brands.other") : getBrand(design.brand).name;
 
   return (
     <PageShell accent={occasion.theme.light}>
       <Breadcrumbs
         items={[
           { label: t("common.breadcrumb.home"), to: "/" },
-          { label: occasionShortHeading(occasion, lang), to: backToGrid },
+          { label: occasionShortHeading(occasion, lang), to: backToBrands },
+          { label: brandLabel, to: backToGrid },
           { label: `${t("designs.design")} ${String(design.number).padStart(2, "0")}` },
         ]}
       />

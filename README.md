@@ -3,8 +3,8 @@
 Personalised corporate greeting cards for REDA, in Arabic and English, for six
 occasions across the year.
 
-Pick an occasion, pick a design, add a name and job title, then download the
-card as a full-resolution image.
+Pick an occasion, pick the company, pick a design, add a name and job title,
+then download the card as a full-resolution image.
 
 ## Running it
 
@@ -26,7 +26,7 @@ npm run db:seed         # seed Supabase from the bundled registry (one-off)
 - **React 19 + Vite 6**, plain JSX, no TypeScript.
 - **Tailwind CSS v4** via `@tailwindcss/vite`. There is no `tailwind.config.js` —
   configuration is CSS-first in `src/index.css`.
-- **react-router 7**, with occasion and design in the URL.
+- **react-router 7**, with occasion, brand and design in the URL.
 - **i18next**, Arabic and English, with direction handled on `<html>`.
 - Cards are drawn with the **2D canvas API**. No html2canvas, no image libraries.
 
@@ -36,8 +36,8 @@ src/
   lib/       canvas rendering, layer geometry, export, drafts
   hooks/     editor state, pointer interaction, URL params
   i18n/      UI strings (en/ar)
-  components/  layout · brand · ui · occasions · designs · editor
-  pages/     OccasionsPage · DesignsPage · EditorPage · NotFoundPage
+  components/  layout · brand · brands · ui · occasions · designs · editor
+  pages/     OccasionsPage · BrandsPage · DesignsPage · EditorPage · NotFoundPage
 ```
 
 ### Typography
@@ -58,6 +58,48 @@ cause of "the downloaded card has the wrong font".
 
 Fonts are self-hosted via `@fontsource`. Note the family registered by the
 variable package is `Space Grotesk Variable`, not `Space Grotesk`.
+
+#### Uploaded fonts
+
+Those four are bundled and `@import`-ed in `src/index.css`, so adding a fifth
+used to mean an npm dependency plus a code edit — and a licensed face that is
+not on npm could not be added at all. `/admin` → الخطوط now takes the files
+directly: a **regular** file (required), an optional **bold**, and a bilingual
+name. The row reaches the browser in the registry snapshot like everything else.
+
+An uploaded face has no stylesheet behind it, so it is declared at runtime with
+the **FontFace API** (`src/lib/fonts.js`) rather than through CSS. That reaches
+`<canvas>` and CSS identically, because both read the same document font set —
+which is what keeps the preview and the downloaded file in agreement. Declaring
+a face is metadata only; the browser fetches the file when something actually
+renders with the family, so a visitor who never picks one pays nothing.
+
+Four decisions worth stating:
+
+- **The family is derived from the row id**, not read out of the file. Two
+  uploads could both call themselves "IBM Plex Sans Arabic", and one calling
+  itself "Cairo" would shadow the bundled Cairo on every card. `uf-<id>` is
+  unique by construction.
+- **A bold is never synthesised.** With both files the 400/700 match is exact.
+  With only a regular, the single face is declared across the whole weight
+  range, so a card loses its weight contrast rather than its letterforms —
+  synthetic bold smears Arabic, which is most of what these cards are.
+- **The stack is `"<uploaded>", "Cairo", sans-serif`.** That inverts the bundled
+  order, where Latin leads because Space Grotesk is half of a deliberate pair.
+  Here there is no pair, only a face and a safety net: Cairo covers both
+  scripts, so an Arabic-only upload still sets a Latin job title in something
+  chosen.
+- **Files are judged by extension, never by `file.type`.** The same `.ttf`
+  arrives as `font/ttf`, as `application/x-font-ttf` or as `""` depending on the
+  platform, and the bucket checks exactly the type the upload declares.
+
+`layout.fontId` is plain text inside jsonb with no foreign key, and `getFont()`
+falls back to the default for an id it does not know — so unpublishing or
+deleting a font degrades every card using it to Cairo rather than breaking it.
+
+Nothing is re-encoded: a browser cannot convert a TTF to WOFF2, and shipping the
+file the foundry supplied is the only way a licensed face can be used at all.
+WOFF2 is roughly half the size if they have it.
 
 ### The home page fills one viewport
 
@@ -84,18 +126,27 @@ cannot resolve `height: 100%` reliably, so the chain is flex all the way down.
 | Path | Page |
 |---|---|
 | `/` | all six occasions |
-| `/:occasion` | design chooser (`?year=` picks a season, `?style=` filters) |
+| `/:occasion` | brand chooser (`?year=` picks a season) |
+| `/:occasion/brands/:brandId` | design chooser (`?category=` and `?style=` filter) |
 | `/:occasion/:designId` | editor |
 
 Everything the editor needs comes from the URL, so links are shareable and a
 refresh keeps you where you were. Nothing is passed through `location.state`.
 
+The brand step has **three** segments, and that is what let it be added without
+moving anything: the editor's `/:occasion/:designId` is two, so react-router
+separates them with no ambiguity, every bookmarked card still resolves, and
+every saved draft — keyed `reda-draft:<occasion>:<designId>` — still matches.
+
+`/:occasion/brands/other` is the one brand id with no company behind it. See
+[Cards and brands](#cards-and-brands).
+
 ### The registries
 
-Occasions, seasons and designs live in Supabase. `src/data/occasions.js` and
-`src/data/designs/index.js` are thin readers over `src/data/registryStore.js`
-and keep the signatures they always had, so no page or hook knows where the
-data came from.
+Occasions, seasons, categories, fonts and designs live in Supabase.
+`src/data/occasions.js`, `src/data/categories.js`, `src/data/fonts.js` and
+`src/data/designs/index.js` are thin readers over `src/data/registryStore.js`,
+so no page or hook knows where the data came from.
 
 The store is seeded **synchronously** from `src/data/registry.snapshot.js`, a
 committed copy of the last published registry, and revalidated once from the
@@ -112,9 +163,15 @@ CDN after the first render. That ordering is the whole design:
 A snapshot is swapped in only when it is both newer (`revision`) and passes a
 structural guard, so a malformed one can never replace a working registry.
 
-Occasion copy lives in the registry as `{ ar, en }` objects rather than as
-i18n keys, because an occasion is a domain entity rather than interface text.
-`src/lib/localize.js` resolves it. UI chrome stays in `src/i18n/`.
+Occasion and category copy lives in the registry as `{ ar, en }` objects rather
+than as i18n keys, because both are domain entities rather than interface text.
+`src/lib/localize.js` resolves them. UI chrome stays in `src/i18n/`.
+
+Every reader treats `categories` and `fonts` as **optional**. A snapshot
+published before `0005_categories.sql` or `0006_fonts.sql` was applied has no
+such key, and refusing it would strand a deployment on its bundled fallback over
+a list that is allowed to be empty — so the structural guard checks each key's
+shape but never its presence.
 
 **All design geometry is stored as a fraction of the native image, never in
 pixels.** That is what keeps the live preview, the exported file and the grid
@@ -132,21 +189,104 @@ numbers restart at `01` each year and would otherwise collide.
 
 Adding next season is an admin action rather than a code edit: create the
 season in `/admin`, upload the artwork, place the name and job title on it, and
-publish. The year dropdown, the style chips and the brand picker all read
-whatever seasons are present for the occasion, and the brand picker never moves
-you to a different year's artwork.
+publish. The year dropdown, the chips and the brand picker all read whatever
+seasons are present, and the brand picker never moves you to a different year's
+artwork.
 
 ### Cards and brands
 
-Each design declares whether its brand logo is already part of the artwork:
+Choosing the company is a **page**, not a filter. `/:occasion` lists the seven
+REDA brands and `/:occasion/brands/:brandId` holds that company's cards. A
+season now carries several cards per company rather than one, and a flat grid of
+forty thumbnails, six of which are yours, is not a chooser.
 
-- `brandBakedIn: true` (all current artwork) — the brand selector picks a
-  *different design*, since the logo is in the pixels.
+Brands stay in `src/data/brands.js` rather than becoming a table. They are the
+group's registered trade names — given, like the calendar, not authored.
+
+`designs.brand` is plain text with no foreign key, precisely because the roster
+is code. So a card can carry `null`, or an id `brands.js` no longer contains,
+and under a browse-by-brand flow such a card is not merely mislabelled — no tile
+leads to it. `src/lib/brandGroups.js` collects anything the roster does not
+claim into one trailing **`other`** tile, shown only when it holds something,
+and `scripts/verify-render.mjs` asserts that every card is listed under exactly
+one tile. Brands with no card for the occasion stay in the grid, disabled: the
+roster is the group, and a subset shown without explanation reads as artwork
+gone missing.
+
+Each design also declares whether its brand logo is already part of the artwork:
+
+- `brandBakedIn: true` (all current artwork) — the brand selector in the editor
+  picks a *different design*, since the logo is in the pixels.
 - `brandBakedIn: false` — the brand becomes a layer composited at render time
   from `src/data/brands.js`.
 
 Both paths render the same control, so the interface does not change when
 logo-free artwork is supplied.
+
+### Duplicating a card
+
+A season is one template rendered once per company, and the text sits in the
+same place on all seven. **تكرار** copies a card — its whole layout, plus the
+style, occasion and season — and asks only for the new card's brand, category
+and artwork. It is offered both in the layout editor, where it copies what is
+currently on screen (saving the source first if it has unsaved changes), and on
+each card in `/admin` → البطاقات.
+
+The copy is created as a draft. The panel stays open afterwards with the brand
+advanced to the next company with no card, so filling a season is one drop per
+brand rather than one round trip per brand.
+
+Dropping new artwork is optional. **Without it the copy points at the source's
+image**, which is a supported state rather than a shortcut: storage paths carry
+a random uuid and no design id, `designs.src` has no unique constraint, and
+uploads are never deleted, so neither row can pull the image out from under the
+other. That is what makes "same artwork, two categories" a single click.
+
+Two things a copy cannot know, both stated in the panel:
+
+- **A layout is fractional, not proportional.** `size` is a fraction of the
+  image's height while `maxWidth` is a fraction of its width, so artwork of a
+  different shape places the text differently. Copying onto it is allowed — and
+  still less work than starting over — so this warns rather than refuses.
+- **`brandMark` is a crop into the artwork itself**, used to preview a logo in
+  the editor. It transfers correctly between cards cut from one template and
+  needs re-dragging otherwise.
+
+The pure part lives in `src/admin/lib/duplicateInput.js` with no imports, so
+`scripts/verify-render.mjs` can assert the copy rules directly — that the layout
+is cloned deeply, that `id` and `number` are left for `createDesign` to
+allocate, and that the default brand is the next gap in the roster.
+
+### Categories
+
+What a card is *for* — «موظفين», «عملاء», whatever is needed next — as opposed
+to what it looks like. Inside a brand's grid the categories present render as
+filter chips, and `?category=` puts the choice in the URL.
+
+This is the one axis of the registry the client owns outright, which is why it
+is a table with an admin screen while `style` stays four ids in the bundle:
+
+| | where it lives | why |
+|---|---|---|
+| `style` | `STYLES` in `src/data/designs/index.js` | the ids are i18n keys (`designs.style.<id>`); a fifth invented at runtime would render as a raw key |
+| `category` | `public.categories` | carries its own `{ ar, en }` label, so the admin can invent one |
+
+Both filter the same grid, and both are shown only where the grid actually
+contains more than one value — a chip row where every card matches filters
+nothing and just costs a line.
+
+**A card's category is optional and stays optional.** Every card made before
+categories existed has none, an occasion that never needs the distinction never
+gains one, and those cards appear under "All" and under no chip. That is why
+`designs.category_id` is nullable and why deleting a category *un-files* its
+cards (`ON DELETE SET NULL`) rather than refusing the way a season or an
+occasion does — there is nothing to orphan. The admin screen still counts them
+first, so the confirmation can say how many cards are about to lose their
+category.
+
+A category reaches the public site only when it is both published **and**
+stamped on a published card, so the whole taxonomy can be set up before a single
+card moves.
 
 ### Rendering
 
@@ -265,6 +405,27 @@ it — the login gate is inside that JavaScript — so the URL was not a secret 
 risk of leaking, it was published. Anyone could have POSTed to it in a loop,
 and build minutes are finite on every plan.
 
+### The database
+
+Schema changes live in `supabase/migrations/`, numbered, each written to run as
+one transaction. Apply them in order against the project:
+
+```bash
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/0005_categories.sql
+```
+
+or paste the file whole into the Supabase SQL editor, which wraps it for you.
+
+`0005_categories.sql` and `0006_fonts.sql` are the two this deploy needs.
+Until they are applied, the matching `/admin` screen reports the missing table
+and the rest of the dashboard keeps working — the card form degrades to "no
+category", and the editor offers the four bundled fonts. The public site is
+unaffected either way.
+
+`0006_fonts.sql` also **widens the media bucket's `allowed_mime_types`**. The
+bucket was created allowing three image types and JSON, so without that
+statement a font upload is refused before any of the application code matters.
+
 ### If something looks wrong
 
 ```bash
@@ -287,12 +448,16 @@ whether the interface hides its buttons but whether the database refuses.
   are English in both languages — they are registered trade names, and the
   wordmarks in the artwork are English.
 - **The design mockup specified DIN Next Arabic**, a licensed Monotype face.
-  Cairo and Space Grotesk were chosen instead (see Typography). If REDA later
-  wants DIN Next Arabic and holds a *web* licence, add the `.woff2` to
-  `public/fonts/`, declare an `@font-face`, and add one entry to
-  `src/data/fonts.js`.
+  Cairo and Space Grotesk were chosen instead (see Typography). If REDA holds a
+  *web* licence for it, this is no longer a code change: upload the file in
+  `/admin` → الخطوط and publish it.
 - **Style tags** on designs were assigned by eye and are provisional — one
-  field each in `/admin`.
+  field each in `/admin`. They now sit alongside categories, which are the
+  admin-managed axis; if the styles turn out to be redundant, dropping them is
+  deleting `STYLES`, one chip row and one upload field.
+- **No card carries a category yet.** The table ships empty, so the chip row is
+  absent until the first one is created in `/admin` → Categories and cards are
+  filed under it.
 - **Edition numbers** (Saudi National Day "96") are not derivable from a
   calendar and need an annual review, now editable in `/admin`.
 - **Saudi Founding Day artwork** is a fully composed poster with very little

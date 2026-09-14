@@ -115,6 +115,28 @@ await expectDenied("anon cannot DELETE a design", "designs?id=eq.eid-al-fitr-202
   method: "DELETE",
 });
 
+// Categories are admin-written text that renders as a filter chip on the
+// public site, so an anon INSERT here would be stored content injection rather
+// than merely a stray row. No data has to exist for this to be meaningful,
+// which is why it is a write probe and not added to the read loop above.
+await expectDenied("anon cannot INSERT a category", "categories", {
+  method: "POST",
+  body: JSON.stringify({ id: "rls-probe", label_en: "probe", label_ar: "probe" }),
+});
+
+// A font row points at files the browser will execute as a typeface on every
+// card that uses it, so an anon INSERT here is worth probing for the same
+// reason categories are -- stored content, not a stray row.
+await expectDenied("anon cannot INSERT a font", "fonts", {
+  method: "POST",
+  body: JSON.stringify({
+    id: "rls-probe",
+    label_en: "probe",
+    label_ar: "probe",
+    regular_src: "/media/fonts/probe/regular.woff2",
+  }),
+});
+
 await expectDenied("anon cannot grant itself admin", "admins", {
   method: "POST",
   body: JSON.stringify({

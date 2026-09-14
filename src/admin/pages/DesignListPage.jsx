@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Plus, SlidersHorizontal, Eye, EyeOff, Trash2, Loader2 } from "lucide-react";
+import { Plus, SlidersHorizontal, Copy, Eye, EyeOff, Trash2, Loader2 } from "lucide-react";
 
 import PageShell from "../../components/layout/PageShell.jsx";
 import Button from "../../components/ui/Button.jsx";
@@ -11,16 +11,27 @@ import Toast from "../../components/ui/Toast.jsx";
 import { loc } from "../../lib/localize.js";
 import { useLanguage } from "../../hooks/useLanguage.js";
 
-import { listOccasions, listDesigns } from "../lib/api.js";
-import { setStatus, deleteDesign } from "../lib/mutations.js";
+import { listOccasions, listDesigns, listCategories } from "../lib/api.js";
+import { setStatus, deleteDesign, updateDesign } from "../lib/mutations.js";
 import { useAsync } from "../hooks/useAsync.js";
 import AsyncSection from "../components/AsyncSection.jsx";
+import DuplicatePanel from "../components/DuplicatePanel.jsx";
 
 const ALL = "__all__";
+
+/** See the note on NO_CATEGORY in DesignUploadPage.jsx. */
+const NO_CATEGORY = "__none__";
 
 /**
  * Every card, filtered by occasion, with the actions that change what the
  * public can see.
+ *
+ * Filing a card under a category happens here rather than in a form of its
+ * own. It is the one field an admin changes *after* the upload -- the artwork,
+ * the brand and the season are settled by then, but which list a card belongs
+ * in is exactly what gets rearranged once there are enough of them to sort. So
+ * it is a dropdown on the card, saved on change, with no separate edit screen
+ * to enter and leave.
  *
  * Publishing and archiving are offered on every row; permanent deletion only
  * once a card is not public. Removing something that has been live is
@@ -38,9 +49,14 @@ const DesignListPage = () => {
 
   const [pending, setPending] = useState(null);
   const [toast, setToast] = useState(null);
+  // The card being copied, or null. One panel at the top of the page rather
+  // than one per card: the grid is four columns of thumbnails and a form
+  // unfolding inside a cell would reflow the row it sits in.
+  const [duplicating, setDuplicating] = useState(null);
 
   const slug = params.get("occasion") ?? ALL;
   const occasions = useAsync(listOccasions);
+  const categories = useAsync(listCategories);
   const designs = useAsync(() => listDesigns(slug === ALL ? null : slug), [slug]);
 
   const options = [
@@ -74,6 +90,18 @@ const DesignListPage = () => {
 
   const addHref = slug === ALL ? "/admin/designs/new" : `/admin/designs/new?occasion=${slug}`;
 
+  // Drafts are offered as well as live ones: a card can be filed under a
+  // category that is not public yet, and it simply produces no chip on the site
+  // until the category is published too.
+  const categoryOptions = [
+    { value: NO_CATEGORY, label: t("admin.designs.noCategory") },
+    ...(categories.data ?? []).map((c) => ({
+      value: c.id,
+      label: loc(c.label, lang),
+      hint: c.status === "published" ? undefined : t("admin.status.draft"),
+    })),
+  ];
+
   return (
     <PageShell>
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
@@ -103,6 +131,22 @@ const DesignListPage = () => {
           />
         </div>
       </div>
+
+      {duplicating && (
+        <DuplicatePanel
+          design={duplicating}
+          onCreated={(created, { aspectWarning }) => {
+            setToast({
+              tone: "info",
+              message:
+                t("admin.duplicate.created", { id: created.id }) +
+                (aspectWarning ? ` ${t("admin.duplicate.aspectWarning")}` : ""),
+            });
+            designs.reload();
+          }}
+          onClose={() => setDuplicating(null)}
+        />
+      )}
 
       <AsyncSection
         state={designs.state}
@@ -150,6 +194,32 @@ const DesignListPage = () => {
                     {t(`designs.style.${design.style}`)}
                   </p>
 
+                  <div className="mt-2.5">
+                    <label
+                      htmlFor={`${id}-cat-${design.id}`}
+                      id={`${id}-cat-${design.id}-label`}
+                      className="sr-only"
+                    >
+                      {t("admin.designs.category")}
+                    </label>
+                    <Select
+                      id={`${id}-cat-${design.id}`}
+                      labelId={`${id}-cat-${design.id}-label`}
+                      value={design.category ?? NO_CATEGORY}
+                      options={categoryOptions}
+                      onChange={(next) =>
+                        act(
+                          design,
+                          () =>
+                            updateDesign(design.id, {
+                              category_id: next === NO_CATEGORY ? null : next,
+                            }),
+                          t("admin.designs.categorySaved"),
+                        )
+                      }
+                    />
+                  </div>
+
                   <div className="mt-3 flex flex-wrap items-center gap-1.5">
                     <Button
                       as={Link}
@@ -159,6 +229,18 @@ const DesignListPage = () => {
                     >
                       <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
                       {t("admin.designs.layout")}
+                    </Button>
+
+                    {/* Icon only, like Delete: four actions and a category
+                        picker already share a card three columns wide. */}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={busy}
+                      onClick={() => setDuplicating(design)}
+                    >
+                      <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span className="sr-only">{t("admin.duplicate.action")}</span>
                     </Button>
 
                     <Button

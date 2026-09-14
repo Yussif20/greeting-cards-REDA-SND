@@ -15,14 +15,29 @@ import { ImagePlus } from "lucide-react";
  */
 const ACCEPT = "image/jpeg,image/png,image/webp";
 
-const Dropzone = ({ onFile, disabled = false }) => {
+/**
+ * `label`, `hint` and `accept` all default to the add-a-card wording and types,
+ * so the original call sites are untouched. The duplicate panel overrides the
+ * copy because there the drop is OPTIONAL; the font form overrides `accept`
+ * because a font is matched by EXTENSION rather than by MIME type -- browsers
+ * disagree about what a .ttf is, and "" is a common answer.
+ *
+ * `accept` is only ever a hint: the file picker honours it, a drop ignores it
+ * entirely, and the real check is the one the caller runs on the file it gets.
+ * Which is why the type filter below applies only to the image default -- an
+ * extension-based list has nothing to compare `file.type` against.
+ */
+const Dropzone = ({ onFile, disabled = false, label, hint, accept = ACCEPT }) => {
   const { t } = useTranslation();
   const input = useRef(null);
   const [over, setOver] = useState(false);
 
   const take = (file) => {
     if (!file) return;
-    if (!ACCEPT.split(",").includes(file.type)) return;
+    // Only meaningful for a MIME list. An extension list (".ttf,.otf") never
+    // matches file.type, and silently dropping the file would look like the
+    // dropzone was broken -- so those are validated by the caller instead.
+    if (accept === ACCEPT && !ACCEPT.split(",").includes(file.type)) return;
     onFile(file);
   };
 
@@ -51,14 +66,16 @@ const Dropzone = ({ onFile, disabled = false }) => {
         }`}
       >
         <ImagePlus className="h-6 w-6 text-ink-3" aria-hidden="true" />
-        <span className="text-sm font-medium text-ink">{t("admin.upload.choose")}</span>
-        <span className="text-xs text-ink-3">{t("admin.upload.hint")}</span>
+        <span className="text-sm font-medium text-ink">
+          {label ?? t("admin.upload.choose")}
+        </span>
+        <span className="text-xs text-ink-3">{hint ?? t("admin.upload.hint")}</span>
       </button>
 
       <input
         ref={input}
         type="file"
-        accept={ACCEPT}
+        accept={accept}
         className="sr-only"
         onChange={(e) => {
           take(e.target.files?.[0]);
