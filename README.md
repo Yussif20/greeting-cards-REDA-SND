@@ -92,6 +92,12 @@ Four decisions worth stating:
 - **Files are judged by extension, never by `file.type`.** The same `.ttf`
   arrives as `font/ttf`, as `application/x-font-ttf` or as `""` depending on the
   platform, and the bucket checks exactly the type the upload declares.
+- **The declared type has to be on the blob, not in the options.**
+  `upload(path, file, { contentType })` ignores `contentType` whenever the body
+  is a Blob: storage-js posts it as multipart and the part carries `file.type`,
+  which Windows leaves empty for both `.ttf` and `.otf`. The bucket then sees
+  `application/octet-stream` and refuses the upload. `uploadBody()` re-wraps the
+  bytes so the declaration is the truth.
 
 `layout.fontId` is plain text inside jsonb with no foreign key, and `getFont()`
 falls back to the default for an id it does not know — so unpublishing or

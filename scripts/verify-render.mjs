@@ -263,6 +263,29 @@ check(
   );
 }
 
+// Declaring the type is not the same as sending it. supabase-js posts a Blob as
+// multipart/form-data and the part carries `blob.type`, so `options.contentType`
+// never leaves the browser -- and a .otf picked on Windows arrives with
+// file.type === "", which reaches the bucket as application/octet-stream.
+{
+  const { uploadBody } = await import("../src/admin/lib/uploadBody.js");
+
+  const picked = new File([new Uint8Array(16)], "DINNextArabic-Regular.otf");
+  check(
+    "what is actually uploaded carries the declared type, not octet-stream",
+    uploadBody(picked, validateFontFile(picked).type).type === "font/otf",
+    picked.type || "(none)",
+  );
+
+  // The bytes are copied to retype a blob, so a blob that is already right has
+  // to pass straight through -- card masters are megabytes and go this way.
+  const master = new Blob([new Uint8Array(4)], { type: "image/webp" });
+  check(
+    "a blob already carrying its type is passed through uncopied",
+    uploadBody(master, "image/webp") === master,
+  );
+}
+
 // A design's layout stores fontId as plain text inside jsonb with no foreign
 // key, so unpublishing a font has to degrade its cards rather than break them.
 check(

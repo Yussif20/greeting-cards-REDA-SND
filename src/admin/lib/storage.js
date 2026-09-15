@@ -1,4 +1,5 @@
 import { supabase } from "./supabase.js";
+import { uploadBody } from "./uploadBody.js";
 import { validateFontFile } from "../../lib/fontFile.js";
 
 export const MEDIA_BUCKET = "media";
@@ -30,12 +31,19 @@ const uid = () =>
 
 const IMMUTABLE = "31536000";
 
+/**
+ * The body goes through uploadBody() because `contentType` alone does not
+ * reach the server for a Blob -- see the note there. It is still passed, since
+ * it is what a non-Blob body would be sent with.
+ */
 async function put(bucket, objectPath, blob, contentType) {
-  const { error } = await supabase.storage.from(bucket).upload(objectPath, blob, {
-    contentType,
-    cacheControl: IMMUTABLE,
-    upsert: false,
-  });
+  const { error } = await supabase.storage
+    .from(bucket)
+    .upload(objectPath, uploadBody(blob, contentType), {
+      contentType,
+      cacheControl: IMMUTABLE,
+      upsert: false,
+    });
   if (error) throw new Error(`upload ${objectPath}: ${error.message}`);
   return objectPath;
 }
