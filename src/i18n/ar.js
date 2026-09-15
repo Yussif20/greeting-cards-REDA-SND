@@ -268,6 +268,13 @@ export default {
       focalX: "التركيز الأفقي",
       focalY: "التركيز الرأسي",
       focalHint: "أي جزء من الصورة يبقى ظاهرًا عند اقتصاص البطاقة.",
+      brandCovers: "صور الشركات",
+      brandCoversHint:
+        "الصورة التي تمثّل كل شركة في صفحة هذه المناسبة. بدونها تُعرض أول بطاقة لتلك الشركة.",
+      coverFallback: "تُعرض حاليًا أول بطاقة لهذه الشركة.",
+      coverChoose: "اختر صورة {{name}}",
+      coverReplace: "استبدال صورة {{name}}",
+      coverRemove: "إزالة",
       icon: "الرمز",
       iconSearch: "بحث في الرموز",
       iconNone: "لا توجد رموز مطابقة.",

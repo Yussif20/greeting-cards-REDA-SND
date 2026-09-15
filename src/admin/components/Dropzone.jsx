@@ -26,8 +26,20 @@ const ACCEPT = "image/jpeg,image/png,image/webp";
  * entirely, and the real check is the one the caller runs on the file it gets.
  * Which is why the type filter below applies only to the image default -- an
  * extension-based list has nothing to compare `file.type` against.
+ *
+ * `compact` is for the places that show SEVERAL of these at once -- the brand
+ * covers on the occasion form are one per company. At full height they would be
+ * most of the page, and the format hint repeated seven times says nothing the
+ * first one did not.
  */
-const Dropzone = ({ onFile, disabled = false, label, hint, accept = ACCEPT }) => {
+const Dropzone = ({
+  onFile,
+  disabled = false,
+  label,
+  hint,
+  accept = ACCEPT,
+  compact = false,
+}) => {
   const { t } = useTranslation();
   const input = useRef(null);
   const [over, setOver] = useState(false);
@@ -59,7 +71,9 @@ const Dropzone = ({ onFile, disabled = false, label, hint, accept = ACCEPT }) =>
         type="button"
         disabled={disabled}
         onClick={() => input.current?.click()}
-        className={`flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-colors duration-200 disabled:opacity-45 ${
+        className={`flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed text-center transition-colors duration-200 disabled:opacity-45 ${
+          compact ? "px-4 py-6" : "px-6 py-12"
+        } ${
           over
             ? "border-brand bg-brand-soft"
             : "border-line bg-surface-2 hover:border-ink-3 hover:bg-surface-3"
@@ -69,7 +83,9 @@ const Dropzone = ({ onFile, disabled = false, label, hint, accept = ACCEPT }) =>
         <span className="text-sm font-medium text-ink">
           {label ?? t("admin.upload.choose")}
         </span>
-        <span className="text-xs text-ink-3">{hint ?? t("admin.upload.hint")}</span>
+        {!compact && (
+          <span className="text-xs text-ink-3">{hint ?? t("admin.upload.hint")}</span>
+        )}
       </button>
 
       <input

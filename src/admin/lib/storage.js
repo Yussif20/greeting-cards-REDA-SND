@@ -85,10 +85,31 @@ export async function uploadCard({ occasionSlug, seasonId, master, thumb, origin
 }
 
 /**
- * Store a hero's variants and return the extension-less base the registry
- * keeps, matching the `${hero.base}.webp` / `${hero.base}@2x.jpg` convention
- * OccasionCard has always used.
+ * Store one brand cover and return the path the occasion row keeps.
+ *
+ * Content-addressed like everything else, so replacing a company's cover writes
+ * a new object rather than overwriting one. That matters more here than it looks:
+ * the published snapshot still points at the old path until the next publish,
+ * and an upsert would blank the tile for everyone in between.
+ *
+ * The original goes to the private bucket on the same best-effort terms as a
+ * card's: the cover is already stored by then, so losing it costs the ability to
+ * re-derive, not the tile.
  */
+export async function uploadBrandCover({ occasionSlug, brandId, cover, original }) {
+  const dir = `covers/${occasionSlug}/${brandId}/${uid()}`;
+  const path = await put(MEDIA_BUCKET, `${dir}/cover.webp`, cover, "image/webp");
+
+  try {
+    const ext = (original.name?.split(".").pop() ?? "bin").toLowerCase().slice(0, 5);
+    await put(ORIGINALS_BUCKET, `${dir}/original.${ext}`, original, original.type);
+  } catch {
+    // The cover is already stored; the tile is usable without the original.
+  }
+
+  return { src: mediaUrl(path) };
+}
+
 /**
  * Store one font file and return the path the registry keeps.
  *
@@ -108,6 +129,11 @@ export async function uploadFont({ fontId, weight, file }) {
   return mediaUrl(await put(MEDIA_BUCKET, path, file, type));
 }
 
+/**
+ * Store a hero's variants and return the extension-less base the registry
+ * keeps, matching the `${hero.base}.webp` / `${hero.base}@2x.jpg` convention
+ * OccasionCard has always used.
+ */
 export async function uploadHero({ occasionSlug, variants, original }) {
   const dir = `heroes/${occasionSlug}/${uid()}`;
 

@@ -74,6 +74,7 @@ const {
   categoryToRow,
   fontToRow,
   occasionToRow,
+  rowToOccasion,
   designToRow,
   rowToDesign,
   buildSnapshot,
@@ -162,11 +163,17 @@ const rebuilt = snapshotFromRows(
  * Round-tripping the expected side through designToRow -> rowToDesign compares
  * the two by VALUE at the current shape, which is what this was ever asserting:
  * that Postgres gives back what went in, read through the public RLS path.
+ *
+ * Occasions go through the same round trip for the same reason, and it is no
+ * longer hypothetical: rowToOccasion now always emits `brandCovers`, so every
+ * snapshot taken before 0007_brand_covers.sql lacks the key while every row read
+ * back carries `{}`. Anything added to an occasion later lands here too, which
+ * is why both sides are round-tripped rather than only the one that broke.
  */
 const expected = buildSnapshot(
   {
     seasons: snapshot.seasons,
-    occasions: snapshot.occasions,
+    occasions: snapshot.occasions.map((o) => rowToOccasion(occasionToRow(o))),
     designs: designs.map((d) => rowToDesign(designToRow(d))),
     categories,
     fonts,

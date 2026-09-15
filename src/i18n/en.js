@@ -277,6 +277,13 @@ export default {
       focalX: "Horizontal focus",
       focalY: "Vertical focus",
       focalHint: "Which part of the photograph stays visible when the tile is cropped.",
+      brandCovers: "Company pictures",
+      brandCoversHint:
+        "The picture that stands for each company on this occasion's page. Without one, that company's first card is shown.",
+      coverFallback: "Currently showing this company's first card.",
+      coverChoose: "Choose a picture for {{name}}",
+      coverReplace: "Replace {{name}}'s picture",
+      coverRemove: "Remove",
       icon: "Mark",
       iconSearch: "Search marks",
       iconNone: "No marks match that.",

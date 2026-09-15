@@ -293,6 +293,7 @@ commit;
 -- is immutable, cacheable for a year, and never needs deleting or versioning:
 --   media/heroes/<slug>/<uid>/hero{,@2x}.{webp,jpg}
 --   media/cards/<slug>/<season>/<uid>/{master.jpg,thumb.webp}
+--   media/covers/<slug>/<brand>/<uid>/cover.webp     -- added by 0007
 --   media/registry/registry.json
 --   media/registry/history/<revision>.json
 --   originals/<slug>/<season>/<uid>/<name>

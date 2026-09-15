@@ -69,3 +69,25 @@ export function designsForBrand(designs, brands, brandId) {
   const known = new Set(brands.map((b) => b.id));
   return designs.filter((d) => !d.brand || !known.has(d.brand));
 }
+
+/**
+ * The picture for one tile: what the admin chose, else the company's first card.
+ *
+ * A cover is an occasion-level decision -- one image per company, uploaded in
+ * /admin -- and the fallback is what the tile has always shown. That ordering is
+ * the whole design: an occasion whose covers are half filled in has no half-
+ * broken tiles, so the client can add them one at a time rather than all seven
+ * before any of it is worth looking at.
+ *
+ * `covers` is absent on an occasion published before brand covers existed and
+ * empty on one nobody has filled in, and those two mean the same thing here.
+ *
+ * `other` is never a key -- it is not a company, it is everything the roster
+ * does not claim -- so the catch-all tile keeps showing its first stray card
+ * with no special case. A brand with a cover but no cards keeps its picture and
+ * stays disabled: it illustrates a company with nothing to open, which is more
+ * honest than an empty box.
+ */
+export function coverFor(group, covers) {
+  return covers?.[group.id]?.src ?? group.cards[0]?.thumb ?? null;
+}

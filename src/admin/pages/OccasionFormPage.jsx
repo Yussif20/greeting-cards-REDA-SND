@@ -16,10 +16,11 @@ import Dropzone from "../components/Dropzone.jsx";
 import AsyncSection from "../components/AsyncSection.jsx";
 import { useAsync } from "../hooks/useAsync.js";
 import { listOccasions } from "../lib/api.js";
-import { processHero, ImageError } from "../lib/images.js";
-import { uploadHero } from "../lib/storage.js";
+import { processCover, processHero, ImageError } from "../lib/images.js";
+import { uploadBrandCover, uploadHero } from "../lib/storage.js";
 import { createOccasion, updateOccasion } from "../lib/mutations.js";
 import { isLucideIcon } from "../../components/occasions/lucideIcons.js";
+import { BRANDS } from "../../data/brands.js";
 
 const slugify = (text) =>
   text
@@ -41,6 +42,7 @@ const BLANK = {
   cardsDir: null,
   artStatus: "final",
   placeholderSource: null,
+  brandCovers: {},
   hero: {
     base: "",
     width: 1672,
@@ -70,8 +72,13 @@ const Form = ({ all, slug }) => {
   const existing = slug ? all.find((o) => o.slug === slug) : null;
   const isNew = !slug;
 
+  // brandCovers is defaulted rather than trusted: an occasion row read from a
+  // database that has not had 0007_brand_covers.sql applied carries no such key,
+  // and every write below would then spread `undefined` into the payload.
   const [draft, setDraft] = useState(() =>
-    existing ? structuredClone(existing) : structuredClone(BLANK),
+    existing
+      ? { ...structuredClone(existing), brandCovers: structuredClone(existing.brandCovers ?? {}) }
+      : structuredClone(BLANK),
   );
   const [accents, setAccents] = useState(() => ({
     light: existing?.theme?.light?.accent ?? "#0F5F4A",
@@ -82,6 +89,18 @@ const Form = ({ all, slug }) => {
 
   const patch = (fields) => setDraft((d) => ({ ...d, ...fields }));
   const patchHero = (fields) => setDraft((d) => ({ ...d, hero: { ...d.hero, ...fields } }));
+
+  // Removing DELETES the key rather than writing null. The public side reads
+  // `covers?.[id]?.src ?? firstCard`, which a null would satisfy just as well --
+  // but the stored map is what an admin reads back next year, and "this company
+  // has no cover" should not be spelled as an entry saying so.
+  const patchCover = (brandId, cover) =>
+    setDraft((d) => {
+      const brandCovers = { ...d.brandCovers };
+      if (cover) brandCovers[brandId] = cover;
+      else delete brandCovers[brandId];
+      return { ...d, brandCovers };
+    });
 
   // Derived rather than stored as ten separate inputs: accentSoft, onAccent and
   // the two scrim stops are consequences of the accent, not free choices, and
@@ -115,6 +134,31 @@ const Form = ({ all, slug }) => {
         formats: processed.formats,
         widths: processed.widths,
       });
+    } catch (err) {
+      setFailure(
+        err instanceof ImageError ? t(`admin.upload.errors.${err.code}`) : err.message,
+      );
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  // The same shape as takeHero: processed and stored on drop, recorded on the
+  // draft, and written to the row only when the admin presses Save. So a cover
+  // uploaded and then abandoned costs an orphaned object in the bucket and
+  // nothing else -- which is the trade every upload here already makes.
+  const takeCover = async (brandId, file) => {
+    setFailure(null);
+    try {
+      setBusy(`cover:${brandId}`);
+      const processed = await processCover(file);
+      const { src } = await uploadBrandCover({
+        occasionSlug: draft.slug || "unassigned",
+        brandId,
+        cover: processed.cover,
+        original: processed.original,
+      });
+      patchCover(brandId, { src, width: processed.width, height: processed.height });
     } catch (err) {
       setFailure(
         err instanceof ImageError ? t(`admin.upload.errors.${err.code}`) : err.message,
@@ -269,6 +313,74 @@ const Form = ({ all, slug }) => {
               ))}
             </div>
             <p className="text-xs text-ink-3">{t("admin.occasion.focalHint")}</p>
+          </section>
+
+          {/* One picture per company, for this occasion's brand chooser.
+              Deliberately not per season: the cover stands for the company, and
+              tying it to a year would mean refilling all seven every time a
+              season is added. A company with no cover keeps showing its first
+              card, so a half-filled occasion has no half-broken tiles. */}
+          <section className="space-y-4 rounded-2xl border border-line bg-surface-2 p-5">
+            <div>
+              <p className="text-sm font-medium text-ink">{t("admin.occasion.brandCovers")}</p>
+              <p className="mt-1 text-xs text-ink-3">{t("admin.occasion.brandCoversHint")}</p>
+            </div>
+
+            <ul className="grid gap-4 sm:grid-cols-2">
+              {BRANDS.map((brand) => {
+                const cover = draft.brandCovers[brand.id] ?? null;
+                const uploading = busy === `cover:${brand.id}`;
+
+                return (
+                  <li key={brand.id} className="space-y-2 rounded-xl border border-line p-3">
+                    {/* Trade names stay English in both languages -- see the
+                        note in src/data/brands.js. */}
+                    <p className="truncate text-sm font-medium text-ink">
+                      <bdi dir="ltr">{brand.name}</bdi>
+                    </p>
+
+                    {uploading ? (
+                      <div className="flex aspect-4/3 items-center justify-center gap-2 rounded-lg bg-surface-3 text-xs text-ink-2">
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                        {t("admin.upload.busy.processing")}
+                      </div>
+                    ) : cover ? (
+                      <img
+                        src={cover.src}
+                        alt=""
+                        className="aspect-4/3 w-full rounded-lg object-cover"
+                      />
+                    ) : (
+                      <p className="text-xs text-ink-3">{t("admin.occasion.coverFallback")}</p>
+                    )}
+
+                    <Dropzone
+                      compact
+                      disabled={Boolean(busy)}
+                      // The brand is in the label, not just in the heading
+                      // above it: seven buttons reading "Choose a picture" are
+                      // seven buttons a screen reader cannot tell apart.
+                      label={t(
+                        cover ? "admin.occasion.coverReplace" : "admin.occasion.coverChoose",
+                        { name: brand.name },
+                      )}
+                      onFile={(file) => takeCover(brand.id, file)}
+                    />
+
+                    {cover && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={Boolean(busy)}
+                        onClick={() => patchCover(brand.id, null)}
+                      >
+                        {t("admin.occasion.coverRemove")}
+                      </Button>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           </section>
 
           <section className="space-y-4 rounded-2xl border border-line bg-surface-2 p-5">

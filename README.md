@@ -229,6 +229,51 @@ Each design also declares whether its brand logo is already part of the artwork:
 Both paths render the same control, so the interface does not change when
 logo-free artwork is supplied.
 
+#### The picture on each tile
+
+A brand tile used to illustrate itself with that company's lowest-numbered card.
+Deterministic, but not *chosen* — on Saudi National Day it landed on a borrowed
+Founding Day placeholder rather than the real artwork, which is exactly why it
+read as random to the people who made the cards.
+
+`/admin` → المناسبات → an occasion → **صور الشركات** now takes one picture per
+company. `coverFor()` in `src/lib/brandGroups.js` is the whole rule:
+
+```js
+covers?.[group.id]?.src ?? group.cards[0]?.thumb ?? null
+```
+
+The fallback is the point. An occasion whose covers are half filled in has no
+half-broken tiles, so the client can add them one company at a time rather than
+all seven before any of it is worth looking at. An occasion published before
+covers existed carries no such key and behaves exactly as it always did.
+
+**Covers do not vary by season.** The picture stands for the company, not for
+the year's artwork, and tying it to a season would mean refilling all seven every
+time one is added. It is the one thing on that page the year dropdown does not
+reach.
+
+They live as `occasions.brand_covers`, a jsonb map keyed by brand id, rather than
+as a table — the dividing line `0001_init.sql` already draws: real columns for
+what you sort, filter, index or constrain, jsonb for what the client consumes
+whole. Three things follow, and they are why a table was refused:
+
+- **The roster is code.** A `brand_covers` table's `brand` column would reference
+  nothing, multiplying the untyped edge `designs.brand` already carries by one
+  row per occasion per company.
+- **It publishes with its occasion** — one status, one `publishSnapshot()`, no
+  sixth table in `publish.js`, and none of the grants and five RLS policies a new
+  table needs before PostgREST will admit it exists.
+- **Every read is `select("*")`**, so the column reaches `/admin` and the
+  snapshot builder untouched; only the two mappers in `serialize.js` learn about
+  it.
+
+A cover is encoded once, at 900px on the long edge with the thumbnail's WebP
+settings, and stored at `media/covers/<slug>/<brand>/<uid>/cover.webp`. It is not
+cropped to the tile's 4:3 — the tile is `object-cover`, the admin watches that
+crop happen in the form, and baking it in would throw away pixels a later design
+change might want back.
+
 ### Duplicating a card
 
 A season is one template rendered once per company, and the text sits in the
@@ -422,15 +467,26 @@ psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/0005_categorie
 
 or paste the file whole into the Supabase SQL editor, which wraps it for you.
 
-`0005_categories.sql` and `0006_fonts.sql` are the two this deploy needs.
-Until they are applied, the matching `/admin` screen reports the missing table
-and the rest of the dashboard keeps working — the card form degrades to "no
-category", and the editor offers the four bundled fonts. The public site is
-unaffected either way.
+`0005_categories.sql`, `0006_fonts.sql` and `0007_brand_covers.sql` are the three
+this deploy needs, and the third is not optional the way the first two are.
+
+`0005` and `0006` each add a **table**, read on its own and tolerated as absent:
+until they are applied the matching `/admin` screen reports the missing table and
+the rest of the dashboard keeps working — the card form degrades to "no
+category", and the editor offers the four bundled fonts.
+
+`0007` adds a **column to `occasions`**, which every occasion write now names. So
+until it is applied, saving an occasion fails outright with `column
+"brand_covers" does not exist` — the rest of `/admin` is unaffected, and so is
+the public site, which reads the snapshot. That is deliberate rather than
+tolerated: a write that silently dropped the field would save an occasion whose
+covers had quietly vanished, and the admin would find out from the live site.
+**Apply `0007` before deploying this build.**
 
 `0006_fonts.sql` also **widens the media bucket's `allowed_mime_types`**. The
 bucket was created allowing three image types and JSON, so without that
 statement a font upload is refused before any of the application code matters.
+`0007` needs no such change: covers are WebP, which that list already allows.
 
 ### If something looks wrong
 

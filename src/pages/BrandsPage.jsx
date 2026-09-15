@@ -7,7 +7,7 @@ import { useOccasionParam } from "../hooks/useOccasionParam.js";
 import { useLanguage } from "../hooks/useLanguage.js";
 import { getDesigns, getYears } from "../data/designs/index.js";
 import { BRANDS } from "../data/brands.js";
-import { brandGroups, OTHER_BRAND } from "../lib/brandGroups.js";
+import { brandGroups, coverFor, OTHER_BRAND } from "../lib/brandGroups.js";
 import { occasionHeading, occasionShortHeading } from "../lib/localize.js";
 
 import PageShell from "../components/layout/PageShell.jsx";
@@ -114,6 +114,10 @@ const BrandsPage = () => {
                 // interface string where the others take a trade name.
                 name={group.id === OTHER_BRAND ? t("brands.other") : group.name}
                 cards={group.cards}
+                // What the admin chose for this company on this occasion, or
+                // its first card. Covers do not vary by season, so this is the
+                // one thing on the page the year dropdown does not reach.
+                cover={coverFor(group, occasion.brandCovers)}
                 disabled={group.disabled}
                 eager={i < 3}
               />

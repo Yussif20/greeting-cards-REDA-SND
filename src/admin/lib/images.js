@@ -10,6 +10,16 @@ export const CARD_MASTER = 2000;
 /** Long edge of the grid thumbnail. Matches CARD_THUMB. */
 export const CARD_THUMB = 600;
 
+/**
+ * Long edge of a brand tile's cover.
+ *
+ * The tile is about 384 CSS px wide at the three-column maximum, so this covers
+ * a 2x screen with headroom and still encodes in a fraction of a master's work.
+ * It has no counterpart in the sharp pipeline: covers only ever arrive through
+ * /admin, so there is no offline-generated variant for it to match.
+ */
+export const COVER_LONG_EDGE = 900;
+
 /** Hero widths, matching HERO_WIDTHS in the sharp pipeline. */
 export const HERO_WIDTHS = [760, 1520];
 
@@ -239,6 +249,54 @@ function loadViaElement(file) {
     };
     img.src = url;
   });
+}
+
+/* -------------------------------------------------------------------------- */
+/* brand covers                                                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * One uploaded brand cover, as the single file the tile needs.
+ *
+ * A card produces a master and a thumbnail because the master is what gets
+ * drawn, personalised and downloaded. A cover is only ever looked at, so there
+ * is nothing for a second file to be for -- it is encoded once, with the same
+ * settings as a grid thumbnail, because it is the same kind of picture at
+ * roughly the same size.
+ *
+ * Nothing is cropped to the tile's 4:3. The tile is `object-cover`, so the crop
+ * is a display decision the admin can see happening in the form's preview, and
+ * baking it into the stored file would throw away pixels a later design change
+ * might want back.
+ */
+export async function processCover(file) {
+  validate(file);
+
+  const intrinsic = await probeDimensions(file);
+  if (intrinsic.width * intrinsic.height > MAX_PIXELS) {
+    throw new ImageError("tooManyPixels", `${intrinsic.width}x${intrinsic.height}`);
+  }
+
+  const size = fit(intrinsic.width, intrinsic.height, COVER_LONG_EDGE);
+
+  const bitmap = await decodeTo(file, size);
+  const source = bitmap ?? (await loadViaElement(file));
+
+  let cover;
+  try {
+    const canvas = paint(source, size);
+    try {
+      assertNotBlank(canvas);
+      cover = await encode(canvas, THUMB_TYPE, THUMB_QUALITY);
+    } finally {
+      release(canvas);
+    }
+  } finally {
+    bitmap?.close();
+    if (source instanceof HTMLImageElement) URL.revokeObjectURL(source.src);
+  }
+
+  return { cover, original: file, width: size.width, height: size.height };
 }
 
 /* -------------------------------------------------------------------------- */

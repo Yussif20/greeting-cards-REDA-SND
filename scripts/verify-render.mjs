@@ -595,6 +595,65 @@ check(
   );
 }
 
+// --- brand covers ----------------------------------------------------------
+//
+// Which picture a tile shows is now an admin decision with a fallback, and the
+// fallback is the part that has to keep working: an occasion whose covers are
+// half filled in must have no half-broken tiles, and an occasion published
+// before covers existed carries no such key at all.
+//
+// Properties of coverFor, against hand-built groups -- the rule the two sections
+// above state twice. The fixtures are group shapes rather than registry rows,
+// because that is what the function consumes.
+
+{
+  const { coverFor } = await import("../src/lib/brandGroups.js");
+
+  const withCards = { id: "rhc", name: "REDA Hazard Control", cards: [{ thumb: "/first.webp" }] };
+  const noCards = { id: "guard", name: "REDA Guard", cards: [] };
+  const covers = { rhc: { src: "/media/covers/x/rhc/u/cover.webp" } };
+
+  check(
+    "an uploaded cover wins over the brand's first card",
+    coverFor(withCards, covers) === "/media/covers/x/rhc/u/cover.webp",
+    coverFor(withCards, covers),
+  );
+
+  check(
+    "a brand with no cover falls back to its first card",
+    coverFor(withCards, {}) === "/first.webp",
+    coverFor(withCards, {}),
+  );
+
+  // The pre-migration case. An occasion row written before 0007, and a snapshot
+  // published before it, have no brandCovers at all -- and a deploy has to keep
+  // serving on exactly that.
+  check(
+    "an occasion published before covers existed still shows the first card",
+    coverFor(withCards, undefined) === "/first.webp",
+    String(coverFor(withCards, undefined)),
+  );
+
+  check(
+    "a brand with neither a cover nor a card has nothing to show",
+    coverFor(noCards, covers) === null,
+    String(coverFor(noCards, covers)),
+  );
+
+  // A cover on a company with no artwork is allowed, and the tile stays disabled
+  // on the strength of `cards`. The picture is not what decides that.
+  check(
+    "a cover with no cards behind it is still shown",
+    coverFor({ ...noCards, cards: [] }, { guard: { src: "/c.webp" } }) === "/c.webp",
+  );
+
+  // The catch-all tile is not a company, so nothing can be keyed to it.
+  check(
+    "the catch-all tile keeps showing its first stray card",
+    coverFor({ id: OTHER_BRAND, cards: [{ thumb: "/stray.webp" }] }, covers) === "/stray.webp",
+  );
+}
+
 // --- categories ------------------------------------------------------------
 //
 // A card's category is optional and stays optional, so its absence is never a
