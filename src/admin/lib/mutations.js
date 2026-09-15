@@ -1,6 +1,7 @@
 import { supabase } from "./supabase.js";
 import { designToRow, occasionToRow } from "../../lib/registry/serialize.js";
 import { publishSnapshot } from "./publish.js";
+import { mutate } from "./mutate.js";
 
 /**
  * Writes.
@@ -38,18 +39,6 @@ const run = async (builder, label) => {
  * `.select()` makes the write return what it changed, so an empty result is a
  * refusal and can be said out loud.
  */
-const mutate = async (builder, label) => {
-  const { data, error } = await builder.select("id");
-  if (error) throw new Error(`${label}: ${error.message}`);
-  if (!data || data.length === 0) {
-    throw new Error(
-      `${label}: the database refused this, or the row no longer exists. ` +
-        `Nothing was changed.`,
-    );
-  }
-  return data;
-};
-
 /**
  * The next free card number for an occasion and season.
  *

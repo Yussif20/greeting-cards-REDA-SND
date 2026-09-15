@@ -83,6 +83,39 @@ const check = (label, cond, detail = "") => {
   }
 };
 
+// --- mutation acknowledgement ---------------------------------------------
+//
+// The shared write helper only needs to know whether a row was affected. It
+// must not name a table-specific primary key: occasions use `slug`, while the
+// other admin resources use `id`.
+
+{
+  const { createClient } = await import("@supabase/supabase-js");
+  const { mutate } = await import("../src/admin/lib/mutate.js");
+  let requestedUrl = "";
+  const fetch = async (url) => {
+    requestedUrl = String(url);
+    return new Response(JSON.stringify([{ slug: "eid-al-fitr" }]), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  };
+  const client = createClient("https://example.supabase.co", "test-key", {
+    global: { fetch },
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  });
+
+  await mutate(
+    client.from("occasions").update({ brand_covers: {} }).eq("slug", "eid-al-fitr"),
+    "updateOccasion",
+  );
+  check(
+    "write acknowledgement does not assume every table has an id column",
+    new URL(requestedUrl).searchParams.get("select") === "*",
+    requestedUrl,
+  );
+}
+
 // Taken by position, not by id: design ids carry the season they belong to,
 // so pinning a literal id here would break the day a new season is added.
 const design = getDesigns("eid-al-adha")[0];
