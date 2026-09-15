@@ -272,6 +272,10 @@ export default {
       title: "Name",
       shortTitle: "Short name",
       tagline: "Tagline",
+      defaultFont: "Default card font",
+      defaultFontHint:
+        "Shown first on every card for this occasion. Draft and archived uploads cannot be selected.",
+      cardFont: "Use each card's font",
       hero: "Tile photograph",
       heroAlt: "Photograph description",
       focalX: "Horizontal focus",

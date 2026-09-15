@@ -27,9 +27,15 @@ export const FALLBACK_LAYOUT = {
 /**
  * @param {Array} siblings designs already belonging to the occasion
  * @param {string} [seasonId] prefer a sibling from this season
+ * @param {string} [defaultFontId] occasion default, when one is configured
  */
-export function defaultLayout(siblings, seasonId) {
-  if (!siblings?.length) return structuredClone(FALLBACK_LAYOUT);
+export function defaultLayout(siblings, seasonId, defaultFontId) {
+  if (!siblings?.length) {
+    return {
+      ...structuredClone(FALLBACK_LAYOUT),
+      fontId: defaultFontId ?? FALLBACK_LAYOUT.fontId,
+    };
+  }
 
   const sameSeason = seasonId ? siblings.filter((d) => d.year === seasonId) : [];
   const pool = sameSeason.length ? sameSeason : siblings;
@@ -37,5 +43,8 @@ export function defaultLayout(siblings, seasonId) {
   // Highest number in the pool: the most recently produced card, and so the
   // one most likely to match artwork being added now.
   const newest = pool.reduce((a, b) => (b.number > a.number ? b : a));
-  return structuredClone(newest.layout);
+  return {
+    ...structuredClone(newest.layout),
+    fontId: defaultFontId ?? newest.layout.fontId,
+  };
 }

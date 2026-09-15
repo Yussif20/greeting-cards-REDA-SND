@@ -406,6 +406,19 @@ const { layoutFingerprint } = await import("../src/lib/draft.js");
 const draftDesign = getDesigns("eid-al-fitr")[0];
 const movedName = { ...draftDesign.layout.name, y: draftDesign.layout.name.y + 0.05 };
 
+const occasionDefault = buildInitialState({
+  design: draftDesign,
+  draft: null,
+  defaultFontId: "tajawal",
+});
+check(
+  "an occasion default font replaces the card default on first open",
+  occasionDefault.fontId === "tajawal" &&
+    occasionDefault.layers
+      .filter((layer) => layer.type === "text")
+      .every((layer) => layer.fontId === "tajawal"),
+);
+
 const savedDraft = (fingerprint) => ({
   layers: {
     [NAME_LAYER]: { text: "Ahmed", color: "#FF0000", y: 0.31, size: 0.09 },
@@ -443,6 +456,13 @@ const draftLegacy = nameOf(buildInitialState({ design: draftDesign, draft: saved
 check(
   "a draft saved before fingerprints existed is treated as stale",
   draftLegacy.y === draftDesign.layout.name.y && draftLegacy.text === "Ahmed",
+);
+
+const { defaultLayout } = await import("../src/admin/lib/layoutDefaults.js");
+const uploadedLayout = defaultLayout([draftDesign], draftDesign.year, "amiri");
+check(
+  "a new card inherits geometry but uses its occasion's default font",
+  uploadedLayout.fontId === "amiri" && uploadedLayout.name.y === draftDesign.layout.name.y,
 );
 
 // --- the brand picker's rows ------------------------------------------------

@@ -95,6 +95,9 @@ const DesignUploadPage = () => {
 
       setBusy("saving");
       const siblings = await listDesigns(chosenOccasion);
+      const occasionDefaultFont = occasions.find(
+        (row) => row.slug === chosenOccasion,
+      )?.defaultFontId;
       const created = await createDesign({
         occasion: chosenOccasion,
         year: chosenSeason,
@@ -107,7 +110,7 @@ const DesignUploadPage = () => {
         thumb: stored.thumb,
         width: processed.width,
         height: processed.height,
-        layout: defaultLayout(siblings, chosenSeason),
+        layout: defaultLayout(siblings, chosenSeason, occasionDefaultFont),
       });
 
       navigate(`/admin/designs/${created.id}/layout`);

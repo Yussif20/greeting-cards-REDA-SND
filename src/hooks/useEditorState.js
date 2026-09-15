@@ -17,7 +17,11 @@ import {
  * `{x: 540, y: 540}` bug -- there are no absolute pixel defaults to go stale.
  */
 
-export function buildLayers(design, { name = "", jobTitle = "", brand = null } = {}) {
+export function buildLayers(
+  design,
+  { name = "", jobTitle = "", brand = null } = {},
+  defaultFontId = design.layout.fontId,
+) {
   const l = design.layout;
   return [
     {
@@ -37,7 +41,7 @@ export function buildLayers(design, { name = "", jobTitle = "", brand = null } =
       dir: "auto",
       weight: 700,
       color: l.defaultColor,
-      fontId: l.fontId,
+      fontId: defaultFontId,
     },
     {
       id: JOB_LAYER,
@@ -56,7 +60,7 @@ export function buildLayers(design, { name = "", jobTitle = "", brand = null } =
       dir: "auto",
       weight: 400,
       color: l.jobTitle.color ?? l.defaultColor,
-      fontId: l.fontId,
+      fontId: defaultFontId,
     },
     {
       id: LOGO_LAYER,
@@ -75,13 +79,13 @@ export function buildLayers(design, { name = "", jobTitle = "", brand = null } =
   ];
 }
 
-export function buildInitialState({ design, draft }) {
+export function buildInitialState({ design, draft, defaultFontId = design.layout.fontId }) {
   const base = {
-    layers: buildLayers(design),
+    layers: buildLayers(design, {}, defaultFontId),
     selectedLayerId: NAME_LAYER,
     activeTool: "move",
     brandId: design.brand ?? null,
-    fontId: design.layout.fontId,
+    fontId: defaultFontId,
     color: design.layout.defaultColor,
     past: [],
     future: [],
@@ -241,15 +245,23 @@ function reducer(state, action) {
     }
 
     case "reset":
-      return buildInitialState({ design: action.design, draft: null });
+      return buildInitialState({
+        design: action.design,
+        draft: null,
+        defaultFontId: action.defaultFontId,
+      });
 
     default:
       return state;
   }
 }
 
-export function useEditorState(design, draft) {
-  const [state, dispatch] = useReducer(reducer, { design, draft }, buildInitialState);
+export function useEditorState(design, draft, defaultFontId) {
+  const [state, dispatch] = useReducer(
+    reducer,
+    { design, draft, defaultFontId },
+    buildInitialState,
+  );
 
   const selectedLayer = useMemo(
     () => state.layers.find((l) => l.id === state.selectedLayerId) ?? null,

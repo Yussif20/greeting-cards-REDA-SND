@@ -12,12 +12,12 @@
  * Snapshot format. Bump when the *shape* changes, not when content does.
  *
  * 2 added `categories` and `design.category`; 3 added `fonts`; 4 added
- * `occasion.brandCovers`. Nothing reads this number to decide how to parse --
- * every reader tolerates all three being absent, which is what lets a deploy
- * built before a migration keep serving while the published snapshot has
- * already moved on.
+ * `occasion.brandCovers`; 5 added `occasion.defaultFontId`. Nothing reads this
+ * number to decide how to parse -- every reader tolerates those fields being
+ * absent, which is what lets a deploy built before a migration keep serving
+ * while the published snapshot has already moved on.
  */
-export const SNAPSHOT_VERSION = 4;
+export const SNAPSHOT_VERSION = 5;
 
 /** Hero derivatives the sharp pipeline produces for the original six. */
 export const LEGACY_HERO_FORMATS = ["avif", "webp", "jpg"];
@@ -60,6 +60,9 @@ export const rowToOccasion = (r) => ({
   slug: r.slug,
   order: r.sort_order,
   enabled: r.enabled,
+  // Null keeps occasions created before the setting using each card's own
+  // layout font. An explicit id takes precedence in the public editor.
+  defaultFontId: r.default_font_id ?? null,
   // Keyed by brand id, each value { src, width, height }. Defaulted rather than
   // passed through, so a row written before 0007_brand_covers.sql -- and a
   // snapshot published before it -- reads as "no covers" rather than undefined.
@@ -134,6 +137,7 @@ export const occasionToRow = (o) => ({
   slug: o.slug,
   sort_order: o.order,
   enabled: o.enabled,
+  default_font_id: o.defaultFontId ?? null,
   brand_covers: o.brandCovers ?? {},
   status: "published",
   title_en: o.title.en,

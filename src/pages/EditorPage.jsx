@@ -47,7 +47,8 @@ const EditorPage = () => {
  */
 const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
   const draft = useMemo(() => loadDraft(slug, design.id), [slug, design.id]);
-  const { state, dispatch, selectedLayer } = useEditorState(design, draft);
+  const defaultFontId = occasion.defaultFontId ?? design.layout.fontId;
+  const { state, dispatch, selectedLayer } = useEditorState(design, draft, defaultFontId);
 
   const [image, setImage] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -155,7 +156,7 @@ const Editor = ({ slug, occasion, design, lang, t, navigate }) => {
   };
 
   const handleReset = () => {
-    dispatch({ type: "reset", design });
+    dispatch({ type: "reset", design, defaultFontId });
     // Otherwise the saved draft survives and a refresh undoes the reset.
     clearDraft(slug, design.id);
     setToast({ tone: "info", message: t("editor.resetDone") });

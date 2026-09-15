@@ -5,17 +5,21 @@ import { Loader2, AlertTriangle, Save } from "lucide-react";
 
 import PageShell from "../../components/layout/PageShell.jsx";
 import Button from "../../components/ui/Button.jsx";
+import Select from "../../components/ui/Select.jsx";
 import TextField from "../../components/ui/TextField.jsx";
 import StatusPill from "../../components/ui/StatusPill.jsx";
 import OccasionCard from "../../components/occasions/OccasionCard.jsx";
 import { deriveTheme } from "../../lib/theme/deriveTheme.js";
+import { BUILT_IN } from "../../data/fonts.js";
+import { loc } from "../../lib/localize.js";
+import { useLanguage } from "../../hooks/useLanguage.js";
 
 import BilingualField from "../components/BilingualField.jsx";
 import IconPicker from "../components/IconPicker.jsx";
 import Dropzone from "../components/Dropzone.jsx";
 import AsyncSection from "../components/AsyncSection.jsx";
 import { useAsync } from "../hooks/useAsync.js";
-import { listOccasions } from "../lib/api.js";
+import { listFonts, listOccasions } from "../lib/api.js";
 import { processCover, processHero, ImageError } from "../lib/images.js";
 import { uploadBrandCover, uploadHero } from "../lib/storage.js";
 import { createOccasion, updateOccasion } from "../lib/mutations.js";
@@ -28,6 +32,13 @@ const slugify = (text) =>
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+
+const CARD_FONT = "__card__";
+
+const load = async () => {
+  const [occasions, fonts] = await Promise.all([listOccasions(), listFonts()]);
+  return { occasions, fonts };
+};
 
 const BLANK = {
   slug: "",
@@ -42,6 +53,7 @@ const BLANK = {
   cardsDir: null,
   artStatus: "final",
   placeholderSource: null,
+  defaultFontId: "cairo",
   brandCovers: {},
   hero: {
     base: "",
@@ -56,17 +68,18 @@ const BLANK = {
 
 const OccasionFormPage = () => {
   const { slug } = useParams();
-  const { state, data, error, reload } = useAsync(listOccasions);
+  const { state, data, error, reload } = useAsync(load);
 
   return (
     <AsyncSection state={state} error={error} onRetry={reload} empty={null}>
-      {data ? <Form all={data} slug={slug} /> : null}
+      {data ? <Form all={data.occasions} fonts={data.fonts} slug={slug} /> : null}
     </AsyncSection>
   );
 };
 
-const Form = ({ all, slug }) => {
+const Form = ({ all, fonts, slug }) => {
   const { t } = useTranslation();
+  const { lang } = useLanguage();
   const navigate = useNavigate();
 
   const existing = slug ? all.find((o) => o.slug === slug) : null;
@@ -194,6 +207,16 @@ const Form = ({ all, slug }) => {
     draft.hero.base;
 
   const focal = draft.hero.focal.split(" ").map((v) => Number.parseInt(v, 10));
+  const fontOptions = [
+    { value: CARD_FONT, label: t("admin.occasion.cardFont") },
+    ...BUILT_IN.map((font) => ({ value: font.id, label: loc(font.label, lang) })),
+    ...fonts.map((font) => ({
+      value: font.id,
+      label: loc(font.label, lang),
+      hint: t(`admin.status.${font.status}`),
+      disabled: font.status !== "published",
+    })),
+  ];
 
   return (
     <PageShell>
@@ -260,6 +283,26 @@ const Form = ({ all, slug }) => {
               onChange={(tagline) => patch({ tagline })}
               multiline
             />
+
+            <div>
+              <label
+                htmlFor="occasion-default-font"
+                className="mb-2 block text-sm font-medium text-ink"
+              >
+                {t("admin.occasion.defaultFont")}
+              </label>
+              <Select
+                id="occasion-default-font"
+                value={draft.defaultFontId ?? CARD_FONT}
+                options={fontOptions}
+                onChange={(fontId) =>
+                  patch({ defaultFontId: fontId === CARD_FONT ? null : fontId })
+                }
+              />
+              <p className="mt-1.5 text-xs text-ink-3">
+                {t("admin.occasion.defaultFontHint")}
+              </p>
+            </div>
           </section>
 
           <section className="space-y-4 rounded-2xl border border-line bg-surface-2 p-5">
